@@ -1,0 +1,8 @@
+{
+  "appId": "br.com.leomedvet.app",
+  "appName": "Léo Med Vet",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#0f172a"
+  }
+}
