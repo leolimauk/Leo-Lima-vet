@@ -726,20 +726,27 @@ const FB={apiKey:"__FB_KEY__"};const AUTH_ON=!!FB.apiKey&&!FB.apiKey.startsWith(
 const AUTH_ERR={EMAIL_NOT_FOUND:"E-mail ou senha incorretos.",INVALID_PASSWORD:"E-mail ou senha incorretos.",INVALID_LOGIN_CREDENTIALS:"E-mail ou senha incorretos.",INVALID_EMAIL:"E-mail inválido.",
  USER_DISABLED:"Seu acesso foi desativado. Fale com o administrador.",USER_NOT_FOUND:"Seu acesso foi removido. Fale com o administrador.",TOKEN_EXPIRED:"Sua senha foi alterada. Entre novamente.",INVALID_REFRESH_TOKEN:"Sessão expirada. Entre novamente.",
  TOO_MANY_ATTEMPTS_TRY_LATER:"Muitas tentativas. Aguarde alguns minutos.",MISSING_PASSWORD:"Informe a senha."};
+const FS="https://firestore.googleapis.com/v1/projects/";
+function jwt(t){try{return JSON.parse(atob(t.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")))}catch(e){return{}}}
+function devName(){const u=navigator.userAgent;const m=u.match(/Android[^;)]*;\s*([^;)]+)/);return m?m[1].trim():/iPhone|iPad/.test(u)?"iPhone/iPad":/Windows/.test(u)?"Windows":/Mac/.test(u)?"Mac":"Navegador"}
+async function fsSession(idToken,mode,sid){const p=jwt(idToken);if(!p.aud||!p.user_id)return null;const url=FS+p.aud+"/databases/(default)/documents/sessions/"+p.user_id;
+ if(mode==="set"){const r=await fetch(url,{method:"PATCH",headers:{"Authorization":"Bearer "+idToken,"Content-Type":"application/json"},body:JSON.stringify({fields:{sid:{stringValue:sid},dev:{stringValue:devName()},at:{timestampValue:new Date().toISOString()}}})});return r.ok}
+ const r=await fetch(url,{headers:{"Authorization":"Bearer "+idToken}});if(r.status===404)return"missing";if(!r.ok)return null;const j=await r.json();return{sid:j.fields&&j.fields.sid&&j.fields.sid.stringValue,dev:j.fields&&j.fields.dev&&j.fields.dev.stringValue}}
+function kicked(dev){store.set("auth",null);showLogin("Sua conta foi acessada em outro aparelho"+(dev?" ("+dev+")":"")+". Só é permitido um aparelho por vez — entre novamente para usar aqui.",true)}
 function authMsg(code){code=String(code||"").split(" ")[0].split(":")[0];return AUTH_ERR[code]||"Não foi possível entrar ("+code+")."}
 function showLogin(msg,isErr){const l=document.getElementById("login");l.classList.add("show");const e=document.getElementById("lgErr");if(msg&&isErr){e.textContent=msg;e.style.display="block"}else{e.style.display="none";if(msg)document.getElementById("lgMsg").textContent=msg}}
 async function doLogin(){const b=document.getElementById("lgBtn"),em=document.getElementById("lgE").value.trim(),pw=document.getElementById("lgP").value;b.disabled=true;b.textContent="Entrando...";
  try{const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+FB.apiKey,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw,returnSecureToken:true})});const j=await r.json();
-  if(!r.ok)throw new Error(j.error&&j.error.message);store.set("auth",{email:j.email,rt:j.refreshToken,ok:Date.now()});document.getElementById("login").classList.remove("show");document.getElementById("lgP").value="";route();toast("Bem-vindo(a), "+j.email)}
+  if(!r.ok)throw new Error(j.error&&j.error.message);const sid=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now());try{await fsSession(j.idToken,"set",sid)}catch(e){}store.set("auth",{email:j.email,rt:j.refreshToken,ok:Date.now(),sid});document.getElementById("login").classList.remove("show");document.getElementById("lgP").value="";route();toast("Bem-vindo(a), "+j.email)}
  catch(e){showLogin(e instanceof TypeError?"Sem conexão com a internet. O primeiro acesso precisa de internet.":authMsg(e.message),true)}finally{b.disabled=false;b.textContent="Entrar"}}
 async function verifyAuth(){const a=store.get("auth",null);if(!a)return;
  try{const r=await fetch("https://securetoken.googleapis.com/v1/token?key="+FB.apiKey,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=refresh_token&refresh_token="+encodeURIComponent(a.rt)});const j=await r.json();
-  if(r.ok){a.rt=j.refresh_token||a.rt;a.ok=Date.now();store.set("auth",a)}else{store.set("auth",null);showLogin(authMsg(j.error&&j.error.message),true)}}
+  if(r.ok){a.rt=j.refresh_token||a.rt;try{const ss=await fsSession(j.id_token,"get");if(ss==="missing"&&a.sid)await fsSession(j.id_token,"set",a.sid);else if(ss&&ss.sid&&a.sid&&ss.sid!==a.sid){kicked(ss.dev);return}}catch(e){}a.ok=Date.now();store.set("auth",a)}else{store.set("auth",null);showLogin(authMsg(j.error&&j.error.message),true)}}
  catch(e){if(Date.now()-a.ok>GRACE_DAYS*864e5)showLogin("Conecte-se à internet para validar seu acesso (verificação a cada "+GRACE_DAYS+" dias).",true)}}
 function logout(){store.set("auth",null);location.hash="#/";showLogin("Você saiu da conta.")}
 function authGate(){if(!AUTH_ON)return;const a=store.get("auth",null);
  if(!a)showLogin();else if(Date.now()-a.ok>GRACE_DAYS*864e5){showLogin("Validando acesso...");verifyAuth().then(()=>{const b=store.get("auth",null);if(b&&Date.now()-b.ok<6e4)document.getElementById("login").classList.remove("show")})}else verifyAuth();
- document.addEventListener("visibilitychange",()=>{if(!document.hidden&&store.get("auth",null))verifyAuth()})}
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&store.get("auth",null))verifyAuth()});setInterval(()=>{if(!document.hidden&&store.get("auth",null))verifyAuth()},5*60*1000)}
 
 /* ================= Init ================= */
 const LOGO = document.querySelector(".brand img").getAttribute("src");
