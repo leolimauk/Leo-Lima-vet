@@ -686,6 +686,8 @@ function printRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const c=R.items.
    (R.obs?'<p style="margin-top:18px"><b>Orientações:</b> '+esc(R.obs)+'</p>':"")+
    '<div class="rx-foot">'+new Date().toLocaleDateString("pt-BR")+'<br/><br/>_______________________________________<br/>'+esc(D.nome||"Assinatura e carimbo")+(D.crmv?" — CRMV "+esc(D.crmv):"")+(two?'<br/><small>Identificação do comprador / farmácia: ____________________________</small>':"")+'</div></div>';
   document.getElementById("printArea").innerHTML=two?page("1ª via — Farmácia")+page("2ª via — Paciente"):page("");
+  const nome="Receita "+((P.nome||"").trim()||"veterinaria");
+  if(window.AndroidPrint&&AndroidPrint.print){setTimeout(()=>{try{AndroidPrint.print(nome)}catch(e){copy(rxText())}},250);return}
   try{window.print()}catch(e){copy(rxText())}
 }
 

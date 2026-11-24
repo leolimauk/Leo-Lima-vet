@@ -9,6 +9,7 @@ on:
       - "assets/**"
       - "capacitor.config.json"
       - "package.json"
+      - "android-native/**"
       - ".github/workflows/build-apk.yml"
 
 permissions:
@@ -34,6 +35,9 @@ jobs:
 
       - name: Criar projeto Android e ícones
         run: npm run android:init
+
+      - name: Ativar impressão nativa (Imprimir / PDF)
+        run: cp android-native/MainActivity.java android/app/src/main/java/br/com/leomedvet/app/MainActivity.java
 
       - name: Compilar APK (debug, instalável)
         run: |
