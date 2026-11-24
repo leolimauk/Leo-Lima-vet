@@ -37,7 +37,8 @@ const ICONS = {
   link: "M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7 M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7",
   blood: "M12 2.7l5.7 5.7a8 8 0 1 1-11.3 0z M9 14h6 M12 11v6", flame: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.3 1.9 1.4 2.8 2.5 2.8z",
   bolt: "M13 2L3 14h9l-1 8 10-12h-9z", flask: "M9 3h6 M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3 M7 15h10",
-  ruler: "M3 17L17 3l4 4L7 21z M7 13l2 2 M10 10l2 2 M13 7l2 2", swap: "M7 4L3 8l4 4 M3 8h14 M17 20l4-4-4-4 M21 16H7"
+  ruler: "M3 17L17 3l4 4L7 21z M7 13l2 2 M10 10l2 2 M13 7l2 2", swap: "M7 4L3 8l4 4 M3 8h14 M17 20l4-4-4-4 M21 16H7",
+  logout: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
@@ -47,7 +48,7 @@ html=html.replace("__FB_KEY__",FBKEY);
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");
 html = html.split("__LOGO__").join(logo)
   .replace("__ICONS__", JSON.stringify(ICONS))
-  .split("__I_BACK__").join(svg("back")).split("__I_SEARCH__").join(svg("search")).split("__I_MOON__").join(svg("moon"))
+  .split("__I_BACK__").join(svg("back")).split("__I_SEARCH__").join(svg("search")).split("__I_MOON__").join(svg("moon")).split("__I_LOGOUT__").join(svg("logout"))
   .replace("/*__DATA__*/null", () => json);
 const out = process.argv[2] || path.join(dir, "index.html");
 fs.writeFileSync(out, html);

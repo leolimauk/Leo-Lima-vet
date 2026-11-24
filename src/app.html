@@ -243,6 +243,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   </a>
   <button class="tbtn" onclick="openSearch()" aria-label="Buscar">__I_SEARCH__</button>
   <button class="tbtn" onclick="toggleTheme()" aria-label="Tema" id="themeBtn">__I_MOON__</button>
+  <button class="tbtn" onclick="if(confirm('Sair da conta neste aparelho?'))logout()" aria-label="Sair" title="Sair da conta" id="logoutBtn" style="display:none">__I_LOGOUT__</button>
 </header>
 
 <div class="layout">
@@ -386,6 +387,7 @@ function route(){
   app.innerHTML=html;
   AFTER.splice(0).forEach(fn=>{try{fn()}catch(e){console.error(e)}});
   document.getElementById("topSub").textContent=sub;
+  const lb=document.getElementById("logoutBtn");if(lb)lb.style.display=(typeof AUTH_ON!=="undefined"&&AUTH_ON&&store.get("auth",null))?"flex":"none";
   document.getElementById("top").classList.toggle("sub",isSub);
   const base="#/"+page;
   const mk=(arr,cls)=>arr.map(([href,l,i])=>'<a href="'+href+'" class="'+((href===base||(href==="#/"&&page===""))?"on":"")+'">'+ic(i,cls?20:22)+'<span>'+l+'</span></a>').join("");
