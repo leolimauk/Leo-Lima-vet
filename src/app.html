@@ -300,6 +300,8 @@ const CTL = {
   B1:{s:"B1 · Azul",c:"t-b1",l:"Lista B1 (psicotrópicos) — Notificação de Receita B (azul). Validade 30 dias, até 60 dias de tratamento."},
   C1:{s:"C1 · 2 vias",c:"t-c1",l:"Lista C1 — Receita de Controle Especial em 2 vias (1ª retida na farmácia). Validade 30 dias. Para produtos de uso veterinário, segue normas do MAPA."},
   CTL:{s:"Controlado",c:"t-ctl",l:"Substância sujeita a controle especial — confirme a lista vigente da Portaria SVS/MS 344/98 (farmácia humana) ou as normas do MAPA (produto veterinário) antes de prescrever."},
+  C5:{s:"C5 · Anabolizante",c:"t-c1",l:"Lista C5 (anabolizantes) — Receita de Controle Especial em 2 vias; validade 30 dias."},
+  CANN:{s:"Cannabis · Receita retida",c:"t-b1",l:"Cannabis medicinal: o médico-veterinário pode prescrever produtos registrados/autorizados pela ANVISA (RDC 327/2019) e produtos veterinários regularizados pelo MAPA (decisão ANVISA 30/10/2024; RDC 936/2024 — Lista A3). Receita especial retida na farmácia. Manipulação proibida. Confirme a norma vigente no CRMV/MAPA."},
   ATB:{s:"Antimicrobiano",c:"t-atb",l:"Antimicrobiano — quando dispensado em farmácia humana, exige receita em 2 vias com retenção (RDC ANVISA 471/2021, validade 10 dias). Use com base em cultura e antibiograma sempre que possível."}
 };
 const UNIT = {
@@ -342,6 +344,20 @@ function spGroup(s){s=norm(s);
   if(/bovin|vaca|bezerr|garrote/.test(s))return"cattle";if(/ovin|caprin|ovelha|cabra/.test(s))return"sr";if(/coelh/.test(s))return"rabbit";
   if(/ave|calopsita|psitac/.test(s))return"bird";if(/reptil|quelon|iguana|jabuti/.test(s))return"reptile";if(/suin/.test(s))return"pig";return"other";}
 const CASES = DATA.cases.map((c,i)=>{c.id="c"+(i+1);c.g=spGroup(c.sp);c._s=norm([c.title,c.sp,c.spec,c.ctx].join(" "));return c});
+
+/* ================= Interações ================= */
+const IG=DATA.ig,INTER=DATA.inter;
+const GLBL={AINE:"AINEs",CORT:"Corticoides",IECA_BRA:"IECA/BRA",DIUR_ALCA:"Diuréticos de alça/tiazídicos",K_UP:"Fármacos que elevam K",FQ:"Fluoroquinolonas",TETRA:"Tetraciclinas",CATION:"Antiácidos/cátions (Ca, Al, Fe, Zn, Bi, sucralfato)",AMINO:"Aminoglicosídeos",NEFRO:"Nefrotóxicos",SEROT:"Serotoninérgicos",IMAO:"Inibidores da MAO (selegilina, amitraz)",AZOL:"Antifúngicos azóis",CYP_INIB:"Inibidores de CYP",INDUTOR:"Indutores enzimáticos",QT:"Prolongadores de QT",BRADI:"Bradicardizantes",BETA:"Betabloqueadores",PGP_INIB:"Inibidores da glicoproteína-P",PGP_SUB:"Substratos da P-gp (lactonas, loperamida, vincristina...)",ANTICOAG:"Antitrombóticos",OPIOIDE:"Opioides agonistas",MU_PARCIAL:"Opioides parciais/kappa",BZD:"Benzodiazepínicos",ALFA2:"Alfa-2 agonistas",BNM:"Bloqueadores neuromusculares",INSULINA:"Insulinas/hipoglicemiantes",D2ANT:"Antagonistas D2",IONOF:"Ionóforos (via ração)",MACRO_LINC:"Macrolídeos/lincosamidas",BACTERICIDA_BL:"Betalactâmicos",SIMPATO:"Simpatomiméticos",BETA2:"Beta-2 agonistas",IBP:"Antissecretores (IBP/H2)",MIELO:"Mielossupressores",HEPATO:"Hepatotóxicos"};
+const EVL={B:"Bula/consenso veterinário",V:"Estudos/relatos veterinários",H:"Extrapolado de dados humanos"};
+function inSide(side,name){return side===name||(IG[side]&&IG[side].includes(name))}
+function sideLbl(side){return IG[side]?(GLBL[side]||side):side}
+function interPairs(names){const out=[],seen=new Set();
+  for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){const x=names[i],y=names[j];if(x===y)continue;
+    INTER.forEach((r,k)=>{const hit=(inSide(r.a,x)&&inSide(r.b,y))||(inSide(r.a,y)&&inSide(r.b,x));const key=k+"|"+[x,y].sort().join("|");if(hit&&!seen.has(key)){seen.add(key);out.push({r,x,y})}})}
+  const o={Grave:0,Moderada:1,Leve:2};return out.sort((p,q)=>o[p.r.sev]-o[q.r.sev])}
+function interFor(name){return INTER.filter(r=>inSide(r.a,name)||inSide(r.b,name)).map(r=>({r,other:inSide(r.a,name)?r.b:r.a}))}
+function sevTag(s){return '<span class="tag '+(s==="Grave"?"t-bad":s==="Moderada"?"t-warn":"t-info")+'">'+s+'</span>'}
+function interCard(p){const r=p.r;return '<div class="card" style="border-left:4px solid '+(r.sev==="Grave"?"var(--bad)":r.sev==="Moderada"?"var(--warn)":"var(--info)")+'"><div class="row wrapf" style="gap:6px">'+sevTag(r.sev)+'<span class="tag t-cls">'+EVL[r.ev]+'</span></div><h3 style="margin-top:8px">'+esc(p.x?p.x+" + "+p.y:sideLbl(p.other))+'</h3>'+(p.other&&IG[p.other]?'<div class="xs muted" style="margin-top:2px">'+esc(IG[p.other].join(", "))+'</div>':"")+'<div class="kv" style="margin-top:10px">'+kv("Efeito",r.eff)+kv("Mecanismo",r.mech)+kv("Conduta",r.cond)+'</div></div>'}
 
 /* ================= State ================= */
 const S = {
@@ -421,7 +437,7 @@ function vHome(){
   const rec=S.recent.map(id=>DM[id]).filter(Boolean).slice(0,6);
   return '<section class="hero"><img src="'+LOGO+'" alt="" /><div style="flex:1;min-width:0;width:100%"><h1>Clínica Vet Pro</h1><p>Bulário, doses por espécie, calculadoras, toxicologia e casos clínicos — funciona offline.</p>'+
   '<div class="search">'+ic("search")+'<input class="inp" placeholder="Buscar: meloxicam, Cerenia, lírio, piometra..." onfocus="openSearch(this.value);this.blur()" readonly /></div></div></section>'+
-  '<div class="stats"><div class="stat"><b>'+DRUGS.length+'</b><span>fármacos (monografias únicas)</span></div><div class="stat"><b>'+nDose+'</b><span>doses por espécie</span></div><div class="stat"><b>'+TOX.length+'</b><span>toxinas e interações</span></div><div class="stat"><b>'+CASES.length+'</b><span>casos clínicos</span></div></div>'+
+  '<div class="stats"><div class="stat"><b>'+DRUGS.length+'</b><span>fármacos (monografias únicas)</span></div><div class="stat"><b>'+nDose+'</b><span>doses por espécie</span></div><div class="stat"><b>'+(TOX.length+INTER.length)+'</b><span>toxinas e interações</span></div><div class="stat"><b>'+CASES.length+'</b><span>casos clínicos</span></div></div>'+
   '<div class="sec-title"><h2>Ferramentas</h2></div><div class="tiles">'+
   tile("#/calc/dose","calc","c1","Calculadora de doses","mg, mL e comprimidos")+tile("#/calc/rcp","heart","c3","RCP & emergência","Doses por peso")+
   tile("#/calc/fluido","drop","c6","Fluidoterapia","Déficit, manutenção, gotas")+tile("#/calc/cri","clock","c5","Infusão contínua","mcg/kg/min → mL/h")+
@@ -471,7 +487,7 @@ function vDrug(id){
   '<div class="actions" style="margin-top:12px"><button class="btn sm" onclick="addRxDrug(\''+d.id+'\')">'+ic("plus",16)+' Receita</button><button class="btn sm" onclick="copyDrug(\''+d.id+'\')">'+ic("copy",16)+' Copiar</button></div></div>'+
   (xs.length?'<div class="note bad"><b>⛔ Contraindicado / evitar:</b><br/>'+xs.map(k=>SPM[k].e+" <b>"+SPM[k].n+":</b> "+esc(d.x[k])).join("<br/>")+'</div>':"")+
   (rows?'<div class="card"><h2 style="margin-bottom:4px">Doses por espécie</h2>'+rows+'</div>':'<div class="note info">Uso tópico/inalatório ou dose conforme produto — veja as observações abaixo.</div>')+
-  '<div class="card kv">'+kv("Apresentações",d.p)+kv("Mecanismo de ação",d.m)+kv("Indicações",d.i)+kv("Contraindicações e precauções",d.ci)+kv("Efeitos adversos e alertas",d.ae)+(d.wd?kv("Carência / observações regulatórias",d.wd):"")+'</div></div>'+disclaimer();
+  (function(){const L=interFor(d.n);return L.length?'<div class="card"><h2>Interações ('+L.length+')</h2><p class="xs muted" style="margin:4px 0 8px">Use o verificador para checar uma combinação específica.</p><div class="stack">'+L.map(interCard).join("")+'</div><a class="btn sm" style="margin-top:10px" href="#/calc/inter" onclick="S.interSel=[\''+d.id+'\']">Verificar com outros fármacos</a></div>':''})()+'<div class="card kv">'+kv("Apresentações",d.p)+kv("Mecanismo de ação",d.m)+kv("Indicações",d.i)+kv("Contraindicações e precauções",d.ci)+kv("Efeitos adversos e alertas",d.ae)+(d.wd?kv("Carência / observações regulatórias",d.wd):"")+'</div></div>'+disclaimer();
 }
 function kv(k,v){return v?'<div><div class="k">'+k+'</div><div class="v">'+esc(v)+'</div></div>':""}
 function copyDrug(id){const d=DM[id];const L=[d.n+" ("+d.b+")","Classe: "+(CLS[d.c]?CLS[d.c].n:""),d.ctl?"Controle: "+CTL[d.ctl].l:"","Apresentações: "+d.p,"Indicações: "+d.i,"Doses:"];
@@ -499,7 +515,7 @@ function renderSearch(v){
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSearch();if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();openSearch()}});
 
 /* ================= Calculadoras ================= */
-const TOOLS=[["dose","Doses","calc"],["cri","Infusão contínua","clock"],["fluido","Fluidoterapia","drop"],["rcp","RCP/Emergência","heart"],["transf","Transfusão","blood"],["energia","Energia/Dieta","flame"],["kcl","Potássio (KCl)","bolt"],["bic","Bicarbonato","flask"],["bsa","Superfície m²","ruler"],["conv","Diluições","swap"]];
+const TOOLS=[["dose","Doses","calc"],["inter","Interações","alert"],["cri","Infusão contínua","clock"],["fluido","Fluidoterapia","drop"],["rcp","RCP/Emergência","heart"],["transf","Transfusão","blood"],["energia","Energia/Dieta","flame"],["kcl","Potássio (KCl)","bolt"],["bic","Bicarbonato","flask"],["bsa","Superfície m²","ruler"],["conv","Diluições","swap"]];
 function vCalc(tool,arg){
   if(tool==="dose"&&arg&&DM[arg])S.calcDrug=arg;
   return '<div class="stack"><h1>Calculadoras</h1><div class="tools">'+TOOLS.map(([k,l,i])=>'<a class="tool '+(k===tool?"on":"")+'" href="#/calc/'+k+'">'+ic(i,18)+l+'</a>').join("")+'</div>'+
@@ -511,6 +527,11 @@ function gv(id){const e=document.getElementById(id);return e?num(e.value):0}
 function bsa(sp,w){return SPM[sp].k*Math.pow(w,2/3)/100}
 let calcRun=()=>{};
 const CALC={
+inter(){calcRun=()=>{};const sel=(S.interSel||[]).filter(id=>DM[id]);S.interSel=sel;const pairs=interPairs(sel.map(id=>DM[id].n));
+  return '<h2>Verificador de interações</h2><p class="muted sm" style="margin:4px 0 12px">Adicione 2 ou mais fármacos. O sistema verifica '+INTER.length+' regras (pares e classes farmacológicas) com mecanismo, conduta e nível de evidência.</p>'+
+  '<div class="search">'+ic("search")+'<input class="inp" id="iq" placeholder="Adicionar fármaco..." oninput="interSug(this.value)" autocomplete="off" /></div><div id="isug" class="list" style="margin-top:6px"></div>'+
+  '<div class="row wrapf" style="gap:6px;margin-top:10px">'+sel.map(id=>'<button class="chip on" onclick="S.interSel=S.interSel.filter(x=>x!==\''+id+'\');rerender()">'+esc(DM[id].n)+' ✕</button>').join("")+(sel.length?'<button class="chip" onclick="S.interSel=[];rerender()">Limpar</button>':"")+(S.rx.items.length?'<button class="chip" onclick="interFromRx()">+ Itens da receita</button>':"")+'</div>'+
+  (sel.length<2?'<div class="empty">Adicione pelo menos 2 fármacos.</div>':pairs.length?'<div class="note bad" style="margin-top:12px"><b>'+pairs.length+' interação(ões) encontrada(s)</b> — '+pairs.filter(p=>p.r.sev==="Grave").length+' grave(s).</div><div class="stack" style="margin-top:10px">'+pairs.map(interCard).join("")+'</div>':'<div class="note ok" style="margin-top:12px">Nenhuma interação cadastrada entre esses fármacos. Isso não exclui interações não descritas — mantenha o julgamento clínico.</div>')},
 dose(){
   const sp=S.calcSp;const list=DRUGS.filter(d=>d.d[sp]&&d.d[sp][0]!=null);
   if(!S.calcDrug||!DM[S.calcDrug]||!DM[S.calcDrug].d[sp]||DM[S.calcDrug].d[sp][0]==null)S.calcDrug=(list.find(d=>d.id===S.calcDrug)||list[0]||{}).id||"";
@@ -569,6 +590,9 @@ conv(){calcRun=calcConv;
   return '<h2>Conversões e diluições</h2><div class="grid g2m" style="margin-top:12px">'+f("vP","Solução em % (p/v)",2)+'<div class="out" id="vOut1"></div></div><div class="hr"></div><h3>Diluição (C1 × V1 = C2 × V2)</h3><div class="grid g2m" style="margin-top:10px">'+
   f("vC1","Concentração inicial (mg/mL)",50)+f("vC2","Concentração final desejada (mg/mL)",5)+f("vV2","Volume final desejado (mL)",10)+'</div><div class="out" id="vOut2" style="margin-top:12px"></div>'}
 };
+function interSug(v){const q=norm(v).trim();const el=document.getElementById("isug");if(!q){el.innerHTML="";return}
+  el.innerHTML=DRUGS.filter(d=>d._s.includes(q)&&!(S.interSel||[]).includes(d.id)).slice(0,6).map(d=>'<a class="item" onclick="S.interSel=(S.interSel||[]).concat(\''+d.id+'\');rerender()"><div class="t">'+esc(d.n)+'</div><div class="s">'+esc(d.b)+'</div></a>').join("")}
+function interFromRx(){const ids=S.rx.items.map(i=>(DRUGS.find(d=>d.n===i.n)||{}).id).filter(Boolean);S.interSel=[...new Set((S.interSel||[]).concat(ids))];rerender()}
 function stepW(dir){const i=document.getElementById("cW");let w=num(i.value);const st=w>=100?10:w>=20?1:w>=5?0.5:0.1;w=Math.max(0.01,+(w+dir*st).toFixed(2));i.value=w;S.calcW[S.calcSp]=w;store.set("calcW",S.calcW);calcRun()}
 function setDose(v){document.getElementById('cDose').value=v;syncRange(v)}
 function syncRange(v){const r=document.getElementById("cRange");if(r)r.value=v;calcRun()}
@@ -680,7 +704,8 @@ function addRxFromCalc(){if(!lastCalc)return;addRxDrug(lastCalc.d.id,lastCalc.tx
 function rxType(){const c=S.rx.items.map(i=>i.ctl);
   if(c.includes("A1"))return["bad","Contém substância da lista A1: exige Notificação de Receita A (amarela) do talonário oficial — esta folha serve apenas como rascunho/orientação ao tutor."];
   if(c.includes("B1"))return["bad","Contém substância da lista B1: exige Notificação de Receita B (azul) do talonário próprio — esta folha serve como rascunho/orientação."];
-  if(c.includes("C1")||c.includes("CTL"))return["warn","Receita de Controle Especial em 2 vias (1ª via retida na farmácia). Inclua endereço completo do tutor."];
+  if(c.includes("CANN"))return["bad","Contém cannabis: produto registrado/autorizado (ANVISA RDC 327/2019 ou MAPA), em receita especial retida na farmácia. Manipulação proibida. Confirme a norma vigente."];
+  if(c.includes("C1")||c.includes("CTL")||c.includes("C5"))return["warn","Receita de Controle Especial em 2 vias (1ª via retida na farmácia). Inclua endereço completo do tutor."];
   if(c.includes("ATB"))return["warn","Antimicrobiano: emita 2 vias quando a dispensação for em farmácia humana (RDC 471/2021 — validade 10 dias)."];
   return["ok","Receita simples."];}
 function vRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const [tc,tl]=rxType();
@@ -694,6 +719,7 @@ function vRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const [tc,tl]=rxType
   '<div class="grid g2m"><div class="field"><label>Apresentação</label><input class="inp" value="'+esc(it.pres)+'" oninput="S.rx.items['+i+'].pres=this.value;saveRx()" /></div><div class="field"><label>Quantidade</label><input class="inp" value="'+esc(it.qty)+'" placeholder="ex.: 1 frasco / 20 comprimidos" oninput="S.rx.items['+i+'].qty=this.value;saveRx()" /></div></div>'+
   '<div class="field"><label>Posologia</label><textarea class="inp" oninput="S.rx.items['+i+'].pos=this.value;saveRx()" placeholder="Administrar ... mL por via oral a cada 12 horas por 7 dias.">'+esc(it.pos)+'</textarea></div></div>').join(""):'<div class="empty">Adicione fármacos pelo botão acima, pela monografia ou pela calculadora (o texto da posologia é preenchido automaticamente).</div>')+'</div>'+
   '<div class="field"><label>Orientações gerais</label><textarea class="inp" oninput="S.rx.obs=this.value;saveRx()" placeholder="Retorno em 7 dias. Manter colar elizabetano...">'+esc(R.obs||"")+'</textarea></div>'+
+  (function(){const P=interPairs(R.items.map(i=>i.n));return P.length?'<div class="note bad"><b>⚠ '+P.length+' interação(ões) na receita:</b><br/>'+P.map(p=>'• '+sevTag(p.r.sev)+' '+esc(p.x+' + '+p.y)+': '+esc(p.r.eff)).join('<br/>')+'<br/><a href="#/calc/inter" onclick="interFromRx()">Ver detalhes</a></div>':''})()+
   '<div class="note '+tc+'">'+tl+'</div>'+
   '<div class="actions"><button class="btn pri" onclick="printRx()">'+ic("print",18)+' Imprimir / PDF</button><button class="btn" onclick="copy(rxText())">'+ic("copy",18)+' Copiar texto</button><button class="btn" onclick="if(confirm(\'Limpar receita atual?\')){S.rx={items:[],pat:{},tut:{}};saveRx();rerender()}">'+ic("trash",18)+' Limpar</button></div></div>';}
 function openSearchRx(){openSearch("");toast("Abra o fármaco e toque em “Receita”")}
@@ -703,7 +729,7 @@ function rxText(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const L=[];
   L.push("Tutor: "+(T.nome||"")+(T.cpf?" | Doc.: "+T.cpf:"")+(T.end?" | End.: "+T.end:"")+(T.tel?" | Tel.: "+T.tel:""));L.push("");
   R.items.forEach((it,i)=>{L.push((i+1)+". "+it.n+(it.pres?" — "+it.pres:"")+(it.qty?" .......... "+it.qty:""));L.push("   "+(it.pos||""));});
   if(R.obs){L.push("");L.push("Orientações: "+R.obs)}L.push("");L.push((D.end?D.end+" — ":"")+new Date().toLocaleDateString("pt-BR"));return L.join("\n");}
-function printRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const c=R.items.map(i=>i.ctl);const two=c.some(x=>["C1","CTL","ATB","A1","B1"].includes(x));
+function printRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const c=R.items.map(i=>i.ctl);const two=c.some(x=>["C1","CTL","ATB","A1","B1","C5","CANN"].includes(x));
   const page=via=>'<div class="rx-page">'+(via?'<div style="text-align:right;font-weight:bold;font-size:12px;margin-bottom:4px">'+via+'</div>':"")+'<div class="rx-h"><b>'+esc(D.clinica||"Receituário Veterinário")+'</b><br/>'+esc(D.nome?"Médico(a)-Veterinário(a): "+D.nome:"")+(D.crmv?" — CRMV "+esc(D.crmv):"")+'<br/><small>'+esc(D.end||"")+(D.tel?" · "+esc(D.tel):"")+'</small>'+'</div>'+
    (two?'<p><b>'+(c.includes("ATB")&&!c.some(x=>["C1","CTL","A1","B1"].includes(x))?"RECEITA DE ANTIMICROBIANO":"RECEITUÁRIO DE CONTROLE ESPECIAL")+'</b></p>':"")+
    '<p><b>Paciente:</b> '+esc(P.nome||"")+' &nbsp; <b>Espécie:</b> '+esc(P.sp||"")+' &nbsp; <b>Raça:</b> '+esc(P.raca||"")+' &nbsp; <b>Idade:</b> '+esc(P.idade||"")+' &nbsp; <b>Sexo:</b> '+esc(P.sexo||"")+' &nbsp; <b>Peso:</b> '+esc(P.peso||"")+' kg<br/><b>Tutor:</b> '+esc(T.nome||"")+(T.cpf?" &nbsp; <b>Doc.:</b> "+esc(T.cpf):"")+'<br/><b>Endereço:</b> '+esc(T.end||"")+(T.tel?" &nbsp; <b>Tel.:</b> "+esc(T.tel):"")+'</p><hr/>'+
@@ -722,9 +748,25 @@ function vReg(){return '<div class="stack"><h1>Legislação & receituário</h1>'
   '<tr><td>'+ctlTag("A1")+'</td><td>Morfina, metadona, fentanil, petidina</td><td>Notificação de Receita A (amarela), talonário da Vigilância Sanitária; validade 30 dias; máx. 30 dias de tratamento.</td></tr>'+
   '<tr><td>'+ctlTag("B1")+'</td><td>Diazepam, midazolam, alprazolam, clonazepam, fenobarbital</td><td>Notificação de Receita B (azul); validade 30 dias; até 60 dias de tratamento.</td></tr>'+
   '<tr><td>'+ctlTag("C1")+'</td><td>Gabapentina, pregabalina, trazodona, fluoxetina, cetamina, propofol, levetiracetam</td><td>Receita de Controle Especial em 2 vias; validade 30 dias.</td></tr>'+
+  '<tr><td>'+ctlTag("C5")+'</td><td>Nandrolona e outros anabolizantes</td><td>Receita de Controle Especial em 2 vias.</td></tr>'+
+  '<tr><td>'+ctlTag("CANN")+'</td><td>Canabidiol / produtos de cannabis</td><td>Receita especial retida (ver seção abaixo).</td></tr>'+
   '<tr><td>'+ctlTag("ATB")+'</td><td>Amoxicilina, cefalexina, enrofloxacino, doxiciclina...</td><td>Em farmácia humana: receita em 2 vias com retenção (RDC 471/2021), validade 10 dias.</td></tr>'+
   '<tr><td><span class="tag t-ok">Simples</span></td><td>Produtos de uso veterinário sem controle</td><td>Receita simples com identificação do MV, CRMV, paciente e tutor (Resolução CFMV 1.321/2020).</td></tr></tbody></table>'+
   '<div class="note warn" style="margin-top:10px">Listas e prazos mudam por atualizações das RDCs da ANVISA e normas do MAPA. Confirme sempre a versão vigente da Portaria SVS/MS 344/98 e do sistema SIPEAGRO (produtos veterinários controlados).</div></div>'+
+  '<div class="card"><h3>Como obter os receituários de controlados</h3><ul class="pts sm" style="margin-top:8px">'+
+  '<li><b>Notificação A (amarela — lista A1/A2/A3):</b> talonário numerado fornecido pela <b>Vigilância Sanitária</b> (municipal/estadual) mediante cadastro do médico-veterinário (CRMV ativo).</li>'+
+  '<li><b>Notificação B (azul — B1/B2):</b> o profissional solicita a <b>numeração</b> à Vigilância Sanitária e manda imprimir em gráfica.</li>'+
+  '<li><b>Receita de Controle Especial (C1, C5):</b> formulário em 2 vias pode ser impresso pelo próprio profissional (este app gera o modelo).</li>'+
+  '<li><b>Produtos veterinários controlados (MAPA):</b> cadastro do médico-veterinário no MAPA e emissão das notificações/receitas pelo sistema <b>SIPEAGRO</b> (aceita assinatura eletrônica qualificada).</li>'+
+  '<li><b>Antimicrobianos em farmácia humana:</b> receita comum em 2 vias, retenção da 1ª via, validade 10 dias (RDC 471/2021).</li></ul></div>'+
+  '<div class="card"><h3>🌿 Cannabis medicinal veterinária</h3><ul class="pts sm" style="margin-top:8px">'+
+  '<li><b>Pode prescrever?</b> Sim. A ANVISA aprovou em 30/10/2024 que médicos-veterinários prescrevam produtos de Cannabis; a RDC 936/2024 incluiu os produtos veterinários de cannabis regularizados pelo MAPA na Lista A3.</li>'+
+  '<li><b>O que pode ser prescrito:</b> medicamentos de cannabis registrados na ANVISA; produtos com autorização sanitária da ANVISA (RDC 327/2019); produtos de uso exclusivo animal regularizados pelo MAPA (verifique quais já têm registro).</li>'+
+  '<li><b>Receita:</b> receita especial, retida na farmácia. Produtos humanos da RDC 327 seguem a regra por teor de THC (até 0,2% THC: receituário de controle especial; acima de 0,2%: Notificação A) — confirme no CRMV.</li>'+
+  '<li><b>Onde o tutor adquire:</b> farmácias/drogarias com o produto regularizado, mediante retenção da receita.</li>'+
+  '<li><b>Proibido:</b> manipulação de produtos de cannabis; a regulamentação não cobre aquisição via associações; importação pela RDC 660/2022 foi desenhada para pacientes humanos (há divergência jurídica sobre uso animal).</li>'+
+  '<li><b>Boas práticas:</b> indicação com base científica (osteoartrite, epilepsia refratária), TCLE assinado pelo tutor, registro em prontuário, preferir produtos sem/baixo THC (cães são sensíveis ao THC), monitorar enzimas hepáticas. O CFMV possui comissão e título em Endocanabinologia Veterinária (não obrigatório).</li></ul>'+
+  '<div class="note warn" style="margin-top:10px">Tema em rápida evolução regulatória (inclusive decisões do STJ sobre cannabis medicinal). Consulte o CRMV do seu estado antes de prescrever.</div><a class="btn sm" style="margin-top:10px" href="#/bulario/canabidiol-cbd-oleo-full-spectrum-isolado">Monografia do CBD</a></div>'+
   DATA.reg.map(r=>'<div class="card"><h3>'+esc(r.title)+'</h3><div class="xs muted" style="margin-top:4px;font-weight:700">'+esc(r.source)+'</div><p class="sm" style="margin:8px 0">'+esc(r.detail)+'</p><a class="btn sm" href="'+esc(r.url)+'" target="_blank" rel="noopener">'+ic("link",16)+' Abrir fonte oficial</a></div>').join("")+'</div>';}
 
 /* ================= Ajustes ================= */

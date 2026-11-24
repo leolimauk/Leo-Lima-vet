@@ -3,7 +3,8 @@ const fs = require("fs"), path = require("path");
 const dir = __dirname;
 const rd = f => fs.readFileSync(path.join(dir, f), "utf8");
 global.D = [];
-for (const f of ["d1.js", "d2.js", "d3.js", "d4.js"]) eval(rd(f));
+for (const f of ["d1.js", "d2.js", "d3.js", "d4.js", "d5.js", "d6.js"]) eval(rd(f));
+const dupN=D.map(d=>d.n).filter((x,i,a)=>a.indexOf(x)!==i);if(dupN.length)throw new Error("Fármacos duplicados: "+dupN);
 const TOX = eval(rd("tox.js") + ";TOX");
 const CASES_NEW = eval(rd("cases_new.js") + ";CASES_NEW");
 const orig = JSON.parse(rd("orig_cases.json"));
@@ -16,7 +17,11 @@ D.forEach(d=>{d.lab=LAB[d.n]||[];if(GT[d.n])d.gt=GT[d.n];});
 eval(rd("usual.js")+";global.USUAL=USUAL");
 for(const [n,m] of Object.entries(USUAL)){const d=D.find(x=>x.n===n);if(!d)throw new Error("USUAL sem fármaco: "+n);
  for(const [sp,v] of Object.entries(m)){const e=d.d[sp];if(!e||e[0]==null)throw new Error("USUAL sem dose: "+n+" "+sp);if(v<e[0]||v>e[1])throw new Error("USUAL fora da faixa: "+n+" "+sp+" "+v);e[5]=v;}}
-const data = { drugs: D, tox: TOX, cases: casesOrig.concat(CASES_NEW), reg };
+eval(rd("inter.js")+";global.IG=IG;global.INTER=INTER");
+const names=new Set(D.map(d=>d.n));
+for(const [g,l] of Object.entries(IG))for(const n of l)if(!names.has(n))throw new Error("Grupo "+g+": fármaco inexistente '"+n+"'");
+for(const r of INTER){for(const k of ["a","b"])if(!IG[r[k]]&&!names.has(r[k]))throw new Error("Interação com referência inválida: "+r[k]);if(!["Grave","Moderada","Leve"].includes(r.sev)||!["B","V","H"].includes(r.ev)||!r.mech||!r.eff||!r.cond)throw new Error("Interação incompleta: "+r.a+" x "+r.b);}
+const data = { drugs: D, ig: IG, inter: INTER, tox: TOX, cases: casesOrig.concat(CASES_NEW), reg };
 const ICONS = {
   back: "M15 18l-6-6 6-6", search: "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14z M20 20l-4-4",
   moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z", sun: "M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z M12 1v2 M12 21v2 M4.2 4.2l1.4 1.4 M18.4 18.4l1.4 1.4 M1 12h2 M21 12h2 M4.2 19.8l1.4-1.4 M18.4 5.6l1.4-1.4",
