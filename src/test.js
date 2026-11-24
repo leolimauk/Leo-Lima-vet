@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 (async()=>{
  const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:844}});
  const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
- await p.goto('file://'+__dirname+'/index.html');
+ await p.goto('file://'+__dirname+'/../index.html');
  const routes=['#/','#/bulario','#/bulario/meloxicam','#/calc/dose','#/calc/cri','#/calc/fluido','#/calc/rcp','#/calc/transf','#/calc/energia','#/calc/kcl','#/calc/bic','#/calc/bsa','#/calc/conv','#/tox','#/tox/t0','#/casos','#/casos/c1','#/casos/c40','#/receita','#/favoritos','#/legislacao','#/ajustes'];
  for(const r of routes){await p.evaluate(h=>location.hash=h,r);await p.waitForTimeout(120);
    const t=await p.evaluate(()=>{const o=document.querySelector('.out');return (o?o.innerText:document.querySelector('#app').innerText).slice(0,170).replace(/\n/g,' | ')});console.log(r,'=>',t)}

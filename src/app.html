@@ -3,31 +3,31 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0f172a" />
+<meta name="theme-color" content="#ffffff" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-title" content="Léo Med Vet" />
+<meta name="apple-mobile-web-app-title" content="Clínica Vet Pro" />
 <meta name="description" content="Bulário veterinário, calculadoras clínicas, toxicologia, casos clínicos e receituário para médicos-veterinários." />
-<title>Léo Med Vet</title>
+<title>Clínica Vet Pro</title>
 <link rel="icon" href="__LOGO__" />
 <link rel="apple-touch-icon" href="__LOGO__" />
 <style>
 :root{
-  --navy:#0f172a;--royal:#1e3a8a;--royal-2:#2563eb;--copper:#d97706;--copper-2:#f59e0b;
-  --bg:#f1f5f9;--surface:#ffffff;--surface-2:#f8fafc;--ink:#0f172a;--muted:#5b6b82;--line:#e2e8f0;--line-2:#cbd5e1;
-  --accent:#1d4ed8;--accent-soft:#e0e7ff;--ok:#047857;--ok-soft:#d1fae5;--warn:#b45309;--warn-soft:#fef3c7;--bad:#b91c1c;--bad-soft:#fee2e2;--info:#0369a1;--info-soft:#e0f2fe;
-  --shadow:0 1px 2px rgba(15,23,42,.06),0 4px 14px rgba(15,23,42,.06);
+  --navy:#0f172a;--royal:#0f766e;--royal-2:#14b8a6;--copper:#d97706;--copper-2:#14b8a6;
+  --bg:#f7f8fa;--surface:#ffffff;--surface-2:#f9fafb;--ink:#111827;--muted:#6b7280;--line:#eceef1;--line-2:#dfe3e8;
+  --accent:#0f766e;--accent-soft:#e6f6f4;--ok:#047857;--ok-soft:#d1fae5;--warn:#b45309;--warn-soft:#fef3c7;--bad:#b91c1c;--bad-soft:#fee2e2;--info:#0369a1;--info-soft:#e0f2fe;
+  --shadow:0 1px 2px rgba(17,24,39,.04);
   --radius:16px;--nav-h:66px;
   --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0b1120;--surface:#111a2e;--surface-2:#16213a;--ink:#e6edf7;--muted:#93a3bc;--line:#22304b;--line-2:#2e3e5e;
-  --accent:#7aa2ff;--accent-soft:#1c2a4f;--ok:#34d399;--ok-soft:#0f2e26;--warn:#fbbf24;--warn-soft:#33270b;--bad:#f87171;--bad-soft:#3a1717;--info:#38bdf8;--info-soft:#0c2a3d;
+  --bg:#0b0f14;--surface:#12171e;--surface-2:#171d25;--ink:#e6edf7;--muted:#93a3bc;--line:#222a35;--line-2:#2c3644;
+  --accent:#2dd4bf;--accent-soft:#11302d;--ok:#34d399;--ok-soft:#0f2e26;--warn:#fbbf24;--warn-soft:#33270b;--bad:#f87171;--bad-soft:#3a1717;--info:#38bdf8;--info-soft:#0c2a3d;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
 }}
 :root[data-theme="dark"]{
-  --bg:#0b1120;--surface:#111a2e;--surface-2:#16213a;--ink:#e6edf7;--muted:#93a3bc;--line:#22304b;--line-2:#2e3e5e;
-  --accent:#7aa2ff;--accent-soft:#1c2a4f;--ok:#34d399;--ok-soft:#0f2e26;--warn:#fbbf24;--warn-soft:#33270b;--bad:#f87171;--bad-soft:#3a1717;--info:#38bdf8;--info-soft:#0c2a3d;
+  --bg:#0b0f14;--surface:#12171e;--surface-2:#171d25;--ink:#e6edf7;--muted:#93a3bc;--line:#222a35;--line-2:#2c3644;
+  --accent:#2dd4bf;--accent-soft:#11302d;--ok:#34d399;--ok-soft:#0f2e26;--warn:#fbbf24;--warn-soft:#33270b;--bad:#f87171;--bad-soft:#3a1717;--info:#38bdf8;--info-soft:#0c2a3d;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -205,6 +205,20 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .lg.show{display:flex}
 .lg .box{background:var(--surface);border-radius:22px;padding:22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .lg img{width:84px;height:84px;border-radius:20px;border:3px solid var(--copper-2);display:block;margin:0 auto 10px}
+
+/* ===== Clean theme overrides ===== */
+.top{background:var(--surface);color:var(--ink);border-bottom:1px solid var(--line);box-shadow:none}
+.brand{color:var(--ink)}.brand img{border:0;border-radius:10px;width:36px;height:36px;background:none}
+.brand b{font-size:16.5px;font-weight:800}.brand b span{color:var(--accent)}.brand small{color:var(--muted)}
+.tbtn{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.hero{background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.hero img{border:0;background:none;border-radius:20px}.hero h1{color:var(--ink)}.hero p{color:var(--muted)}
+.hero .inp{background:var(--surface-2);color:var(--ink);border:1.5px solid var(--line-2)}.hero .search svg{color:var(--muted)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.out{background:var(--accent-soft);border:1px solid var(--accent)}
+.tile{box-shadow:none}.card{box-shadow:none}
+.lg{background:var(--bg)}.lg .box{border:1px solid var(--line);box-shadow:0 10px 40px rgba(17,24,39,.08)}.lg img{border:0;border-radius:20px}
+.dock{box-shadow:none}
 /* ---------- Print ---------- */
 #printArea{display:none}
 @media print{
@@ -224,8 +238,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 <header class="top" id="top">
   <button class="tbtn back" onclick="goBack()" aria-label="Voltar">__I_BACK__</button>
   <a class="brand" href="#/">
-    <img src="__LOGO__" alt="Léo Med Vet" />
-    <div style="min-width:0"><b>Léo Med Vet</b><small id="topSub">Farmacologia &amp; Clínica Veterinária</small></div>
+    <img src="__LOGO__" alt="Clínica Vet Pro" />
+    <div style="min-width:0"><b>Clínica Vet <span>Pro</span></b><small id="topSub">Farmacologia &amp; Clínica Veterinária</small></div>
   </a>
   <button class="tbtn" onclick="openSearch()" aria-label="Buscar">__I_SEARCH__</button>
   <button class="tbtn" onclick="toggleTheme()" aria-label="Tema" id="themeBtn">__I_MOON__</button>
@@ -247,7 +261,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <div id="gres" style="margin-top:12px"></div>
   </div>
 </div>
-<div class="lg" id="login"><div class="box"><img src="__LOGO__" alt="" /><h2 style="text-align:center">Léo Med Vet</h2><p class="muted sm" style="text-align:center;margin:4px 0 16px" id="lgMsg">Acesso restrito. Entre com o login fornecido pelo administrador.</p>
+<div class="lg" id="login"><div class="box"><img src="__LOGO__" alt="" /><h2 style="text-align:center">Clínica Vet Pro</h2><p class="muted sm" style="text-align:center;margin:4px 0 16px" id="lgMsg">Acesso restrito. Entre com o login fornecido pelo administrador.</p>
 <form onsubmit="event.preventDefault();doLogin()" class="stack"><div class="field"><label for="lgE">E-mail</label><input class="inp" id="lgE" type="email" autocomplete="username" required /></div>
 <div class="field"><label for="lgP">Senha</label><input class="inp" id="lgP" type="password" autocomplete="current-password" required /></div>
 <div class="note bad" id="lgErr" style="display:none"></div><button class="btn pri block" id="lgBtn" type="submit">Entrar</button></form>
@@ -403,7 +417,7 @@ function vHome(){
   const day=Math.floor(Date.now()/864e5);const cd=CASES[day%CASES.length];
   const fav=[...S.favs].map(id=>DM[id]).filter(Boolean).slice(0,6);
   const rec=S.recent.map(id=>DM[id]).filter(Boolean).slice(0,6);
-  return '<section class="hero"><img src="'+LOGO+'" alt="" /><div style="flex:1;min-width:0;width:100%"><h1>Léo Med Vet</h1><p>Bulário, doses por espécie, calculadoras, toxicologia e casos clínicos — funciona offline.</p>'+
+  return '<section class="hero"><img src="'+LOGO+'" alt="" /><div style="flex:1;min-width:0;width:100%"><h1>Clínica Vet Pro</h1><p>Bulário, doses por espécie, calculadoras, toxicologia e casos clínicos — funciona offline.</p>'+
   '<div class="search">'+ic("search")+'<input class="inp" placeholder="Buscar: meloxicam, Cerenia, lírio, piometra..." onfocus="openSearch(this.value);this.blur()" readonly /></div></div></section>'+
   '<div class="stats"><div class="stat"><b>'+DRUGS.length+'</b><span>fármacos (monografias únicas)</span></div><div class="stat"><b>'+nDose+'</b><span>doses por espécie</span></div><div class="stat"><b>'+TOX.length+'</b><span>toxinas e interações</span></div><div class="stat"><b>'+CASES.length+'</b><span>casos clínicos</span></div></div>'+
   '<div class="sec-title"><h2>Ferramentas</h2></div><div class="tiles">'+
@@ -718,7 +732,7 @@ function vSettings(){const D=S.doc;const t=store.get("theme","auto");
   (AUTH_ON&&store.get("auth",null)?'<div class="card"><h3>Conta</h3><p class="sm" style="margin:6px 0 10px">Conectado como <b>'+esc(store.get("auth",{}).email)+'</b></p><button class="btn" onclick="logout()">Sair da conta</button></div>':"")+
   '<div class="card"><h3>Aparência</h3><div class="row wrapf" style="margin-top:10px">'+[["auto","Automático"],["light","Claro"],["dark","Escuro"]].map(([k,l])=>'<button class="btn '+(t===k?"on":"")+'" onclick="store.set(\'theme\',\''+k+'\');applyTheme();rerender()">'+l+'</button>').join("")+'</div></div>'+
   '<div class="card"><h3>Dados locais</h3><p class="sm muted" style="margin:4px 0 10px">'+S.favs.size+' favoritos · '+S.done.size+' casos estudados · '+S.rx.items.length+' itens na receita</p><button class="btn" onclick="if(confirm(\'Apagar favoritos, histórico e receita deste aparelho?\')){[\'favs\',\'recent\',\'doneCases\',\'rx\',\'calcW\'].forEach(k=>{try{localStorage.removeItem(\'lmv_\'+k)}catch(e){}});location.reload()}">'+ic("trash",18)+' Apagar dados locais</button></div>'+
-  '<div class="card"><h3>Sobre</h3><p class="sm" style="margin:6px 0 0">Léo Med Vet 2.0 — '+DRUGS.length+' monografias, '+DRUGS.reduce((a,d)=>a+Object.keys(d.d).length,0)+' doses por espécie, '+TOX.length+' toxinas/interações e '+CASES.length+' casos clínicos. Funciona 100% offline.</p></div>'+disclaimer()+'</div>';}
+  '<div class="card"><h3>Sobre</h3><p class="sm" style="margin:6px 0 0">Clínica Vet Pro — '+DRUGS.length+' monografias, '+DRUGS.reduce((a,d)=>a+Object.keys(d.d).length,0)+' doses por espécie, '+TOX.length+' toxinas/interações e '+CASES.length+' casos clínicos. Funciona 100% offline.</p></div>'+disclaimer()+'</div>';}
 
 
 /* ================= Login (Firebase Auth via REST) ================= */

@@ -44,19 +44,19 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
-          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/LeoMedVet.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/ClinicaVetPro.apk"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: LeoMedVet-apk
-          path: LeoMedVet.apk
+          name: ClinicaVetPro-apk
+          path: ClinicaVetPro.apk
           retention-days: 30
 
       - name: Publicar APK como Release (download direto no celular)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-${{ github.run_number }}
-          name: Léo Med Vet — APK build ${{ github.run_number }}
+          name: Clínica Vet Pro — APK build ${{ github.run_number }}
           body: APK de instalação direta (debug). No Android, permita instalar de fontes desconhecidas.
-          files: LeoMedVet.apk
+          files: ClinicaVetPro.apk
           make_latest: true
