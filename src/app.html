@@ -282,7 +282,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 <script>
 "use strict";
-const DATA = /*__DATA__*/null;
+const DATA = (function(){const emb=/*__DATA__*/null;try{const s=JSON.parse(localStorage.getItem("lmv_data")||"null");if(s&&s.v&&s.drugs&&s.v>(emb.v||0))return s}catch(e){}return emb})();
 
 /* ================= Base ================= */
 const SP = [
@@ -391,7 +391,7 @@ function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||
 /* ================= Router ================= */
 const AFTER=[];
 const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diag","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Toxicologia","alert"]];
-const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/derm","Dermatologia","paw"],["#/escalas","Escalas clínicas","gauge"],["#/odontovet","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/derm","Dermatologia","paw"],["#/escalas","Escalas clínicas","gauge"],["#/lab","Laboratório","flask"],["#/emergencia","Emergência","cross"],["#/anestesia","Anestesia","syringe"],["#/vacinas","Vacinação","drop"],["#/repro","Reprodução","venus"],["#/producao","Produção animal","barn"],["#/docs","Documentos & termos","clip"],["#/quiz","Quiz","quiz"],["#/odontovet","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
 function goBack(){if(history.length>1)history.back();else location.hash="#/"}
 function route(){
   const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
@@ -409,6 +409,14 @@ function route(){
     case "derm":html=vDerm(arg,parts[2]);isSub=!!arg;sub="Dermatologia";break;
     case "odontovet":html=vOdV();sub="Odontograma";break;
     case "escalas":html=vEsc(arg);sub="Escalas clínicas";break;
+    case "lab":html=vLab(arg);sub="Laboratório";break;
+    case "docs":html=vDocs(arg);sub="Documentos & termos";break;
+    case "vacinas":html=vVac(arg);sub="Vacinação";break;
+    case "repro":html=vRepro(arg);sub="Reprodução";break;
+    case "anestesia":html=vAnes(arg);sub="Anestesia";break;
+    case "emergencia":html=vEmerg(arg);sub="Emergência";break;
+    case "producao":html=vProd(arg);sub="Produção animal";break;
+    case "quiz":html=vQuiz(arg);isSub=!!arg;sub="Quiz";break;
     case "favoritos":html=vFavs();sub="Favoritos";break;
     case "legislacao":html=vReg();sub="Legislação & Receituário";break;
     case "ajustes":html=vSettings();sub="Ajustes";break;
@@ -458,7 +466,11 @@ function vHome(){
   tile("#/tox","alert","c3","Toxicologia","Antídotos e condutas")+tile("#/casos","book","c4","Casos clínicos","Modo estudo")+
   tile("#/receita","file","c2","Receituário","Gera receita pronta")+tile("#/legislacao","scale","c8","Legislação","MAPA · ANVISA · CFMV")+
   tile("#/diag","search","c5","Diagnósticos","Queixas · IRIS · ACVIM")+tile("#/derm","paw","c7","Dermatologia","Atlas e diferencial")+
-  tile("#/escalas","gauge","c6","Escalas","Dor · ECC · coma")+tile("#/odontovet","tooth","c4","Odontograma","Triadan · AVDC")+'</div>'+
+  tile("#/escalas","gauge","c6","Escalas","Dor · ECC · coma")+tile("#/odontovet","tooth","c4","Odontograma","Triadan · AVDC")+
+  tile("#/lab","flask","c1","Laboratório","Hemograma · bioquímica · gaso")+tile("#/emergencia","cross","c3","Emergência","Triagem · choque · FAST")+
+  tile("#/anestesia","syringe","c5","Anestesia","ASA · jejum · checklist")+tile("#/vacinas","drop","c6","Vacinação","Protocolos e calendário")+
+  tile("#/repro","venus","c7","Reprodução","Parto · progesterona")+tile("#/producao","barn","c8","Produção animal","Lote · ECC · carência")+
+  tile("#/docs","clip","c2","Documentos","Termos · atestados · ficha")+tile("#/quiz","quiz","c4","Quiz","Trilhas de estudo")+'</div>'+
   '<div class="sec-title"><h2>Bulário por espécie</h2></div><div class="sp-grid">'+SP.map(s=>'<a class="sp-btn" href="#/bulario" onclick="setMedSp(\''+s.id+'\')"><em>'+s.e+'</em>'+s.n.split("/")[0]+'</a>').join("")+'</div>'+
   (fav.length?'<div class="sec-title"><h2>Favoritos</h2><a class="btn sm ghost" href="#/favoritos">Ver todos</a></div><div class="list">'+fav.map(drugItem).join("")+'</div>':"")+
   (rec.length?'<div class="sec-title"><h2>Vistos recentemente</h2></div><div class="list">'+rec.map(drugItem).join("")+'</div>':"")+
@@ -797,6 +809,7 @@ function vSettings(){const D=S.doc;const t=store.get("theme","auto");
   return '<div class="stack"><h1>Ajustes</h1><div class="card"><h3>Dados do prescritor</h3><p class="sm muted" style="margin:4px 0 10px">Ficam salvos somente neste aparelho e aparecem no receituário.</p><div class="grid g2m">'+inp("nome","Nome completo")+inp("crmv","CRMV (nº/UF)","12345/SP")+inp("clinica","Clínica/Hospital")+inp("tel","Telefone")+'</div><div style="margin-top:12px">'+inp("end","Endereço")+'</div></div>'+
   (AUTH_ON&&store.get("auth",null)?'<div class="card"><h3>Conta</h3><p class="sm" style="margin:6px 0 10px">Conectado como <b>'+esc(store.get("auth",{}).email)+'</b></p><button class="btn" onclick="logout()">Sair da conta</button></div>':"")+
   '<div class="card"><h3>Aparência</h3><div class="row wrapf" style="margin-top:10px">'+[["auto","Automático"],["light","Claro"],["dark","Escuro"]].map(([k,l])=>'<button class="btn '+(t===k?"on":"")+'" onclick="store.set(\'theme\',\''+k+'\');applyTheme();rerender()">'+l+'</button>').join("")+'</div></div>'+
+  '<div class="card"><h3>Conteúdo do app</h3><p class="sm muted" style="margin:4px 0 10px">Versão do banco de dados: '+dataVer()+' · '+DRUGS.length+' fármacos. O app baixa atualizações de conteúdo automaticamente quando há internet (sem precisar instalar novo APK).</p><button class="btn" onclick="checkDataUpdate(true)">'+ic("search",18)+' Verificar atualização agora</button></div>'+
   '<div class="card"><h3>Dados locais</h3><p class="sm muted" style="margin:4px 0 10px">'+S.favs.size+' favoritos · '+S.done.size+' casos estudados · '+S.rx.items.length+' itens na receita</p><button class="btn" onclick="if(confirm(\'Apagar favoritos, histórico e receita deste aparelho?\')){[\'favs\',\'recent\',\'doneCases\',\'rx\',\'calcW\'].forEach(k=>{try{localStorage.removeItem(\'lmv_\'+k)}catch(e){}});location.reload()}">'+ic("trash",18)+' Apagar dados locais</button></div>'+
   '<div class="card"><h3>Sobre</h3><p class="sm" style="margin:6px 0 0">Clínica Vet Pro — '+DRUGS.length+' monografias, '+DRUGS.reduce((a,d)=>a+Object.keys(d.d).length,0)+' doses por espécie, '+TOX.length+' toxinas/interações e '+CASES.length+' casos clínicos. Funciona 100% offline.</p></div>'+disclaimer()+'</div>';}
 

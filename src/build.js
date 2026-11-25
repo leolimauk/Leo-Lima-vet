@@ -23,7 +23,10 @@ for(const [g,l] of Object.entries(IG))for(const n of l)if(!names.has(n))throw ne
 for(const r of INTER){for(const k of ["a","b"])if(!IG[r[k]]&&!names.has(r[k]))throw new Error("Interação com referência inválida: "+r[k]);if(!["Grave","Moderada","Leve"].includes(r.sev)||!["B","V","H"].includes(r.ev)||!r.mech||!r.eff||!r.cond)throw new Error("Interação incompleta: "+r.a+" x "+r.b);}
 eval(rd("vet_diag.js")+";global.QX=QX;global.DERM=DERM");
 for(const x of [...QX,...DERM])for(const f of x.far||[])if(!names.has(f))throw new Error((x.id)+": fármaco inexistente "+f);
-const data = { qx: QX, derm: DERM, drugs: D, ig: IG, inter: INTER, tox: TOX, cases: casesOrig.concat(CASES_NEW), reg };
+const X = eval(rd("vet_extra.js")+";({LABREF,VAC,GEST,ASA,JEJUM,CHECK,MONIT})");
+for(const x of X.LABREF){if(x.length!==8||!(x[3][0]<=x[3][1])||!(x[4][0]<=x[4][1]))throw new Error("LABREF inválido: "+x[0])}
+for(const [k,g] of Object.entries(X.GEST))if(!(g[2][0]<=g[1]&&g[1]<=g[2][1]))throw new Error("GEST inválido: "+k);
+const data = { v: Date.now(), qx: QX, derm: DERM, drugs: D, ig: IG, inter: INTER, tox: TOX, cases: casesOrig.concat(CASES_NEW), reg, labref: X.LABREF, vac: X.VAC, gest: X.GEST, asa: X.ASA, jejum: X.JEJUM, check: X.CHECK, monit: X.MONIT };
 const ICONS = {
   back: "M15 18l-6-6 6-6", search: "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14z M20 20l-4-4",
   moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z", sun: "M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z M12 1v2 M12 21v2 M4.2 4.2l1.4 1.4 M18.4 18.4l1.4 1.4 M1 12h2 M21 12h2 M4.2 19.8l1.4-1.4 M18.4 5.6l1.4-1.4",
@@ -45,6 +48,13 @@ const ICONS = {
   blood: "M12 2.7l5.7 5.7a8 8 0 1 1-11.3 0z M9 14h6 M12 11v6", flame: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.3 1.9 1.4 2.8 2.5 2.8z",
   bolt: "M13 2L3 14h9l-1 8 10-12h-9z", flask: "M9 3h6 M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3 M7 15h10",
   ruler: "M3 17L17 3l4 4L7 21z M7 13l2 2 M10 10l2 2 M13 7l2 2", swap: "M7 4L3 8l4 4 M3 8h14 M17 20l4-4-4-4 M21 16H7",
+  flask: "M9 3h6 M10 3v6L4 19a1.5 1.5 0 0 0 1.3 2h13.4a1.5 1.5 0 0 0 1.3-2L14 9V3 M7 15h10",
+  syringe: "M18 2l4 4 M17 7l3-3 M19 9l-8 8-4 1 1-4 8-8z M9 13l2 2 M2 22l5-5",
+  clip: "M9 3h6v3H9z M9 4H6a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-3 M8 11h8 M8 15h6",
+  venus: "M12 3a5 5 0 1 0 0 10a5 5 0 1 0 0-10z M12 13v8 M9 18h6",
+  cross: "M9 3h6v6h6v6h-6v6H9v-6H3V9h6z",
+  barn: "M3 21V10l9-6 9 6v11z M9 21v-6h6v6 M3 10h18",
+  quiz: "M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14 M12 17.5v.5",
   logout: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9",
   paw: "M7 9a2 2 0 1 0 0-4a2 2 0 1 0 0 4z M12 7a2 2 0 1 0 0-4a2 2 0 1 0 0 4z M17 9a2 2 0 1 0 0-4a2 2 0 1 0 0 4z M12 11c-4 0-6 4-6 6.5S8 21 12 19c4 2 6 1 6-1.5S16 11 12 11z",
   gauge: "M12 14l4-4 M3 14a9 9 0 0 1 18 0 M5 18h14",
@@ -52,7 +62,7 @@ const ICONS = {
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js"));
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js")+"\n"+rd("feat_vet2.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");
@@ -62,4 +72,5 @@ html = html.split("__LOGO__").join(logo)
   .replace("/*__DATA__*/null", () => json);
 const out = process.argv[2] || path.join(dir, "index.html");
 fs.writeFileSync(out, html);
+if(!process.argv[3]||process.argv[3]!=="--no-json")fs.writeFileSync(path.join(path.dirname(path.resolve(out)),"data.json"),JSON.stringify(data));
 console.log("ok", out, (html.length / 1024).toFixed(0) + " KB", "drugs", D.length, "tox", TOX.length, "cases", data.cases.length);
