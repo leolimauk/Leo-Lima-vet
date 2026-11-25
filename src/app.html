@@ -783,7 +783,7 @@ function vSettings(){const D=S.doc;const t=store.get("theme","auto");
 const FB={apiKey:"__FB_KEY__"};const AUTH_ON=!!FB.apiKey&&!FB.apiKey.startsWith("__");const GRACE_DAYS=7;
 const AUTH_ERR={EMAIL_NOT_FOUND:"E-mail ou senha incorretos.",INVALID_PASSWORD:"E-mail ou senha incorretos.",INVALID_LOGIN_CREDENTIALS:"E-mail ou senha incorretos.",INVALID_EMAIL:"E-mail inválido.",
  USER_DISABLED:"Seu acesso foi desativado. Fale com o administrador.",USER_NOT_FOUND:"Seu acesso foi removido. Fale com o administrador.",TOKEN_EXPIRED:"Sua senha foi alterada. Entre novamente.",INVALID_REFRESH_TOKEN:"Sessão expirada. Entre novamente.",
- TOO_MANY_ATTEMPTS_TRY_LATER:"Muitas tentativas. Aguarde alguns minutos.",MISSING_PASSWORD:"Informe a senha."};
+ TOO_MANY_ATTEMPTS_TRY_LATER:"Muitas tentativas. Aguarde alguns minutos.",PROJECT_NUMBER_MISMATCH:"Sessão inválida para este app. Entre novamente.",MISSING_PASSWORD:"Informe a senha."};
 function jwt(t){try{return JSON.parse(atob(t.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")))}catch(e){return{}}}
 function devName(){const u=navigator.userAgent;const m=u.match(/Android[^;)]*;\s*([^;)]+)/);return m?m[1].trim():/iPhone|iPad/.test(u)?"iPhone/iPad":/Windows/.test(u)?"Windows":/Mac/.test(u)?"Mac":"Navegador"}
 const IDT="https://identitytoolkit.googleapis.com/v1/accounts:";

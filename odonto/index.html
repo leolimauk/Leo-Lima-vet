@@ -309,8 +309,8 @@ const ICONS = {"back":"M15 18l-6-6 6-6","search":"M11 4a7 7 0 1 0 0 14a7 7 0 1 0
 function ic(n,s){return '<svg class="i" viewBox="0 0 24 24"'+(s?' style="width:'+s+'px;height:'+s+'px'+(n==="starf"?';fill:currentColor':'')+'"':(n==="starf"?' style="fill:currentColor"':''))+'><path d="'+ICONS[n]+'"/></svg>'}
 
 const store = {
-  get(k,d){try{const v=localStorage.getItem("lmv_"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
-  set(k,v){try{localStorage.setItem("lmv_"+k,JSON.stringify(v))}catch(e){}}
+  get(k,d){try{const v=localStorage.getItem("lmo_"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("lmo_"+k,JSON.stringify(v))}catch(e){}}
 };
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
@@ -837,7 +837,7 @@ function vSettings(){const D=S.doc;const t=store.get("theme","auto");
   return '<div class="stack"><h1>Ajustes</h1><div class="card"><h3>Dados do prescritor</h3><p class="sm muted" style="margin:4px 0 10px">Ficam salvos somente neste aparelho e aparecem no receituário.</p><div class="grid g2m">'+inp("nome","Nome completo")+inp("crmv","CRO (nº/UF)","12345/SP")+inp("clinica","Clínica/Hospital")+inp("tel","Telefone")+'</div><div style="margin-top:12px">'+inp("end","Endereço")+'</div></div>'+
   (AUTH_ON&&store.get("auth",null)?'<div class="card"><h3>Conta</h3><p class="sm" style="margin:6px 0 10px">Conectado como <b>'+esc(store.get("auth",{}).email)+'</b></p><button class="btn" onclick="logout()">Sair da conta</button></div>':"")+
   '<div class="card"><h3>Aparência</h3><div class="row wrapf" style="margin-top:10px">'+[["auto","Automático"],["light","Claro"],["dark","Escuro"]].map(([k,l])=>'<button class="btn '+(t===k?"on":"")+'" onclick="store.set(\'theme\',\''+k+'\');applyTheme();rerender()">'+l+'</button>').join("")+'</div></div>'+
-  '<div class="card"><h3>Dados locais</h3><p class="sm muted" style="margin:4px 0 10px">'+S.favs.size+' favoritos · '+S.done.size+' casos estudados · '+S.rx.items.length+' itens na receita</p><button class="btn" onclick="if(confirm(\'Apagar favoritos, histórico e receita deste aparelho?\')){[\'favs\',\'recent\',\'doneCases\',\'rx\',\'calcW\'].forEach(k=>{try{localStorage.removeItem(\'lmv_\'+k)}catch(e){}});location.reload()}">'+ic("trash",18)+' Apagar dados locais</button></div>'+
+  '<div class="card"><h3>Dados locais</h3><p class="sm muted" style="margin:4px 0 10px">'+S.favs.size+' favoritos · '+S.done.size+' casos estudados · '+S.rx.items.length+' itens na receita</p><button class="btn" onclick="if(confirm(\'Apagar favoritos, histórico e receita deste aparelho?\')){[\'favs\',\'recent\',\'doneCases\',\'rx\',\'calcW\'].forEach(k=>{try{localStorage.removeItem(\'lmo_\'+k)}catch(e){}});location.reload()}">'+ic("trash",18)+' Apagar dados locais</button></div>'+
   '<div class="card"><h3>Sobre</h3><p class="sm" style="margin:6px 0 0">Clínica Odonto Pro — '+DRUGS.length+' fármacos e produtos, '+TOX.length+' urgências, '+INTER.length+' interações e '+CASES.length+' casos clínicos. Funciona 100% offline.</p></div>'+disclaimer()+'</div>';}
 
 
@@ -845,7 +845,7 @@ function vSettings(){const D=S.doc;const t=store.get("theme","auto");
 const FB={apiKey:"AIzaSyAjleBKFHTEdlenYLfBrwKRWNidvMymUMs"};const AUTH_ON=!!FB.apiKey&&!FB.apiKey.startsWith("__");const GRACE_DAYS=7;
 const AUTH_ERR={EMAIL_NOT_FOUND:"E-mail ou senha incorretos.",INVALID_PASSWORD:"E-mail ou senha incorretos.",INVALID_LOGIN_CREDENTIALS:"E-mail ou senha incorretos.",INVALID_EMAIL:"E-mail inválido.",
  USER_DISABLED:"Seu acesso foi desativado. Fale com o administrador.",USER_NOT_FOUND:"Seu acesso foi removido. Fale com o administrador.",TOKEN_EXPIRED:"Sua senha foi alterada. Entre novamente.",INVALID_REFRESH_TOKEN:"Sessão expirada. Entre novamente.",
- TOO_MANY_ATTEMPTS_TRY_LATER:"Muitas tentativas. Aguarde alguns minutos.",MISSING_PASSWORD:"Informe a senha."};
+ TOO_MANY_ATTEMPTS_TRY_LATER:"Muitas tentativas. Aguarde alguns minutos.",PROJECT_NUMBER_MISMATCH:"Sessão inválida para este app. Entre novamente.",MISSING_PASSWORD:"Informe a senha."};
 function jwt(t){try{return JSON.parse(atob(t.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")))}catch(e){return{}}}
 function devName(){const u=navigator.userAgent;const m=u.match(/Android[^;)]*;\s*([^;)]+)/);return m?m[1].trim():/iPhone|iPad/.test(u)?"iPhone/iPad":/Windows/.test(u)?"Windows":/Mac/.test(u)?"Mac":"Navegador"}
 const IDT="https://identitytoolkit.googleapis.com/v1/accounts:";
