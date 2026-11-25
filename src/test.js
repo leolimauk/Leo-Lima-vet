@@ -2,10 +2,10 @@
 const { chromium } = require('playwright');const path=require('path');
 (async()=>{
  const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:844}});
- await ctx.route(/github\.io/,r=>r.fulfill({status:404,body:""}));await ctx.route(/googleapis/,r=>r.fulfill({json:{id_token:"t",refresh_token:"r",users:[{displayName:"sessao:A|x"}]}}));
+ await ctx.route(/github\.io/,r=>r.fulfill({json:{v:0}}));await ctx.route(/googleapis/,r=>r.fulfill({json:{id_token:"t",refresh_token:"r",users:[{displayName:"sessao:A|x"}]}}));
  const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
  await p.goto('file://'+path.resolve(__dirname,'../index.html'));await p.evaluate(()=>localStorage.setItem("lmv_auth",JSON.stringify({email:"t@t",rt:"r",ok:Date.now(),sid:"A"})));await p.reload();await p.waitForTimeout(400);
- const routes=['#/','#/bulario','#/bulario/meloxicam','#/calc/dose','#/calc/anestv','#/calc/corticv','#/calc/inter','#/calc/rcp','#/calc/fluido','#/tox','#/casos','#/diag','#/diag/vomito','#/derm','#/derm/atlas','#/derm/ddx','#/derm/exames','#/derm/req','#/odontovet','#/escalas/dor-cao','#/escalas/dor-gato','#/escalas/ecc','#/escalas/coma','#/receita','#/legislacao','#/ajustes','#/lab','#/lab/gaso','#/lab/ref','#/docs','#/docs/t-eut','#/docs/obito','#/vacinas','#/vacinas/cat','#/vacinas/horse','#/vacinas/cattle','#/vacinas/cal','#/repro','#/repro/p4','#/repro/distocia','#/anestesia','#/anestesia/jejum','#/anestesia/check','#/anestesia/monit','#/emergencia','#/emergencia/choque','#/emergencia/fast','#/emergencia/transf','#/producao','#/producao/ecc','#/producao/carencia','#/quiz'];
+ const routes=['#/','#/bulario','#/bulario/meloxicam','#/calc/dose','#/calc/anestv','#/calc/corticv','#/calc/inter','#/calc/rcp','#/calc/fluido','#/tox','#/casos','#/diag','#/diag/vomito','#/derm','#/derm/atlas','#/derm/ddx','#/derm/exames','#/derm/req','#/odontovet','#/escalas/dor-cao','#/escalas/dor-gato','#/escalas/ecc','#/escalas/coma','#/receita','#/legislacao','#/ajustes','#/lab','#/lab/gaso','#/lab/ref','#/docs','#/docs/t-eut','#/docs/obito','#/vacinas','#/vacinas/cat','#/vacinas/horse','#/vacinas/cattle','#/vacinas/cal','#/repro','#/repro/p4','#/repro/distocia','#/anestesia','#/anestesia/jejum','#/anestesia/check','#/anestesia/monit','#/emergencia','#/emergencia/choque','#/emergencia/fast','#/emergencia/transf','#/producao','#/producao/ecc','#/producao/carencia','#/quiz','#/plantao','#/protocolos','#/protocolos/obstr','#/procedimentos','#/procedimentos/toraco','#/internacao','#/fisio'];
  for(const r of routes){await p.evaluate(h=>location.hash=h,r);await p.waitForTimeout(60);const t=await p.evaluate(()=>{const o=document.querySelector('.out');return (o?o.innerText:document.querySelector('#app').innerText).slice(0,110).replace(/\n/g,' | ')});console.log(r,'=>',t)}
  const res=await p.evaluate(()=>{const out={};
   // bulário + calculadora
@@ -62,6 +62,31 @@ const { chromium } = require('playwright');const path=require('path');
   // quiz: todas as trilhas geram 10 questões válidas
   out.quiz={};for(const k of Object.keys(QUIZ_T)){newQuiz(k);out.quiz[k]=S.qz.Q.length+(S.qz.Q.every(q=>q.o.length>=2&&q.o.includes(q.a)&&new Set(q.o).size===q.o.length)?' ok':' FALHA')}
   location.hash='#/quiz/farm';route();qAns(0);out.quiz_tela=document.querySelector('#app .note').innerText.slice(0,40);
+  // odontograma — todas as espécies
+  out.odonto={};for(const [k] of ODSP){S.ovsp=k;S.ovt=null;location.hash='#/odontovet';route();const o=document.querySelector('#app .out .lbl');out.odonto[k]=o?o.innerText:(document.querySelector('#app .card h3')||{}).innerText}
+  S.ovsp='horse';S.ov.horse={};odTog('horse',106,1);S.ovt=106;rerender();out.odonto_equino=ovText().split('\n').slice(1).join(' ')+' | '+triInfo('horse',105).nm;
+  out.triInfo_coelho=triInfo('rabbit',102).nm+' / '+triInfo('rabbit',102).r;
+  // plantão
+  S.pw='10';S.psp='dog';location.hash='#/plantao';route();out.plantao_adrenalina=[...document.querySelectorAll('#app .item')].find(e=>/Adrenalina — baixa/.test(e.innerText)).innerText.replace(/\n/g,' | ');
+  S.psp='cat';S.pw='4';rerender();out.plantao_gato_lido=[...document.querySelectorAll('#app .item')].find(e=>/Lidocaína/.test(e.innerText)).innerText.replace(/\n/g,' | ');out.plantao_gato_furo=[...document.querySelectorAll('#app .item')].find(e=>/Furosemida/.test(e.innerText)).innerText.replace(/\n/g,' | ');
+  rcpStart();S.rcp.t0-=125000;S.rcp.log[0].d=0;rcpEv('Adrenalina');rcpTick();out.rcp=document.getElementById('rcpClock').innerText+' | '+document.getElementById('rcpCyc').innerText.replace(/\n/g,' ');rcpStop();
+  // protocolos: todos renderizam sem tokens não convertidos
+  S.pw='5';let pok=0,pbad=[];for(const P of PROT){location.hash='#/protocolos/'+P.id;route();const t=document.querySelector('#app').innerText;if(/\[\[|NaN|undefined/.test(t))pbad.push(P.id);else pok++}out.protocolos=pok+'/'+PROT.length;out.protBad=pbad;
+  location.hash='#/protocolos/obstr';route();out.prot_obstr_calcio=[...document.querySelectorAll('#app li')][1].innerText.slice(0,140);
+  let prok=0;for(const P of PROC){location.hash='#/procedimentos/'+P.id;route();if(document.querySelector('#app ol li'))prok++}out.procedimentos=prok+'/'+PROC.length;
+  // internação
+  S.int=[];location.hash='#/internacao';route();document.getElementById('inN').value='Rex';document.getElementById('inS').value='Cão';document.getElementById('inW').value='12';document.getElementById('inD').value='Parvovirose';intAdd();route();
+  const pid=S.int[0].id;document.getElementById('imN').value='Maropitant';document.getElementById('imD').value='1 mg/kg SC';document.getElementById('imH').value='24';intMed(pid);
+  document.getElementById('imN').value='Ampicilina';document.getElementById('imD').value='22 mg/kg IV';document.getElementById('imH').value='8';intMed(pid);S.int[0].meds[1].last=Date.now()-9*3600000;
+  document.getElementById('ipFc').value='140';document.getElementById('ipT').value='39.6';intPar(pid);out.sbar=sbar(S.int[0]).replace(/\n/g,' | ').slice(0,420);
+  out.int_status=S.int[0].meds.map(m=>medSt(m)[1]);S.int=[];intSave();
+  // quiz: todas as trilhas
+  out.quiz={};for(const k of Object.keys(QUIZ_T)){if(k==='erros')continue;newQuiz(k);const N=QUIZ_T[k][2]||10;out.quiz[k]=S.qz.Q.length+'/'+N+(S.qz.Q.every(q=>q.o.length>=2&&q.o.includes(q.a)&&new Set(q.o).size===q.o.length)?'':' FALHA')}
+  out.banco=DATA.qb.length;
+  newQuiz('qb_farm');const q0=S.qz.Q[0];qAns(q0.o.findIndex(o=>o!==q0.a));out.erro_salvo=store.get('qerr',[]).length;newQuiz('erros');out.revisao=S.qz.Q.length;
+  location.hash='#/quiz';route();out.quiz_menu=document.querySelector('#app').innerText.slice(0,200).replace(/\n/g,' | ');
+  out.amostras=['dose','marca','onl','xl','mec','qb_sp'].map(k=>{newQuiz(k);const q=S.qz.Q[0];return q.q+' => '+q.a});
+  out.busca=(()=>{openSearch('obstrução uretral');const t=document.getElementById('gres').innerText;closeSearch();return /PROTOCOLOS/.test(t)})();
   out.dataV=DATA.v;
   let mono=0;for(const x of DRUGS){location.hash='#/bulario/'+x.id;route();if(document.querySelector('#app h1'))mono++}out.monografias=mono+'/'+DRUGS.length;
   return out});

@@ -26,7 +26,10 @@ for(const x of [...QX,...DERM])for(const f of x.far||[])if(!names.has(f))throw n
 const X = eval(rd("vet_extra.js")+";({LABREF,VAC,GEST,ASA,JEJUM,CHECK,MONIT})");
 for(const x of X.LABREF){if(x.length!==8||!(x[3][0]<=x[3][1])||!(x[4][0]<=x[4][1]))throw new Error("LABREF inválido: "+x[0])}
 for(const [k,g] of Object.entries(X.GEST))if(!(g[2][0]<=g[1]&&g[1]<=g[2][1]))throw new Error("GEST inválido: "+k);
-const data = { v: Date.now(), qx: QX, derm: DERM, drugs: D, ig: IG, inter: INTER, tox: TOX, cases: casesOrig.concat(CASES_NEW), reg, labref: X.LABREF, vac: X.VAC, gest: X.GEST, asa: X.ASA, jejum: X.JEJUM, check: X.CHECK, monit: X.MONIT };
+const QB = eval(rd("quiz_bank.js")+";QB");
+const AREAS=["farm","leg","sp","clin","grandes","anest","repro"];const seenQ=new Set();
+for(const q of QB){if(!AREAS.includes(q[0])||typeof q[1]!=="string"||!Array.isArray(q[2])||q[2].length<3||new Set(q[2]).size!==q[2].length)throw new Error("Questão inválida: "+q[1]);if(seenQ.has(q[1]))throw new Error("Questão duplicada: "+q[1]);seenQ.add(q[1])}
+const data = { v: Date.now(), qx: QX, derm: DERM, drugs: D, ig: IG, inter: INTER, tox: TOX, cases: casesOrig.concat(CASES_NEW), reg, labref: X.LABREF, vac: X.VAC, gest: X.GEST, asa: X.ASA, jejum: X.JEJUM, check: X.CHECK, monit: X.MONIT, qb: QB };
 const ICONS = {
   back: "M15 18l-6-6 6-6", search: "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14z M20 20l-4-4",
   moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z", sun: "M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z M12 1v2 M12 21v2 M4.2 4.2l1.4 1.4 M18.4 18.4l1.4 1.4 M1 12h2 M21 12h2 M4.2 19.8l1.4-1.4 M18.4 5.6l1.4-1.4",
@@ -62,7 +65,7 @@ const ICONS = {
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js")+"\n"+rd("feat_vet2.js"));
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js")+"\n"+rd("feat_vet2.js")+"\n"+rd("feat_vet3.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");
