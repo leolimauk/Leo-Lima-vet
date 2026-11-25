@@ -219,6 +219,16 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .tile{box-shadow:none}.card{box-shadow:none}
 .lg{background:var(--bg)}.lg .box{border:1px solid var(--line);box-shadow:0 10px 40px rgba(17,24,39,.08)}.lg img{border:0;border-radius:20px}
 .dock{box-shadow:none}
+.fig{width:100%;height:auto;display:block}
+.figbox{max-width:280px;margin:10px auto 0;background:var(--surface-2);border-radius:14px;padding:8px}
+.dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:700px){.dgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.dcard{display:flex;flex-direction:column;gap:8px}
+.dthumb{background:var(--surface-2);border-radius:10px;padding:4px;display:flex;align-items:center;justify-content:center}
+.dthumb svg{height:100%;width:auto}
+.tb{border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:6px 2px;font-size:11px;font-weight:800;color:var(--ink);cursor:pointer}
+.tb.ok{background:var(--ok-soft);border-color:var(--ok)}.tb.bad{background:var(--warn-soft);border-color:var(--warn)}.tb.aus{opacity:.35;text-decoration:line-through}
+.tb.on{outline:2px solid var(--accent);outline-offset:1px}
 /* ---------- Print ---------- */
 #printArea{display:none}
 @media print{
@@ -380,8 +390,8 @@ function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||
 
 /* ================= Router ================= */
 const AFTER=[];
-const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/calc","Cálculos","calc"],["#/tox","Toxicologia","alert"],["#/casos","Casos","book"]];
-const SIDE=NAV.concat([["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diag","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Toxicologia","alert"]];
+const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/derm","Dermatologia","paw"],["#/escalas","Escalas clínicas","gauge"],["#/odontovet","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
 function goBack(){if(history.length>1)history.back();else location.hash="#/"}
 function route(){
   const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
@@ -395,6 +405,10 @@ function route(){
     case "tox":if(arg){html=vToxD(arg);isSub=true;sub="Toxicologia"}else{html=vTox();sub="Toxicologia & Interações"}break;
     case "casos":if(arg){html=vCase(arg);isSub=true;sub="Caso Clínico"}else{html=vCases();sub="Casos Clínicos"}break;
     case "receita":html=vRx();sub="Receituário";break;
+    case "diag":if(arg==="w"){html=vWz(parts[2]);isSub=true;sub="Assistente"}else if(arg){html=vQxD(arg);isSub=true;sub="Diagnóstico"}else{html=vQx();sub="Diagnósticos"}break;
+    case "derm":html=vDerm(arg,parts[2]);isSub=!!arg;sub="Dermatologia";break;
+    case "odontovet":html=vOdV();sub="Odontograma";break;
+    case "escalas":html=vEsc(arg);sub="Escalas clínicas";break;
     case "favoritos":html=vFavs();sub="Favoritos";break;
     case "legislacao":html=vReg();sub="Legislação & Receituário";break;
     case "ajustes":html=vSettings();sub="Ajustes";break;
@@ -442,7 +456,9 @@ function vHome(){
   tile("#/calc/dose","calc","c1","Calculadora de doses","mg, mL e comprimidos")+tile("#/calc/rcp","heart","c3","RCP & emergência","Doses por peso")+
   tile("#/calc/fluido","drop","c6","Fluidoterapia","Déficit, manutenção, gotas")+tile("#/calc/cri","clock","c5","Infusão contínua","mcg/kg/min → mL/h")+
   tile("#/tox","alert","c3","Toxicologia","Antídotos e condutas")+tile("#/casos","book","c4","Casos clínicos","Modo estudo")+
-  tile("#/receita","file","c2","Receituário","Gera receita pronta")+tile("#/legislacao","scale","c8","Legislação","MAPA · ANVISA · CFMV")+'</div>'+
+  tile("#/receita","file","c2","Receituário","Gera receita pronta")+tile("#/legislacao","scale","c8","Legislação","MAPA · ANVISA · CFMV")+
+  tile("#/diag","search","c5","Diagnósticos","Queixas · IRIS · ACVIM")+tile("#/derm","paw","c7","Dermatologia","Atlas e diferencial")+
+  tile("#/escalas","gauge","c6","Escalas","Dor · ECC · coma")+tile("#/odontovet","tooth","c4","Odontograma","Triadan · AVDC")+'</div>'+
   '<div class="sec-title"><h2>Bulário por espécie</h2></div><div class="sp-grid">'+SP.map(s=>'<a class="sp-btn" href="#/bulario" onclick="setMedSp(\''+s.id+'\')"><em>'+s.e+'</em>'+s.n.split("/")[0]+'</a>').join("")+'</div>'+
   (fav.length?'<div class="sec-title"><h2>Favoritos</h2><a class="btn sm ghost" href="#/favoritos">Ver todos</a></div><div class="list">'+fav.map(drugItem).join("")+'</div>':"")+
   (rec.length?'<div class="sec-title"><h2>Vistos recentemente</h2></div><div class="list">'+rec.map(drugItem).join("")+'</div>':"")+
@@ -505,17 +521,19 @@ function renderSearch(v){
   const q=norm(v).trim().split(/\s+/).filter(Boolean);const el=document.getElementById("gres");
   if(!q.length){el.innerHTML='<div class="muted sm">Dica: busque por princípio ativo, nome comercial (ex.: <b>Apoquel</b>, <b>Cerenia</b>), indicação (<b>esporotricose</b>), toxina (<b>chocolate</b>) ou caso (<b>piometra</b>).</div>';return}
   const m=o=>q.every(w=>o._s.includes(w));
-  const dr=DRUGS.filter(m).slice(0,25),tx=TOX.filter(m).slice(0,10),cs=CASES.filter(m).slice(0,10);
+  const dr=DRUGS.filter(m).slice(0,25),tx=TOX.filter(m).slice(0,10),cs=CASES.filter(m).slice(0,10),qx=(typeof QXS!=='undefined'?QXS:[]).filter(m).slice(0,6),dm=(typeof DERMS!=='undefined'?DERMS:[]).filter(m).slice(0,8);
   const go="onclick=\"closeSearch()\"";
   el.innerHTML=(dr.length?'<div class="xs muted" style="font-weight:800;margin:6px 2px">MEDICAMENTOS ('+dr.length+')</div><div class="list">'+dr.map(d=>'<a class="item" '+go+' href="#/bulario/'+d.id+'"><div class="t">'+esc(d.n)+'</div><div class="s">'+esc(d.b)+'</div></a>').join("")+'</div>':"")+
   (tx.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">TOXICOLOGIA ('+tx.length+')</div><div class="list">'+tx.map(t=>'<a class="item" '+go+' href="#/tox/'+t.id+'"><div class="row"><span class="sev '+t.sev+'"></span><div class="t">'+esc(t.n)+'</div></div><div class="s">'+esc(t.t+" · "+t.sp)+'</div></a>').join("")+'</div>':"")+
+  (qx.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">DIAGNÓSTICO POR QUEIXA</div><div class="list">'+qx.map(q=>'<a class="item" '+go+' href="#/diag/'+q.id+'"><div class="t">'+esc(q.n)+'</div></a>').join("")+'</div>':"")+
+  (dm.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">DERMATOLOGIA</div><div class="list">'+dm.map(d=>'<a class="item" '+go+' href="#/derm/d/'+d.id+'"><div class="t">'+esc(d.n)+'</div></a>').join("")+'</div>':"")+
   (cs.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">CASOS CLÍNICOS ('+cs.length+')</div><div class="list">'+cs.map(c=>'<a class="item" '+go+' href="#/casos/'+c.id+'"><div class="t">'+esc(c.title)+'</div><div class="s">'+esc(c.sp+" · "+c.spec)+'</div></a>').join("")+'</div>':"")+
-  (!dr.length&&!tx.length&&!cs.length?'<div class="empty">Nada encontrado para “'+esc(v)+'”.</div>':"");
+  (!dr.length&&!tx.length&&!cs.length&&!qx.length&&!dm.length?'<div class="empty">Nada encontrado para “'+esc(v)+'”.</div>':"");
 }
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSearch();if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();openSearch()}});
 
 /* ================= Calculadoras ================= */
-const TOOLS=[["dose","Doses","calc"],["inter","Interações","alert"],["cri","Infusão contínua","clock"],["fluido","Fluidoterapia","drop"],["rcp","RCP/Emergência","heart"],["transf","Transfusão","blood"],["energia","Energia/Dieta","flame"],["kcl","Potássio (KCl)","bolt"],["bic","Bicarbonato","flask"],["bsa","Superfície m²","ruler"],["conv","Diluições","swap"]];
+const TOOLS=[["dose","Doses","calc"],["inter","Interações","alert"],["anestv","Anestésico local","drop"],["corticv","Corticoides","flask"],["cri","Infusão contínua","clock"],["fluido","Fluidoterapia","drop"],["rcp","RCP/Emergência","heart"],["transf","Transfusão","blood"],["energia","Energia/Dieta","flame"],["kcl","Potássio (KCl)","bolt"],["bic","Bicarbonato","flask"],["bsa","Superfície m²","ruler"],["conv","Diluições","swap"]];
 function vCalc(tool,arg){
   if(tool==="dose"&&arg&&DM[arg])S.calcDrug=arg;
   return '<div class="stack"><h1>Calculadoras</h1><div class="tools">'+TOOLS.map(([k,l,i])=>'<a class="tool '+(k===tool?"on":"")+'" href="#/calc/'+k+'">'+ic(i,18)+l+'</a>').join("")+'</div>'+
@@ -527,6 +545,9 @@ function gv(id){const e=document.getElementById(id);return e?num(e.value):0}
 function bsa(sp,w){return SPM[sp].k*Math.pow(w,2/3)/100}
 let calcRun=()=>{};
 const CALC={
+anestv(){calcRun=calcAnestV;const sp=["dog","cat"].includes(S.calcSp)?S.calcSp:"dog";
+  return '<h2>Dose máxima de anestésico local</h2><p class="muted sm" style="margin:4px 0 12px">Volume máximo total para bloqueios locorregionais e infiltração, por espécie e peso.</p><div class="grid g2m"><div class="field"><label>Anestésico</label><select class="inp" id="avA" onchange="calcRun()">'+ANV.map((a,i)=>'<option value="'+i+'">'+a.n+'</option>').join("")+'</select></div><div class="field"><label>Espécie</label><select class="inp" id="avS" onchange="calcRun()"><option value="dog" '+(sp==="dog"?"selected":"")+'>🐕 Cão</option><option value="cat" '+(sp==="cat"?"selected":"")+'>🐈 Gato</option></select></div>'+f("avW","Peso (kg)",weightFor(sp))+f("avU","Volume já utilizado (mL)",0)+'</div><div class="out" id="avO" style="margin-top:14px"></div>'},
+corticv(){calcRun=calcCortV;return '<h2>Equivalência de corticoides</h2><div class="grid g2m" style="margin-top:10px"><div class="field"><label>Corticoide de origem</label><select class="inp" id="cvO" onchange="calcRun()">'+COV.map((c,i)=>'<option value="'+i+'" '+(i===1?"selected":"")+'>'+c[0]+'</option>').join("")+'</select></div>'+f("cvD","Dose (mg)",10)+'</div><div id="cvOut" style="margin-top:12px"></div>'},
 inter(){calcRun=()=>{};const sel=(S.interSel||[]).filter(id=>DM[id]);S.interSel=sel;const pairs=interPairs(sel.map(id=>DM[id].n));
   return '<h2>Verificador de interações</h2><p class="muted sm" style="margin:4px 0 12px">Adicione 2 ou mais fármacos. O sistema verifica '+INTER.length+' regras (pares e classes farmacológicas) com mecanismo, conduta e nível de evidência.</p>'+
   '<div class="search">'+ic("search")+'<input class="inp" id="iq" placeholder="Adicionar fármaco..." oninput="interSug(this.value)" autocomplete="off" /></div><div id="isug" class="list" style="margin-top:6px"></div>'+
@@ -643,7 +664,7 @@ function calcFluid(){const sp=document.getElementById("fSp").value,w=gv("fW"),D=
 function calcRCP(){const sp=document.getElementById("rSp").value,w=gv("rW");const o=document.getElementById("rOut");
   const R=[["Adrenalina (dose baixa)",0.01,1,"mg","IV/IO a cada 3–5 min (ciclos alternados)"],["Adrenalina (intratraqueal)",0.02,1,"mg","diluir em salina, via tubo"],["Vasopressina",0.8,20,"UI","IV/IO, alternativa à adrenalina"],["Atropina",0.04,0.5,"mg","IV/IO — assistolia/AESP vagal"],
    ["Lidocaína (FV refratária — cães)",2,20,"mg","IV/IO lento"],["Amiodarona (FV refratária)",5,50,"mg","IV/IO lento"],["Naloxona (reversão opioide)",0.04,0.4,"mg","IV/IO"],["Flumazenil (reversão BZD)",0.01,0.1,"mg","IV/IO"],["Atipamezol (reversão alfa-2)",0.1,5,"mg","IM/IV"],
-   ["Gluconato de cálcio 10%",50,100,"mg","IV lento — hipocalcemia/hipercalemia"],["Bicarbonato 8,4% (RCP > 10 min)",1,1,"mEq","IV lento"],["Glicose 50% (diluir)",0.5,500,"g","= 1 mL/kg diluído 1:2"]];
+   ["Gluconato de cálcio 10%",50,100,"mg","IV lento — hipocalcemia/hipercalemia"],["Bicarbonato 8,4% (RCP > 10 min)",1,1,"mEq","IV lento"],["Glicose 50% (diluir)",0.5,500,"g","= 1 mL/kg diluído 1:2"],["Diazepam (convulsão)",0.5,5,"mg","IV ou 1 mg/kg retal"],["Midazolam (convulsão)",0.2,5,"mg","IV/IM/intranasal"],["Emulsão lipídica 20% (intoxicação lipofílica)",1.5,1,"mL","bolus, depois 0,25 mL/kg/min"],["Furosemida (edema pulmonar)",2,10,"mg","IV/IM, repetir a cada 1 h se necessário"]];
   const rows=R.map(([n,dk,c,un,ob])=>{if(sp==="cat"&&n.startsWith("Lidocaína"))return"";let tot=dk*w,vol;if(un==="g"){tot=dk*w;vol=tot*1000/c}else vol=tot/c;
     return '<tr><td><b>'+n+'</b><div class="xs muted">'+fmt(dk)+" "+(un==="g"?"g":un)+'/kg · '+ob+'</div></td><td class="n">'+fmt(tot)+" "+un+'</td><td class="n">'+fmt(vol)+' mL</td></tr>'}).join("");
   o.innerHTML='<table class="tbl"><thead><tr><th>Fármaco</th><th>Dose</th><th>Volume</th></tr></thead><tbody>'+rows+'</tbody></table>'+
@@ -697,6 +718,7 @@ function vCase(id){const i=CASES.findIndex(c=>c.id===id);const c=CASES[i];if(!c)
   '<button class="btn pri block" id="caseBtn" onclick="document.getElementById(\'caseAns\').style.display=\'block\';this.style.display=\'none\';S.done.add(\''+c.id+'\');store.set(\'doneCases\',[...S.done])">Revelar conduta</button>'+
   '<a class="btn block" href="#/casos/'+nx.id+'">Próximo caso →</a></div>'+disclaimer();}
 
+/*__FEAT__*/
 /* ================= Receituário ================= */
 function saveRx(){store.set("rx",S.rx)}
 function addRxDrug(id,txt,pres){const d=DM[id];S.rx.items.push({n:d.n,pres:pres||d.p.split(";")[0],qty:"",pos:txt||"",ctl:d.ctl||""});saveRx();toast("Adicionado ao receituário");location.hash="#/receita"}
