@@ -1,0 +1,65 @@
+name: Gerar APK Android — Clínica Odonto Pro
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master, "claude/**"]
+    paths:
+      - "odonto/index.html"
+      - "odonto/assets/**"
+      - "odonto/capacitor.config.json"
+      - "odonto/package.json"
+      - "odonto/android-native/**"
+      - ".github/workflows/build-apk-odonto.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: odonto
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Instalar dependências
+        run: npm install --no-audit --no-fund
+
+      - name: Criar projeto Android e ícones
+        run: npm run android:init
+
+      - name: Ativar impressão nativa (Imprimir / PDF)
+        run: cp android-native/MainActivity.java android/app/src/main/java/br/com/clinicaodontopro/app/MainActivity.java
+
+      - name: Compilar APK (debug, instalável)
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/ClinicaOdontoPro.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClinicaOdontoPro-apk
+          path: ClinicaOdontoPro.apk
+          retention-days: 30
+
+      - name: Publicar APK como Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: odonto-apk-${{ github.run_number }}
+          name: Clínica Odonto Pro — APK build ${{ github.run_number }}
+          body: APK de instalação direta (debug). No Android, permita instalar de fontes desconhecidas.
+          files: ClinicaOdontoPro.apk
+          make_latest: false
