@@ -390,7 +390,7 @@ function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||
 /* ================= Router ================= */
 const AFTER=[];
 const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diagnosticos","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Urgências","alert"]];
-const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/periograma","Periograma","chart"],["#/odontograma","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+const SIDE=NAV.concat([["#/estomato","Estomatologia","eye"],["#/casos","Casos clínicos","book"],["#/periograma","Periograma","chart"],["#/odontograma","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
 function goBack(){if(history.length>1)history.back();else location.hash="#/"}
 function route(){
   const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
@@ -405,6 +405,7 @@ function route(){
     case "odontograma":html=vOdonto();sub="Odontograma";break;
     case "diagnosticos":if(arg){html=vDiag(arg);isSub=true;sub="Diagnóstico"}else{html=vDiags();sub="Diagnósticos"}break;
     case "periograma":html=vPerio();sub="Periograma";break;
+    case "estomato":html=vStom(arg,parts[2]);isSub=!!arg;sub="Estomatologia";break;
     case "casos":if(arg){html=vCase(arg);isSub=true;sub="Caso Clínico"}else{html=vCases();sub="Casos Clínicos"}break;
     case "receita":html=vRx();sub="Receituário";break;
     case "favoritos":html=vFavs();sub="Favoritos";break;
@@ -454,7 +455,7 @@ function vHome(){
   tile("#/calc/profi","shield","c4","Profilaxia antibiótica","Endocardite (AHA)")+tile("#/calc/emerg","heart","c3","Kit de emergência","Doses por peso")+
   tile("#/calc/dose","drop","c5","Doses pediátricas","mg/kg → mL e gotas")+tile("#/calc/inter","alert","c2","Interações","Varfarina, epinefrina, AINEs...")+
   tile("#/tox","alert","c3","Urgências","Síncope, anafilaxia, LAST")+tile("#/receita","file","c8","Receituário","Com CRO e 2 vias")+
-  tile("#/diagnosticos","search","c5","Diagnósticos","Com ilustrações e assistente")+tile("#/periograma","chart","c6","Periograma","Gráfico e estadiamento")+
+  tile("#/estomato","eye","c7","Estomatologia","Atlas, diferencial, biópsia, câncer")+tile("#/diagnosticos","search","c5","Diagnósticos","Com ilustrações e assistente")+tile("#/periograma","chart","c6","Periograma","Gráfico e estadiamento")+
   tile("#/casos","book","c4","Casos clínicos","Modo estudo")+tile("#/diagnosticos/assistente","shield","c7","Assistente pulpar","Testes → diagnóstico AAE")+'</div>'+
   '<div class="sec-title"><h2>Bulário por perfil de paciente</h2></div><div class="sp-grid">'+SP.slice(0,5).map(s=>'<a class="sp-btn" href="#/bulario" onclick="setMedSp(\''+s.id+'\')"><em>'+s.e+'</em>'+s.n+'</a>').join("")+'</div>'+
   (fav.length?'<div class="sec-title"><h2>Favoritos</h2><a class="btn sm ghost" href="#/favoritos">Ver todos</a></div><div class="list">'+fav.map(drugItem).join("")+'</div>':"")+
@@ -518,12 +519,13 @@ function renderSearch(v){
   const q=norm(v).trim().split(/\s+/).filter(Boolean);const el=document.getElementById("gres");
   if(!q.length){el.innerHTML='<div class="muted sm">Dica: busque por princípio ativo, nome comercial (ex.: <b>Septanest</b>, <b>Clavulin</b>), indicação (<b>alveolite</b>), urgência (<b>anafilaxia</b>) ou caso (<b>terceiro molar</b>).</div>';return}
   const m=o=>q.every(w=>o._s.includes(w));
-  const dr=DRUGS.filter(m).slice(0,25),tx=TOX.filter(m).slice(0,10),cs=CASES.filter(m).slice(0,10);
+  const dr=DRUGS.filter(m).slice(0,25),tx=TOX.filter(m).slice(0,10),cs=CASES.filter(m).slice(0,10),st=(typeof STOMS!=='undefined'?STOMS:[]).filter(m).slice(0,10);
   const go="onclick=\"closeSearch()\"";
   el.innerHTML=(dr.length?'<div class="xs muted" style="font-weight:800;margin:6px 2px">MEDICAMENTOS ('+dr.length+')</div><div class="list">'+dr.map(d=>'<a class="item" '+go+' href="#/bulario/'+d.id+'"><div class="t">'+esc(d.n)+'</div><div class="s">'+esc(d.b)+'</div></a>').join("")+'</div>':"")+
   (tx.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">TOXICOLOGIA ('+tx.length+')</div><div class="list">'+tx.map(t=>'<a class="item" '+go+' href="#/tox/'+t.id+'"><div class="row"><span class="sev '+t.sev+'"></span><div class="t">'+esc(t.n)+'</div></div><div class="s">'+esc(t.t+" · "+t.sp)+'</div></a>').join("")+'</div>':"")+
+  (st.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">ESTOMATOLOGIA ('+st.length+')</div><div class="list">'+st.map(l=>'<a class="item" '+go+' href="#/estomato/l/'+l.id+'"><div class="t">'+esc(l.n)+'</div><div class="s">'+esc(l.el)+'</div></a>').join("")+'</div>':"")+
   (cs.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">CASOS CLÍNICOS ('+cs.length+')</div><div class="list">'+cs.map(c=>'<a class="item" '+go+' href="#/casos/'+c.id+'"><div class="t">'+esc(c.title)+'</div><div class="s">'+esc(c.sp+" · "+c.spec)+'</div></a>').join("")+'</div>':"")+
-  (!dr.length&&!tx.length&&!cs.length?'<div class="empty">Nada encontrado para “'+esc(v)+'”.</div>':"");
+  (!dr.length&&!tx.length&&!cs.length&&!st.length?'<div class="empty">Nada encontrado para “'+esc(v)+'”.</div>':"");
 }
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSearch();if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();openSearch()}});
 

@@ -16,7 +16,10 @@ const PROF=["ad","ped","ges","lac","ido","ren","hep"];
 for(const d of D){for(const k of Object.keys(d.d||{}))if(!PROF.includes(k))throw new Error("Perfil inválido "+k+" em "+d.n);for(const k of Object.keys(d.x||{}))if(!PROF.includes(k))throw new Error("x inválido "+k+" em "+d.n);}
 const DIAG = eval(rd("diag.js") + ";DIAG");
 for(const d of DIAG)for(const f of d.far||[])if(!names.has(f))throw new Error("Diagnóstico "+d.id+": fármaco inexistente "+f);
-const data = { diag: DIAG, drugs: D, ig: IG, inter: INTER, tox: TOX, cases: CASES, reg: [] };
+eval(rd("stom.js")+";global.STOM=STOM;global.SISTEM=SISTEM");
+{const ids=new Set();for(const l of STOM){if(ids.has(l.id))throw new Error("Lesão duplicada "+l.id);ids.add(l.id);for(const f of l.far||[])if(!names.has(f))throw new Error("Lesão "+l.id+": fármaco inexistente "+f);}
+ const fs2=rd("feat_stom.js");const m=fs2.slice(fs2.indexOf("const DDXR="),fs2.indexOf("function vDdx"));const used=[...m.matchAll(/"?([a-zê\-]+)"?:\d/g)].map(x=>x[1]);for(const u of used)if(!ids.has(u))throw new Error("DDXR: lesão inexistente "+u);}
+const data = { stom: STOM, sistem: SISTEM, diag: DIAG, drugs: D, ig: IG, inter: INTER, tox: TOX, cases: CASES, reg: [] };
 const ICONS = {
   back: "M15 18l-6-6 6-6", search: "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14z M20 20l-4-4",
   moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z", sun: "M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z M12 1v2 M12 21v2 M4.2 4.2l1.4 1.4 M18.4 18.4l1.4 1.4 M1 12h2 M21 12h2 M4.2 19.8l1.4-1.4 M18.4 5.6l1.4-1.4",
@@ -41,11 +44,12 @@ const ICONS = {
   tooth: "M7 3c2 0 3 1 5 1s3-1 5-1c3 0 4 3 4 6 0 3-1 5-2 8-1 3-1 6-3 6s-2-4-3-7c-1 3-1 7-3 7s-2-3-3-6c-1-3-2-5-2-8 0-3 1-6 4-6z",
   shield: "M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z M9 12l2 2 4-4",
   chart: "M3 3v18h18 M7 15l4-4 3 3 5-6",
+  eye: "M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6z",
   logout: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_diag_perio.js"));
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_diag_perio.js")+"\n"+rd("feat_stom.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");
