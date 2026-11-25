@@ -219,6 +219,21 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .tile{box-shadow:none}.card{box-shadow:none}
 .lg{background:var(--bg)}.lg .box{border:1px solid var(--line);box-shadow:0 10px 40px rgba(17,24,39,.08)}.lg img{border:0;border-radius:20px}
 .dock{box-shadow:none}
+.fig{width:100%;height:auto;display:block}
+.figbox{max-width:260px;margin:10px auto 0;background:var(--surface-2);border-radius:14px;padding:8px}
+.dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:700px){.dgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.dcard{display:flex;flex-direction:column;gap:8px}
+.dthumb{background:var(--surface-2);border-radius:10px;padding:4px;height:110px;display:flex;align-items:center;justify-content:center}
+.dthumb svg{height:100%;width:auto}
+.pchart{width:100%;min-width:560px;height:150px;display:block}
+.tsel{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:3px}
+.tb{border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:6px 0;font-size:11px;font-weight:800;color:var(--ink);cursor:pointer}
+.tb.ok{background:var(--ok-soft);border-color:var(--ok)}.tb.bad{background:var(--warn-soft);border-color:var(--warn)}.tb.aus{opacity:.35;text-decoration:line-through}
+.tb.on{outline:2px solid var(--accent);outline-offset:1px}
+.pin{min-height:38px;padding:6px 4px;text-align:center;width:48px;font-size:15px}
+.ptbl td,.ptbl th{padding:5px 3px;text-align:center}
+.ptbl td:first-child,.ptbl th:first-child{text-align:left;min-width:92px}
 /* ---------- Print ---------- */
 #printArea{display:none}
 @media print{
@@ -374,8 +389,8 @@ function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||
 
 /* ================= Router ================= */
 const AFTER=[];
-const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/calc","Cálculos","calc"],["#/tox","Urgências","alert"],["#/casos","Casos","book"]];
-const SIDE=NAV.concat([["#/odontograma","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diagnosticos","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Urgências","alert"]];
+const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/periograma","Periograma","chart"],["#/odontograma","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
 function goBack(){if(history.length>1)history.back();else location.hash="#/"}
 function route(){
   const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
@@ -388,6 +403,8 @@ function route(){
     case "calc":html=vCalc(arg||"dose",parts[2]);sub="Calculadoras Clínicas";break;
     case "tox":if(arg){html=vToxD(arg);isSub=true;sub="Urgências médicas"}else{html=vTox();sub="Urgências no Consultório"}break;
     case "odontograma":html=vOdonto();sub="Odontograma";break;
+    case "diagnosticos":if(arg){html=vDiag(arg);isSub=true;sub="Diagnóstico"}else{html=vDiags();sub="Diagnósticos"}break;
+    case "periograma":html=vPerio();sub="Periograma";break;
     case "casos":if(arg){html=vCase(arg);isSub=true;sub="Caso Clínico"}else{html=vCases();sub="Casos Clínicos"}break;
     case "receita":html=vRx();sub="Receituário";break;
     case "favoritos":html=vFavs();sub="Favoritos";break;
@@ -436,7 +453,9 @@ function vHome(){
   tile("#/calc/anest","calc","c1","Anestésicos locais","Dose máxima em tubetes")+tile("#/odontograma","tooth","c6","Odontograma","Anatomia e anestesia por dente")+
   tile("#/calc/profi","shield","c4","Profilaxia antibiótica","Endocardite (AHA)")+tile("#/calc/emerg","heart","c3","Kit de emergência","Doses por peso")+
   tile("#/calc/dose","drop","c5","Doses pediátricas","mg/kg → mL e gotas")+tile("#/calc/inter","alert","c2","Interações","Varfarina, epinefrina, AINEs...")+
-  tile("#/tox","alert","c3","Urgências","Síncope, anafilaxia, LAST")+tile("#/receita","file","c8","Receituário","Com CRO e 2 vias")+'</div>'+
+  tile("#/tox","alert","c3","Urgências","Síncope, anafilaxia, LAST")+tile("#/receita","file","c8","Receituário","Com CRO e 2 vias")+
+  tile("#/diagnosticos","search","c5","Diagnósticos","Com ilustrações e assistente")+tile("#/periograma","chart","c6","Periograma","Gráfico e estadiamento")+
+  tile("#/casos","book","c4","Casos clínicos","Modo estudo")+tile("#/diagnosticos/assistente","shield","c7","Assistente pulpar","Testes → diagnóstico AAE")+'</div>'+
   '<div class="sec-title"><h2>Bulário por perfil de paciente</h2></div><div class="sp-grid">'+SP.slice(0,5).map(s=>'<a class="sp-btn" href="#/bulario" onclick="setMedSp(\''+s.id+'\')"><em>'+s.e+'</em>'+s.n+'</a>').join("")+'</div>'+
   (fav.length?'<div class="sec-title"><h2>Favoritos</h2><a class="btn sm ghost" href="#/favoritos">Ver todos</a></div><div class="list">'+fav.map(drugItem).join("")+'</div>':"")+
   (rec.length?'<div class="sec-title"><h2>Vistos recentemente</h2></div><div class="list">'+rec.map(drugItem).join("")+'</div>':"")+
@@ -737,6 +756,7 @@ function vCase(id){const i=CASES.findIndex(c=>c.id===id);const c=CASES[i];if(!c)
   '<button class="btn pri block" id="caseBtn" onclick="document.getElementById(\'caseAns\').style.display=\'block\';this.style.display=\'none\';S.done.add(\''+c.id+'\');store.set(\'doneCases\',[...S.done])">Revelar conduta</button>'+
   '<a class="btn block" href="#/casos/'+nx.id+'">Próximo caso →</a></div>'+disclaimer();}
 
+/*__FEAT__*/
 /* ================= Odontograma ================= */
 const TT={ // tipos de dente
  IC:{n:"Incisivo central",r:"1 raiz",ca:"1 canal",an:{s:"Infiltrativa (supraperiosteal) vestibular + nasopalatino para a palatina",i:"Infiltrativa vestibular (articaína é eficaz) ou bloqueio do nervo incisivo/mentual"}},

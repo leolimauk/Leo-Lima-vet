@@ -14,7 +14,9 @@ for(const [g,l] of Object.entries(IG))for(const n of l)if(!names.has(n))throw ne
 for(const r of INTER){for(const k of ["a","b"])if(!IG[r[k]]&&!names.has(r[k]))throw new Error("Interação inválida: "+r[k]);}
 const PROF=["ad","ped","ges","lac","ido","ren","hep"];
 for(const d of D){for(const k of Object.keys(d.d||{}))if(!PROF.includes(k))throw new Error("Perfil inválido "+k+" em "+d.n);for(const k of Object.keys(d.x||{}))if(!PROF.includes(k))throw new Error("x inválido "+k+" em "+d.n);}
-const data = { drugs: D, ig: IG, inter: INTER, tox: TOX, cases: CASES, reg: [] };
+const DIAG = eval(rd("diag.js") + ";DIAG");
+for(const d of DIAG)for(const f of d.far||[])if(!names.has(f))throw new Error("Diagnóstico "+d.id+": fármaco inexistente "+f);
+const data = { diag: DIAG, drugs: D, ig: IG, inter: INTER, tox: TOX, cases: CASES, reg: [] };
 const ICONS = {
   back: "M15 18l-6-6 6-6", search: "M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14z M20 20l-4-4",
   moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z", sun: "M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z M12 1v2 M12 21v2 M4.2 4.2l1.4 1.4 M18.4 18.4l1.4 1.4 M1 12h2 M21 12h2 M4.2 19.8l1.4-1.4 M18.4 5.6l1.4-1.4",
@@ -38,11 +40,12 @@ const ICONS = {
   ruler: "M3 17L17 3l4 4L7 21z M7 13l2 2 M10 10l2 2 M13 7l2 2", swap: "M7 4L3 8l4 4 M3 8h14 M17 20l4-4-4-4 M21 16H7",
   tooth: "M7 3c2 0 3 1 5 1s3-1 5-1c3 0 4 3 4 6 0 3-1 5-2 8-1 3-1 6-3 6s-2-4-3-7c-1 3-1 7-3 7s-2-3-3-6c-1-3-2-5-2-8 0-3 1-6 4-6z",
   shield: "M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z M9 12l2 2 4-4",
+  chart: "M3 3v18h18 M7 15l4-4 3 3 5-6",
   logout: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html");
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_diag_perio.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");

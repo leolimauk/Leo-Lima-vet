@@ -1,8 +1,8 @@
 // Teste automático do app odontológico: node odonto/src/test.js
 const {chromium}=require("playwright");const path=require("path");
-(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:900}});const errs=[];p.on("pageerror",e=>errs.push(e.message));
-await p.goto("file://"+path.resolve(__dirname,"../index.html"));await p.waitForTimeout(300);
-const routes=["#/","#/bulario","#/calc/anest","#/calc/dose","#/calc/profi","#/calc/emerg","#/calc/inter","#/calc/cortic","#/calc/conv","#/tox","#/tox/t0","#/casos","#/casos/c1","#/odontograma","#/receita","#/legislacao","#/ajustes","#/favoritos"];
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:900}});await ctx.route(/googleapis/,r=>r.fulfill({json:{id_token:"t",refresh_token:"r",users:[{displayName:"sessao:A|x"}]}}));const p=await ctx.newPage();const errs=[];p.on("pageerror",e=>errs.push(e.message));
+await p.goto("file://"+path.resolve(__dirname,"../index.html"));await p.evaluate(()=>localStorage.setItem("lmo_auth",JSON.stringify({email:"t@t",rt:"r",ok:Date.now(),sid:"A"})));await p.reload();await p.waitForTimeout(400);
+const routes=["#/","#/bulario","#/calc/anest","#/calc/dose","#/calc/profi","#/calc/emerg","#/calc/inter","#/calc/cortic","#/calc/conv","#/tox","#/tox/t0","#/casos","#/casos/c1","#/odontograma","#/diagnosticos","#/diagnosticos/abscesso-agudo","#/diagnosticos/assistente","#/periograma","#/receita","#/legislacao","#/ajustes","#/favoritos"];
 for(const r of routes){await p.evaluate(h=>location.hash=h,r);await p.waitForTimeout(80);const t=await p.evaluate(()=>{const o=document.querySelector(".out");return (o?o.innerText:document.querySelector("#app").innerText).slice(0,140).replace(/\n/g," | ")});console.log(r,"=>",t)}
 const r=await p.evaluate(()=>{const out={};let mono=0,calc=0,bad=[];
  for(const d of DRUGS){location.hash="#/bulario/"+d.id;route();if(document.querySelector("#app h1"))mono++;
@@ -15,5 +15,10 @@ const r=await p.evaluate(()=>{const out={};let mono=0,calc=0,bad=[];
  location.hash="#/odontograma";route();S.tooth=36;rerender();out.dente36=document.querySelector("#app").innerText.match(/1º molar[^\n]*/)?.[0];
  S.odSet="dec";S.tooth=75;rerender();out.dente75=document.querySelector("#app").innerText.match(/2º molar decíduo/)?.[0];
  out.inter_varf=interPairs(["Miconazol Gel Oral 2%","Varfarina","Ibuprofeno"]).map(q=>q.r.sev+": "+q.x+" + "+q.y);
- Object.assign(out,{mono,drugs:DRUGS.length,calc,bad,iok,itotal:INTER.length,ifail});return out});
+ let dg=0,dgBad=[];for(const d of DIAGS){location.hash="#/diagnosticos/"+d.id;route();const svg=document.querySelector("#app .figbox svg");if(svg&&svg.innerHTML.length>200)dg++;else dgBad.push(d.id)}
+ const W=[["n","n","normal","n","n","n","normal"],["n","n","curta","n","n","n","normal"],["n","s","longa","s","n","n","lp"],["n","n","ausente","n","n","n","lesao"],["n","n","ausente","s","s","n","lesao"],["n","n","ausente","n","n","s","lesao"],["s","n","","n","n","n","lesao"]];
+ out.wizard=W.map(([trat,dor,frio,perc,edema,fist,rx])=>{S.wz={trat,dor,frio,perc,edema,fist,rx};location.hash="#/diagnosticos/assistente";route();const o=document.querySelector("#app .out");return o?o.innerText.replace(/\n/g," | ").replace(/Ver .*/,""):"(sem resultado)"});
+ S.perio=perioNew();S.perio.idade="40";S.perio.osso="30";S.perio.fumo="2";[16,26,36,46,11].forEach(n=>{const t=pT(n);t.ps=[6,4,5,6,3,5];t.mg=[1,0,1,1,0,0];t.bop=[1,1,0,1,0,1]});[21,31,41,12].forEach(n=>{const t=pT(n);t.ps=[2,2,2,2,2,2];t.mg=[0,0,0,0,0,0]});pT(17).aus=1;
+ out.perio=perioCalc();location.hash="#/periograma";route();out.perioSvg=document.querySelectorAll("#app .pchart").length;
+ Object.assign(out,{dg,dgTotal:DIAGS.length,dgBad,mono,drugs:DRUGS.length,calc,bad,iok,itotal:INTER.length,ifail});return out});
 console.log(JSON.stringify(r,null,1));console.log("errors",errs);await b.close()})();
