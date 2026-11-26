@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Clínica Odonto Pro" />
+<meta name="description" content="Bulário odontológico, anestésicos locais, calculadoras, urgências, odontograma, casos clínicos e receituário para cirurgiões-dentistas e estudantes." />
+<title>Clínica Odonto Pro</title>
+<link rel="icon" href="__LOGO__" />
+<link rel="apple-touch-icon" href="__LOGO__" />
+<style>
+:root{
+  --navy:#0f172a;--royal:#0369a1;--royal-2:#0ea5e9;--copper:#d97706;--copper-2:#0ea5e9;
+  --bg:#f7f8fa;--surface:#ffffff;--surface-2:#f9fafb;--ink:#111827;--muted:#6b7280;--line:#eceef1;--line-2:#dfe3e8;
+  --accent:#0369a1;--accent-soft:#e0f2fe;--ok:#047857;--ok-soft:#d1fae5;--warn:#b45309;--warn-soft:#fef3c7;--bad:#b91c1c;--bad-soft:#fee2e2;--info:#0369a1;--info-soft:#e0f2fe;
+  --shadow:0 1px 2px rgba(17,24,39,.04);
+  --radius:16px;--nav-h:66px;
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b0f14;--surface:#12171e;--surface-2:#171d25;--ink:#e6edf7;--muted:#93a3bc;--line:#222a35;--line-2:#2c3644;
+  --accent:#38bdf8;--accent-soft:#0c2a3d;--ok:#34d399;--ok-soft:#0f2e26;--warn:#fbbf24;--warn-soft:#33270b;--bad:#f87171;--bad-soft:#3a1717;--info:#38bdf8;--info-soft:#0c2a3d;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
+}}
+:root[data-theme="dark"]{
+  --bg:#0b0f14;--surface:#12171e;--surface-2:#171d25;--ink:#e6edf7;--muted:#93a3bc;--line:#222a35;--line-2:#2c3644;
+  --accent:#38bdf8;--accent-soft:#0c2a3d;--ok:#34d399;--ok-soft:#0f2e26;--warn:#fbbf24;--warn-soft:#33270b;--bad:#f87171;--bad-soft:#3a1717;--info:#38bdf8;--info-soft:#0c2a3d;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 12px);overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* ---------- Topbar ---------- */
+.top{position:sticky;top:0;z-index:50;background:linear-gradient(100deg,#0b1224 0%,#13265c 60%,#1e3a8a 100%);color:#fff;padding:calc(10px + var(--safe-t)) 16px 10px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 18px rgba(2,6,23,.35)}
+.top .back{display:none}
+.top.sub .back{display:flex}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;text-decoration:none;color:#fff}
+.brand img{width:40px;height:40px;border-radius:12px;border:2px solid var(--copper-2);background:#fff;flex:none}
+.brand b{display:block;font-size:17px;font-weight:850;letter-spacing:-.01em;line-height:1.1}
+.brand small{display:block;font-size:11.5px;color:#c7d2fe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbtn{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.tbtn:active{transform:scale(.96)}
+/* ---------- Layout ---------- */
+.wrap{max-width:1080px;margin:0 auto;padding:16px}
+.layout{display:block}
+.side{display:none}
+@media (min-width:980px){
+  body{padding-bottom:24px}
+  .layout{display:grid;grid-template-columns:220px 1fr;gap:20px;max-width:1300px;margin:0 auto;padding:0 16px}
+  .side{display:flex;flex-direction:column;gap:4px;position:sticky;top:76px;height:calc(100vh - 90px);padding-top:16px}
+  .side a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:650}
+  .side a:hover{background:var(--surface)}
+  .side a.on{background:var(--accent-soft);color:var(--accent)}
+  .dock{display:none!important}
+  .wrap{padding:16px 0}
+}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 4px calc(6px + var(--safe-b));box-shadow:0 -4px 18px rgba(15,23,42,.06)}
+.dock a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;padding:6px 2px;border-radius:12px;min-width:0}
+.dock a.on{color:var(--accent)}
+.dock a.on svg{stroke-width:2.4}
+/* ---------- Generic ---------- */
+h1,h2,h3{margin:0;letter-spacing:-.015em}
+h1{font-size:22px;font-weight:850}
+h2{font-size:18px;font-weight:800}
+h3{font-size:15.5px;font-weight:800}
+.muted{color:var(--muted)}
+.sm{font-size:13px}.xs{font-size:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.stack>*+*{margin-top:12px}
+.row{display:flex;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.wrapf{flex-wrap:wrap}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:640px){.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g2m{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sec-title{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 10px}
+.sec-title h2{font-size:17px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none;font-size:14px;min-height:42px}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .btn.pri{color:#0b1120}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.pri{color:#0b1120}}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:6px 10px;min-height:34px;font-size:13px}
+.btn.block{width:100%}
+.btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line-2);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--ink)}
+.chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tag{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:2px 8px;font-size:11.5px;font-weight:800;line-height:1.5;white-space:nowrap}
+.t-a1{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
+.t-b1{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd}
+.t-c1,.t-ctl{background:#f1f5f9;color:#334155;border:1px solid #cbd5e1}
+.t-atb{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.t-cls{background:var(--accent-soft);color:var(--accent)}
+.t-bad{background:var(--bad-soft);color:var(--bad)}
+.t-warn{background:var(--warn-soft);color:var(--warn)}
+.t-ok{background:var(--ok-soft);color:var(--ok)}
+.t-info{background:var(--info-soft);color:var(--info)}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12.5px;font-weight:750;color:var(--muted)}
+.inp,select.inp,textarea.inp{width:100%;border:1.5px solid var(--line-2);background:var(--surface);border-radius:12px;padding:10px 12px;font-size:15px;min-height:44px;outline:none}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea.inp{min-height:84px;resize:vertical}
+.search{position:relative}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search .inp{padding-left:40px}
+.empty{padding:28px 12px;text-align:center;color:var(--muted)}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.note{border-radius:12px;padding:10px 12px;font-size:13.5px}
+.note.warn{background:var(--warn-soft);color:var(--warn)}
+.note.bad{background:var(--bad-soft);color:var(--bad)}
+.note.info{background:var(--info-soft);color:var(--info)}
+.note.ok{background:var(--ok-soft);color:var(--ok)}
+.note b{font-weight:800}
+/* ---------- Home ---------- */
+.hero{background:radial-gradient(120% 140% at 0% 0%,#1d4ed8 0%,#13265c 45%,#0b1224 100%);color:#fff;border-radius:22px;padding:20px;display:flex;gap:16px;align-items:center;box-shadow:0 14px 30px rgba(2,6,23,.25);overflow:hidden;position:relative}
+.hero img{width:92px;height:92px;border-radius:22px;border:3px solid var(--copper-2);background:#fff;flex:none}
+.hero h1{font-size:22px;color:#fff}
+.hero p{margin:6px 0 0;color:#c7d2fe;font-size:13.5px}
+.hero .search{margin-top:12px}
+.hero .inp{background:rgba(255,255,255,.96);color:#0f172a;border-color:transparent}
+.hero .search svg{color:#475569}
+@media (max-width:520px){.hero{flex-direction:column;align-items:flex-start;padding:18px}.hero img{width:64px;height:64px;border-radius:16px}}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+@media (min-width:640px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:24px;font-weight:850;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted);font-weight:650}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:640px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tile{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);min-height:96px}
+.tile .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center}
+.tile b{font-size:14.5px}
+.tile span{font-size:12px;color:var(--muted)}
+.ic.c1{background:#dbeafe;color:#1d4ed8}.ic.c2{background:#fef3c7;color:#b45309}.ic.c3{background:#fee2e2;color:#b91c1c}.ic.c4{background:#d1fae5;color:#047857}.ic.c5{background:#ede9fe;color:#6d28d9}.ic.c6{background:#e0f2fe;color:#0369a1}.ic.c7{background:#fce7f3;color:#be185d}.ic.c8{background:#f1f5f9;color:#334155}
+.sp-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:420px){.sp-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.sp-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:14px;background:var(--surface);border:1px solid var(--line);text-decoration:none;color:var(--ink);font-size:11.5px;font-weight:700;text-align:center}
+.sp-btn em{font-style:normal;font-size:24px;line-height:1.1}
+/* ---------- Lists ---------- */
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:var(--ink);cursor:pointer}
+.item:active{background:var(--surface-2)}
+.item .t{font-weight:800;font-size:15px}
+.item .s{font-size:12.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.spi{font-size:15px;letter-spacing:1px}
+.sev{width:10px;height:10px;border-radius:50%;flex:none}
+.sev.Fatal{background:#dc2626}.sev.Grave{background:#ea580c}.sev.Moderada{background:#d97706}.sev.Leve{background:#65a30d}
+/* ---------- Detail ---------- */
+.dhead{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.dhead h1{font-size:22px}
+.kv{display:grid;gap:10px}
+.kv .k{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.kv .v{margin-top:2px}
+.dose-t{width:100%;border-collapse:separate;border-spacing:0}
+.dose-row{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.dose-row:first-child{border-top:0}
+.dose-row .e{font-size:24px;line-height:1}
+.dose-row .d{font-weight:850;font-size:15.5px;font-variant-numeric:tabular-nums}
+.dose-row .m{font-size:13px;color:var(--muted);margin-top:2px}
+.dose-row .o{font-size:13px;margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+/* ---------- Calc ---------- */
+.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:640px){.tools{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.tool{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;font-weight:750;font-size:13px}
+.tool.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+@media (max-width:639px){.tools{display:flex;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}.tools::-webkit-scrollbar{display:none}.tool{flex:none;white-space:nowrap}}
+.out{border-radius:14px;padding:14px;background:linear-gradient(135deg,var(--accent-soft),var(--surface));border:1.5px solid var(--accent)}
+.out .big{font-size:26px;font-weight:900;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.15}
+.out .lbl{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.res-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.res{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.res b{display:block;font-size:19px;font-weight:850;font-variant-numeric:tabular-nums}
+.res span{font-size:12px;color:var(--muted);font-weight:650}
+.wstep{display:flex;gap:6px}
+.wstep button{min-width:44px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tbl td.n{font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap}
+.scroll-x{overflow-x:auto}
+/* ---------- Overlay / modal ---------- */
+.ov{position:fixed;inset:0;z-index:80;background:rgba(2,6,23,.55);display:none;align-items:flex-start;justify-content:center;padding:calc(12px + var(--safe-t)) 12px 12px}
+.ov.show{display:flex}
+.ov .box{background:var(--surface);border-radius:20px;width:100%;max-width:720px;max-height:calc(100vh - 24px);overflow:auto;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + var(--safe-b) + 16px);transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:90;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.case-q{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px;font-weight:750}
+.pts{margin:0;padding-left:20px}
+.pts li{margin:6px 0}
+.take{background:var(--ok-soft);color:var(--ok);border-radius:12px;padding:12px;font-weight:750}
+.disc{font-size:12px;color:var(--muted);text-align:center;margin:28px 8px 8px}
+.lg{position:fixed;inset:0;z-index:100;background:radial-gradient(120% 120% at 0% 0%,#1d4ed8 0%,#13265c 45%,#0b1224 100%);display:none;align-items:center;justify-content:center;padding:20px}
+.lg.show{display:flex}
+.lg .box{background:var(--surface);border-radius:22px;padding:22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.lg img{width:84px;height:84px;border-radius:20px;border:3px solid var(--copper-2);display:block;margin:0 auto 10px}
+
+/* ===== Clean theme overrides ===== */
+.top{background:var(--surface);color:var(--ink);border-bottom:1px solid var(--line);box-shadow:none}
+.brand{color:var(--ink)}.brand img{border:0;border-radius:10px;width:36px;height:36px;background:none}
+.brand b{font-size:16.5px;font-weight:800}.brand b span{color:var(--accent)}.brand small{color:var(--muted)}
+.tbtn{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.hero{background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.hero img{border:0;background:none;border-radius:20px}.hero h1{color:var(--ink)}.hero p{color:var(--muted)}
+.hero .inp{background:var(--surface-2);color:var(--ink);border:1.5px solid var(--line-2)}.hero .search svg{color:var(--muted)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.out{background:var(--accent-soft);border:1px solid var(--accent)}
+.tile{box-shadow:none}.card{box-shadow:none}
+.lg{background:var(--bg)}.lg .box{border:1px solid var(--line);box-shadow:0 10px 40px rgba(17,24,39,.08)}.lg img{border:0;border-radius:20px}
+.dock{box-shadow:none}
+.fig{width:100%;height:auto;display:block}
+.figbox{max-width:260px;margin:10px auto 0;background:var(--surface-2);border-radius:14px;padding:8px}
+.dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:700px){.dgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.dcard{display:flex;flex-direction:column;gap:8px}
+.dthumb{background:var(--surface-2);border-radius:10px;padding:4px;height:110px;display:flex;align-items:center;justify-content:center}
+.dthumb svg{height:100%;width:auto}
+.pchart{width:100%;min-width:560px;height:150px;display:block}
+.tsel{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:3px}
+.tb{border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:6px 0;font-size:11px;font-weight:800;color:var(--ink);cursor:pointer}
+.tb.ok{background:var(--ok-soft);border-color:var(--ok)}.tb.bad{background:var(--warn-soft);border-color:var(--warn)}.tb.aus{opacity:.35;text-decoration:line-through}
+.tb.on{outline:2px solid var(--accent);outline-offset:1px}
+.pin{min-height:38px;padding:6px 4px;text-align:center;width:48px;font-size:15px}
+.ptbl td,.ptbl th{padding:5px 3px;text-align:center}
+.ptbl td:first-child,.ptbl th:first-child{text-align:left;min-width:92px}
+/* ---------- Print ---------- */
+#printArea{display:none}
+@media print{
+  body{background:#fff;padding:0;color:#000}
+  .top,.dock,.layout,.ov,.toast{display:none!important}
+  #printArea{display:block}
+  .rx-page{page-break-after:always;padding:18mm 16mm;font-family:Georgia,serif;color:#000;min-height:260mm;position:relative}
+  .rx-page:last-child{page-break-after:auto}
+  .rx-h{border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:14px}
+  .rx-h b{font-size:18px}
+  .rx-item{margin:12px 0}
+  .rx-foot{position:absolute;bottom:18mm;left:16mm;right:16mm;text-align:center;border-top:1px solid #000;padding-top:6px}
+}
+</style>
+</head>
+<body>
+<header class="top" id="top">
+  <button class="tbtn back" onclick="goBack()" aria-label="Voltar">__I_BACK__</button>
+  <a class="brand" href="#/">
+    <img src="__LOGO__" alt="Clínica Odonto Pro" />
+    <div style="min-width:0"><b>Clínica Odonto <span>Pro</span></b><small id="topSub">Farmacologia &amp; Clínica Odontológica</small></div>
+  </a>
+  <button class="tbtn" onclick="openSearch()" aria-label="Buscar">__I_SEARCH__</button>
+  <button class="tbtn" onclick="toggleTheme()" aria-label="Tema" id="themeBtn">__I_MOON__</button>
+  <button class="tbtn" onclick="if(confirm('Sair da conta neste aparelho?'))logout()" aria-label="Sair" title="Sair da conta" id="logoutBtn" style="display:none">__I_LOGOUT__</button>
+</header>
+
+<div class="layout">
+  <nav class="side" id="side"></nav>
+  <main class="wrap" id="app"></main>
+</div>
+
+<nav class="dock" id="dock"></nav>
+
+<div class="ov" id="searchOv" onclick="if(event.target===this)closeSearch()">
+  <div class="box">
+    <div class="row">
+      <div class="search" style="flex:1">__I_SEARCH__<input class="inp" id="gq" placeholder="Buscar fármaco, marca, toxina, caso..." autocomplete="off" oninput="renderSearch(this.value)" /></div>
+      <button class="btn ghost" onclick="closeSearch()">Fechar</button>
+    </div>
+    <div id="gres" style="margin-top:12px"></div>
+  </div>
+</div>
+<div class="lg" id="login"><div class="box"><img src="__LOGO__" alt="" /><h2 style="text-align:center">Clínica Odonto Pro</h2><p class="muted sm" style="text-align:center;margin:4px 0 16px" id="lgMsg">Acesso restrito. Entre com o login fornecido pelo administrador.</p>
+<form onsubmit="event.preventDefault();doLogin()" class="stack"><div class="field"><label for="lgE">E-mail</label><input class="inp" id="lgE" type="email" autocomplete="username" required /></div>
+<div class="field"><label for="lgP">Senha</label><input class="inp" id="lgP" type="password" autocomplete="current-password" required /></div>
+<div class="note bad" id="lgErr" style="display:none"></div><button class="btn pri block" id="lgBtn" type="submit">Entrar</button></form>
+<p class="xs muted" style="text-align:center;margin-top:14px">Esqueceu a senha ou precisa de acesso? Fale com o administrador.</p></div></div>
+<div class="toast" id="toast"></div>
+<div id="printArea"></div>
+
+<script>
+"use strict";
+const DATA = /*__DATA__*/null;
+
+/* ================= Base ================= */
+const SP = [
+  {id:"ad",n:"Adulto",e:"🧑",w:70,k:10,ml:0,mlExp:1},
+  {id:"ped",n:"Criança",e:"🧒",w:20,k:10,ml:0,mlExp:1},
+  {id:"ges",n:"Gestante",e:"🤰",w:65,k:10,ml:0,mlExp:1},
+  {id:"lac",n:"Lactante",e:"🤱",w:65,k:10,ml:0,mlExp:1},
+  {id:"ido",n:"Idoso",e:"🧓",w:65,k:10,ml:0,mlExp:1},
+  {id:"ren",n:"Doença renal",e:"🫘",w:70,k:10,ml:0,mlExp:1},
+  {id:"hep",n:"Hepatopata",e:"🩺",w:70,k:10,ml:0,mlExp:1}
+];
+const SPM = Object.fromEntries(SP.map(s=>[s.id,s]));
+const CLS = {
+  anest:{n:"Anestésicos locais",c:"c1"},analg:{n:"Analgésicos",c:"c5"},aine:{n:"Anti-inflamatórios (AINEs)",c:"c2"},cort:{n:"Corticoides",c:"c2"},
+  atb:{n:"Antibióticos",c:"c4"},afung:{n:"Antifúngicos",c:"c4"},avir:{n:"Antivirais",c:"c4"},antis:{n:"Antissépticos e uso clínico",c:"c6"},
+  hemo:{n:"Hemostáticos",c:"c3"},fluor:{n:"Flúor e dessensibilizantes",c:"c6"},seda:{n:"Ansiolíticos e sedação",c:"c5"},emerg:{n:"Emergências",c:"c3"},
+  dtm:{n:"Dor orofacial e DTM",c:"c7"},sup:{n:"Suporte (antieméticos, IBP, antialérgicos)",c:"c8"},endo:{n:"Endodontia",c:"c1"},clar:{n:"Clareamento",c:"c7"},
+  sist:{n:"Fármacos do paciente (sistêmicos)",c:"c8"}
+};
+const CTL = {
+  A1:{s:"A1 · Amarela",c:"t-a1",l:"Lista A1 (entorpecentes) — Notificação de Receita A (amarela), talonário numerado fornecido pela Vigilância Sanitária. Validade 30 dias."},
+  B1:{s:"B1 · Azul",c:"t-b1",l:"Lista B1 (psicotrópicos) — Notificação de Receita B (azul). Validade 30 dias, até 60 dias de tratamento."},
+  C1:{s:"C1 · 2 vias",c:"t-c1",l:"Lista C1 — Receita de Controle Especial em 2 vias (1ª retida na farmácia). Validade 30 dias. O cirurgião-dentista prescreve para uso odontológico."},
+  CTL:{s:"Controlado",c:"t-ctl",l:"Substância sujeita a controle especial (Portaria SVS/MS 344/98) — confirme a lista vigente; em geral Receita de Controle Especial em 2 vias."},
+  C5:{s:"C5 · Anabolizante",c:"t-c1",l:"Lista C5 (anabolizantes) — Receita de Controle Especial em 2 vias; validade 30 dias."},
+  CANN:{s:"Cannabis · Receita retida",c:"t-b1",l:"Cannabis medicinal: o médico-veterinário pode prescrever produtos registrados/autorizados pela ANVISA (RDC 327/2019) e produtos veterinários regularizados pelo MAPA (decisão ANVISA 30/10/2024; RDC 936/2024 — Lista A3). Receita especial retida na farmácia. Manipulação proibida. Confirme a norma vigente no CRMV/MAPA."},
+  ATB:{s:"Antibiótico",c:"t-atb",l:"Antimicrobiano — receita em 2 vias com retenção da 1ª via na farmácia, validade 10 dias (RDC ANVISA 471/2021). Prescreva só quando houver infecção com sinais sistêmicos ou disseminação, sempre com remoção da causa."}
+};
+const UNIT = {
+  mg:{k:"mg/kg",t:"mg",c:"mg/mL"},mcg:{k:"mcg/kg",t:"mcg",c:"mcg/mL"},UI:{k:"UI/kg",t:"UI",c:"UI/mL"},mEq:{k:"mEq/kg",t:"mEq",c:"mEq/mL"},
+  mL:{k:"mL/kg",t:"mL",c:""},g:{k:"g/kg",t:"g",c:""},m2:{k:"mg/m²",t:"mg",c:"mg/mL"},mcgmin:{k:"mcg/kg/min",t:"mcg/min",c:"mcg/mL"},"":{k:"",t:"",c:""}
+};
+const ICONS = __ICONS__;
+function ic(n,s){return '<svg class="i" viewBox="0 0 24 24"'+(s?' style="width:'+s+'px;height:'+s+'px'+(n==="starf"?';fill:currentColor':'')+'"':(n==="starf"?' style="fill:currentColor"':''))+'><path d="'+ICONS[n]+'"/></svg>'}
+
+const store = {
+  get(k,d){try{const v=localStorage.getItem("lmo_"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("lmo_"+k,JSON.stringify(v))}catch(e){}}
+};
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const fmt = (n,d) => {
+  if(!isFinite(n)) return "—";
+  if(d==null){ const a=Math.abs(n); d = a>=100?0:a>=10?1:a>=1?2:a>=0.1?3:4; }
+  return n.toLocaleString("pt-BR",{maximumFractionDigits:d,minimumFractionDigits:0});
+};
+const num = v => { const x=parseFloat(String(v).replace(",",".")); return isFinite(x)?x:0; };
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),2200)}
+function copy(txt){
+  const done=()=>toast("Copiado para a área de transferência");
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done,()=>fallback())}else fallback();
+  function fallback(){const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){toast("Não foi possível copiar")}ta.remove()}
+}
+
+/* ================= Data prep ================= */
+const DRUGS = DATA.drugs.map((d,i)=>{
+  d.id = norm(d.n).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  d.x = d.x||{}; d.d = d.d||{};
+  d._s = norm([d.n,d.b,d.i,d.p,CLS[d.c]&&CLS[d.c].n].join(" "));
+  return d;
+}).sort((a,b)=>a.n.localeCompare(b.n,"pt-BR"));
+const DM = Object.fromEntries(DRUGS.map(d=>[d.id,d]));
+const TOX = DATA.tox.map((t,i)=>{t.id="t"+i;t._s=norm([t.n,t.t,t.sp,t.mech,t.sx,t.ant].join(" "));return t});
+function spGroup(s){s=norm(s);if(/crian/.test(s))return"ped";if(/gestan/.test(s))return"ges";if(/idos/.test(s))return"ido";return"ad";}
+const CASES = DATA.cases.map((c,i)=>{c.id="c"+(i+1);c.g=spGroup(c.sp);c._s=norm([c.title,c.sp,c.spec,c.ctx].join(" "));return c});
+
+/* ================= Interações ================= */
+const IG=DATA.ig,INTER=DATA.inter;
+const GLBL={VASO_EPI:"Anestésicos com epinefrina",AINE:"AINEs",CORT:"Corticoides",ANTICOAG:"Anticoagulantes/antiagregantes",BZD:"Benzodiazepínicos",OPIOIDE:"Opioides",SEROT:"Serotoninérgicos",TRICICL:"Tricíclicos",CYP3A_INIB:"Inibidores do CYP3A4",AZOL_SIST:"Azóis",MACRO:"Macrolídeos",QT:"Prolongadores de QT",METHB:"Indutores de meta-hemoglobina",SEDATIVO:"Sedativos",IMUNOSSUP:"Imunossupressores",DIABET:"Antidiabéticos"};
+const EVL={B:"Bula/diretriz",V:"Estudos clínicos",H:"Farmacologia/relatos"};
+function inSide(side,name){return side===name||(IG[side]&&IG[side].includes(name))}
+function sideLbl(side){return IG[side]?(GLBL[side]||side):side}
+function interPairs(names){const out=[],seen=new Set();
+  for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){const x=names[i],y=names[j];if(x===y)continue;
+    INTER.forEach((r,k)=>{const hit=(inSide(r.a,x)&&inSide(r.b,y))||(inSide(r.a,y)&&inSide(r.b,x));const key=k+"|"+[x,y].sort().join("|");if(hit&&!seen.has(key)){seen.add(key);out.push({r,x,y})}})}
+  const o={Grave:0,Moderada:1,Leve:2};return out.sort((p,q)=>o[p.r.sev]-o[q.r.sev])}
+function interFor(name){return INTER.filter(r=>inSide(r.a,name)||inSide(r.b,name)).map(r=>({r,other:inSide(r.a,name)?r.b:r.a}))}
+function sevTag(s){return '<span class="tag '+(s==="Grave"?"t-bad":s==="Moderada"?"t-warn":"t-info")+'">'+s+'</span>'}
+function interCard(p){const r=p.r;return '<div class="card" style="border-left:4px solid '+(r.sev==="Grave"?"var(--bad)":r.sev==="Moderada"?"var(--warn)":"var(--info)")+'"><div class="row wrapf" style="gap:6px">'+sevTag(r.sev)+'<span class="tag t-cls">'+EVL[r.ev]+'</span></div><h3 style="margin-top:8px">'+esc(p.x?p.x+" + "+p.y:sideLbl(p.other))+'</h3>'+(p.other&&IG[p.other]?'<div class="xs muted" style="margin-top:2px">'+esc(IG[p.other].join(", "))+'</div>':"")+'<div class="kv" style="margin-top:10px">'+kv("Efeito",r.eff)+kv("Mecanismo",r.mech)+kv("Conduta",r.cond)+'</div></div>'}
+
+/* ================= State ================= */
+const S = {
+  q:"",sp:store.get("medSp",""),cls:"",ctl:"",
+  favs:new Set(store.get("favs",[])),recent:store.get("recent",[]),
+  calcSp:store.get("calcSp","ped"),calcW:store.get("calcW",{}),calcDrug:"",
+  toxT:"",caseSp:"",caseQ:"",done:new Set(store.get("doneCases",[])),
+  rx:store.get("rx",{items:[],pat:{},tut:{}}),
+  doc:store.get("doc",{nome:"",crmv:"",clinica:"",end:"",tel:""}),tooth:"",odSet:"perm"
+};
+function saveFavs(){store.set("favs",[...S.favs])}
+function toggleFav(id){S.favs.has(id)?S.favs.delete(id):S.favs.add(id);saveFavs();toast(S.favs.has(id)?"Adicionado aos favoritos":"Removido dos favoritos");route()}
+function pushRecent(id){S.recent=[id,...S.recent.filter(x=>x!==id)].slice(0,8);store.set("recent",S.recent)}
+function weightFor(sp){return S.calcW[sp]!=null?S.calcW[sp]:SPM[sp].w}
+
+/* ================= Theme ================= */
+function applyTheme(){const t=store.get("theme","auto");const r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t);
+  const dark=t==="dark"||(t==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);document.getElementById("themeBtn").innerHTML=dark?ic("sun"):ic("moon")}
+function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);store.set("theme",dark?"light":"dark");applyTheme()}
+
+/* ================= Router ================= */
+const AFTER=[];
+const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diagnosticos","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Urgências","alert"]];
+const SIDE=NAV.concat([["#/emergencia","Emergências","cross"],["#/prontuario","Prontuário e fotos","camera"],["#/imagem","Exames de imagem","xray"],["#/materiais","Materiais dentários","layers"],["#/estomato","Estomatologia","eye"],["#/casos","Casos clínicos","book"],["#/periograma","Periograma","chart"],["#/odontograma","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+function goBack(){if(history.length>1)history.back();else location.hash="#/"}
+function route(){
+  const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
+  const page=parts[0]||"";const arg=parts[1]||"";
+  const app=document.getElementById("app");
+  let html="",sub="Farmacologia & Clínica Odontológica",isSub=false;
+  switch(page){
+    case "":html=vHome();break;
+    case "bulario":if(arg){html=vDrug(arg);isSub=true;sub="Bulário"}else{html=vMeds();sub="Bulário Odontológico"}break;
+    case "calc":html=vCalc(arg||"dose",parts[2]);sub="Calculadoras Clínicas";break;
+    case "tox":if(arg){html=vToxD(arg);isSub=true;sub="Urgências médicas"}else{html=vTox();sub="Urgências no Consultório"}break;
+    case "odontograma":html=vOdonto();sub="Odontograma";break;
+    case "diagnosticos":if(arg){html=vDiag(arg);isSub=true;sub="Diagnóstico"}else{html=vDiags();sub="Diagnósticos"}break;
+    case "periograma":html=vPerio();sub="Periograma";break;
+    case "emergencia":html=vEmergO(arg,parts[2]);isSub=!!parts[2];sub="Emergências";break;
+    case "prontuario":html=vPront(arg,parts[2]);isSub=!!arg;sub="Prontuário";break;
+    case "imagem":html=vImg(arg);sub="Exames de imagem";break;
+    case "materiais":html=vMat(arg);isSub=!!arg;sub="Materiais dentários";break;
+    case "estomato":html=vStom(arg,parts[2]);isSub=!!arg;sub="Estomatologia";break;
+    case "casos":if(arg){html=vCase(arg);isSub=true;sub="Caso Clínico"}else{html=vCases();sub="Casos Clínicos"}break;
+    case "receita":html=vRx();sub="Receituário";break;
+    case "favoritos":html=vFavs();sub="Favoritos";break;
+    case "legislacao":html=vReg();sub="Legislação & Receituário";break;
+    case "ajustes":html=vSettings();sub="Ajustes";break;
+    default:html=vHome();
+  }
+  app.innerHTML=html;
+  AFTER.splice(0).forEach(fn=>{try{fn()}catch(e){console.error(e)}});
+  document.getElementById("topSub").textContent=sub;
+  const lb=document.getElementById("logoutBtn");if(lb)lb.style.display=(typeof AUTH_ON!=="undefined"&&AUTH_ON&&store.get("auth",null))?"flex":"none";
+  document.getElementById("top").classList.toggle("sub",isSub);
+  const base="#/"+page;
+  const mk=(arr,cls)=>arr.map(([href,l,i])=>'<a href="'+href+'" class="'+((href===base||(href==="#/"&&page===""))?"on":"")+'">'+ic(i,cls?20:22)+'<span>'+l+'</span></a>').join("");
+  document.getElementById("dock").innerHTML=mk(NAV);
+  document.getElementById("side").innerHTML=mk(SIDE,1);
+  if(!route._keep)window.scrollTo(0,0);route._keep=false;
+  if(page==="calc")calcRun();
+}
+window.addEventListener("hashchange",route);
+function rerender(){route._keep=true;route()}
+
+/* ================= Components ================= */
+function labInfo(d,sp){return{on:true,tag:"",why:""}}
+function ctlTag(c){return c&&CTL[c]?'<span class="tag '+CTL[c].c+'">'+CTL[c].s+'</span>':""}
+function clsTag(c){return CLS[c]?'<span class="tag t-cls">'+CLS[c].n+'</span>':""}
+function spIcons(d){return SP.filter(s=>d.d[s.id]).map(s=>s.e).join("")}
+function doseText(d,sp){const e=d.d[sp];if(!e)return"";const u=UNIT[d.u||""];
+  if(e[0]==null)return e[4]||"Ver observações";
+  return (e[0]===e[1]?fmt(e[0]):fmt(e[0])+"–"+fmt(e[1]))+" "+u.k;}
+function drugItem(d){
+  const spTxt=S.sp&&d.d[S.sp]?'<div class="sm" style="margin-top:6px"><b>'+SPM[S.sp].e+" "+esc(doseText(d,S.sp))+'</b> <span class="muted">· '+esc(d.d[S.sp][2]||"")+" · "+esc(d.d[S.sp][3]||"")+'</span></div>':(S.sp&&d.x[S.sp]?'<div class="sm" style="margin-top:6px;color:var(--bad)"><b>⛔ '+SPM[S.sp].n+":</b> "+esc(d.x[S.sp])+'</div>':"");
+  return '<a class="item" href="#/bulario/'+d.id+'"><div class="row between"><div class="t">'+esc(d.n)+'</div>'+(S.favs.has(d.id)?'<span style="color:var(--copper)">'+ic("starf",18)+'</span>':"")+'</div><div class="s">'+esc(d.b)+'</div>'+spTxt+
+  '<div class="tags">'+clsTag(d.c)+ctlTag(d.ctl)+'<span class="spi" title="Perfis com posologia">'+spIcons(d)+'</span></div></a>';
+}
+
+/* ================= Home ================= */
+function vHome(){
+  const day=Math.floor(Date.now()/864e5);const cd=CASES[day%CASES.length];
+  const fav=[...S.favs].map(id=>DM[id]).filter(Boolean).slice(0,6);
+  const rec=S.recent.map(id=>DM[id]).filter(Boolean).slice(0,6);
+  return '<section class="hero"><img src="'+LOGO+'" alt="" /><div style="flex:1;min-width:0;width:100%"><h1>Clínica Odonto Pro</h1><p>Bulário odontológico, anestésicos, urgências, odontograma e casos clínicos — funciona offline.</p>'+
+  '<div class="search">'+ic("search")+'<input class="inp" placeholder="Buscar: articaína, amoxicilina, alveolite, anafilaxia..." onfocus="openSearch(this.value);this.blur()" readonly /></div></div></section>'+
+  '<div class="stats"><div class="stat"><b>'+DRUGS.length+'</b><span>fármacos e produtos</span></div><div class="stat"><b>'+TOX.length+'</b><span>urgências médicas</span></div><div class="stat"><b>'+INTER.length+'</b><span>regras de interação</span></div><div class="stat"><b>'+CASES.length+'</b><span>casos clínicos</span></div></div>'+
+  '<div class="sec-title"><h2>Ferramentas</h2></div><div class="tiles">'+
+  tile("#/emergencia","cross","c3","Emergências","RCP · doses · trauma dentário")+tile("#/prontuario","camera","c2","Prontuário","Evolução e fotos pelo celular")+
+  tile("#/imagem","xray","c5","Exames de imagem","Requisição: panorâmica, tomografia")+tile("#/materiais","layers","c7","Materiais dentários","Restauração, endodontia, prótese")+
+  tile("#/calc/anest","calc","c1","Anestésicos locais","Dose máxima em tubetes")+tile("#/odontograma","tooth","c6","Odontograma","Anatomia e anestesia por dente")+
+  tile("#/calc/profi","shield","c4","Profilaxia antibiótica","Endocardite (AHA)")+tile("#/calc/emerg","heart","c3","Kit de emergência","Doses por peso")+
+  tile("#/calc/dose","drop","c5","Doses pediátricas","mg/kg → mL e gotas")+tile("#/calc/inter","alert","c2","Interações","Varfarina, epinefrina, AINEs...")+
+  tile("#/tox","alert","c3","Urgências","Síncope, anafilaxia, LAST")+tile("#/receita","file","c8","Receituário","Com CRO e 2 vias")+
+  tile("#/estomato","eye","c7","Estomatologia","Atlas, diferencial, biópsia, câncer")+tile("#/diagnosticos","search","c5","Diagnósticos","Com ilustrações e assistente")+tile("#/periograma","chart","c6","Periograma","Gráfico e estadiamento")+
+  tile("#/casos","book","c4","Casos clínicos","Modo estudo")+tile("#/diagnosticos/assistente","shield","c7","Assistente pulpar","Testes → diagnóstico AAE")+'</div>'+
+  '<div class="sec-title"><h2>Bulário por perfil de paciente</h2></div><div class="sp-grid">'+SP.slice(0,5).map(s=>'<a class="sp-btn" href="#/bulario" onclick="setMedSp(\''+s.id+'\')"><em>'+s.e+'</em>'+s.n+'</a>').join("")+'</div>'+
+  (fav.length?'<div class="sec-title"><h2>Favoritos</h2><a class="btn sm ghost" href="#/favoritos">Ver todos</a></div><div class="list">'+fav.map(drugItem).join("")+'</div>':"")+
+  (rec.length?'<div class="sec-title"><h2>Vistos recentemente</h2></div><div class="list">'+rec.map(drugItem).join("")+'</div>':"")+
+  '<div class="sec-title"><h2>Caso do dia</h2><a class="btn sm ghost" href="#/casos">Todos</a></div><a class="item" href="#/casos/'+cd.id+'"><div class="xs muted" style="font-weight:800">'+esc(cd.sp)+' · '+esc(cd.spec)+'</div><div class="t" style="margin-top:4px">'+esc(cd.title)+'</div><div class="sm muted" style="margin-top:6px">'+esc(cd.ctx.slice(0,170))+'…</div></a>'+
+  disclaimer();
+}
+function tile(h,i,c,t,s){return '<a class="tile" href="'+h+'"><div class="ic '+c+'">'+ic(i)+'</div><b>'+t+'</b><span>'+s+'</span></a>'}
+function disclaimer(){return '<p class="disc">Ferramenta de apoio à decisão clínica para cirurgiões-dentistas e estudantes. Conteúdo baseado em referências de terapêutica odontológica (ex.: Andrade — Terapêutica Medicamentosa em Odontologia; Malamed — Manual de Anestesia Local; diretrizes AHA/ADA) e pode variar entre fontes — confira a bula, a legislação vigente e o julgamento clínico. Não substitui avaliação profissional.</p>'}
+function setMedSp(s){S.sp=s;store.set("medSp",s)}
+
+/* ================= Bulário ================= */
+function filteredDrugs(){
+  const q=norm(S.q).trim().split(/\s+/).filter(Boolean);
+  return DRUGS.filter(d=>(!S.cls||d.c===S.cls)&&(!S.sp||d.d[S.sp]||d.x[S.sp])&&(!S.ctl||(S.ctl==="ctl"?["A1","B1","C1","CTL"].includes(d.ctl):d.ctl===S.ctl))&&q.every(w=>d._s.includes(w)));
+}
+function vMeds(){
+  const clsCount={};DRUGS.forEach(d=>clsCount[d.c]=(clsCount[d.c]||0)+1);
+  return '<div class="stack"><div class="row between"><h1>Bulário</h1><span class="muted sm" id="medCount"></span></div>'+
+  '<div class="search">'+ic("search")+'<input class="inp" id="medQ" value="'+esc(S.q)+'" placeholder="Nome, marca comercial ou indicação" oninput="S.q=this.value;medList()" /></div>'+
+  '<div class="chips">'+'<button class="chip '+(!S.sp?"on":"")+'" onclick="S.sp=\'\';store.set(\'medSp\',\'\');rerender()">Todos os perfis</button>'+SP.map(s=>'<button class="chip '+(S.sp===s.id?"on":"")+'" onclick="S.sp=\''+s.id+'\';store.set(\'medSp\',S.sp);rerender()">'+s.e+" "+s.n+'</button>').join("")+'</div>'+
+  '<div class="chips"><button class="chip '+(!S.cls?"on":"")+'" onclick="S.cls=\'\';rerender()">Todas as classes</button>'+Object.keys(CLS).filter(k=>clsCount[k]).map(k=>'<button class="chip '+(S.cls===k?"on":"")+'" onclick="S.cls=\''+k+'\';rerender()">'+CLS[k].n+' <span class="muted">'+clsCount[k]+'</span></button>').join("")+'</div>'+
+  '<div class="chips">'+[["","Todos"],["ctl","Controlados"],["A1","A1 Amarela"],["B1","B1 Azul"],["C1","C1"],["ATB","Antimicrobianos"]].map(([k,l])=>'<button class="chip '+(S.ctl===k?"on":"")+'" onclick="S.ctl=\''+k+'\';rerender()">'+l+'</button>').join("")+'</div>'+
+  '<div class="list" id="medList"></div></div>'+disclaimer()+(AFTER.push(medList),"");
+}
+function medList(){
+  const el=document.getElementById("medList");if(!el)return;const r=filteredDrugs();
+  document.getElementById("medCount").textContent=r.length+" de "+DRUGS.length;
+  el.innerHTML=r.length?r.map(drugItem).join(""):'<div class="empty">Nenhum fármaco encontrado.<br/>Tente outro termo ou limpe os filtros.</div>';
+}
+function vDrug(id){
+  const d=DM[id];if(!d)return'<div class="empty">Fármaco não encontrado.</div>';
+  pushRecent(id);
+  const rows=SP.filter(s=>d.d[s.id]).map(s=>{const e=d.d[s.id];
+    return '<div class="dose-row"><div class="e">'+s.e+'</div><div><div class="row between wrapf" style="gap:6px"><div><div class="xs muted" style="font-weight:800">'+s.n.toUpperCase()+'</div><div class="d">'+esc(doseText(d,s.id))+'</div></div>'+
+    (e[0]!=null?'<a class="btn sm" href="#/calc/dose/'+d.id+'" onclick="S.calcSp=\''+s.id+'\';store.set(\'calcSp\',S.calcSp)">'+ic("calc",16)+' Calcular</a>':"")+'</div>'+
+    '<div class="m">'+esc([e[2],e[3]].filter(Boolean).join(" · "))+'</div><div style="margin-top:5px">'+labInfo(d,s.id).tag+'</div>'+(e[4]&&e[0]!=null?'<div class="o">'+esc(e[4])+'</div>':"")+'</div></div>'}).join("");
+  const xs=Object.keys(d.x).filter(k=>SPM[k]);
+  return '<div class="stack"><div class="card"><div class="dhead"><div style="min-width:0"><h1>'+esc(d.n)+'</h1><div class="muted sm" style="margin-top:4px">'+esc(d.b)+'</div></div>'+
+  '<button class="tbtn" style="background:var(--surface-2);color:'+(S.favs.has(d.id)?"var(--copper)":"var(--muted)")+';border-color:var(--line)" onclick="toggleFav(\''+d.id+'\')" aria-label="Favoritar">'+ic(S.favs.has(d.id)?"starf":"star")+'</button></div>'+
+  '<div class="row wrapf" style="margin-top:10px;gap:6px">'+clsTag(d.c)+ctlTag(d.ctl)+'</div>'+
+  (d.ctl?'<div class="note '+(d.ctl==="ATB"?"ok":"warn")+'" style="margin-top:12px">'+esc(CTL[d.ctl].l)+'</div>':"")+
+  '<div class="actions" style="margin-top:12px"><button class="btn sm" onclick="addRxDrug(\''+d.id+'\')">'+ic("plus",16)+' Receita</button><button class="btn sm" onclick="copyDrug(\''+d.id+'\')">'+ic("copy",16)+' Copiar</button></div></div>'+
+  (xs.length?'<div class="note bad"><b>⛔ Contraindicado / evitar:</b><br/>'+xs.map(k=>SPM[k].e+" <b>"+SPM[k].n+":</b> "+esc(d.x[k])).join("<br/>")+'</div>':"")+
+  (rows?'<div class="card"><h2 style="margin-bottom:4px">Posologia por perfil de paciente</h2>'+rows+'</div>':'<div class="note info">Uso conforme técnica/produto — veja as observações abaixo.</div>')+
+  (function(){const L=interFor(d.n);return L.length?'<div class="card"><h2>Interações ('+L.length+')</h2><p class="xs muted" style="margin:4px 0 8px">Use o verificador para checar uma combinação específica.</p><div class="stack">'+L.map(interCard).join("")+'</div><a class="btn sm" style="margin-top:10px" href="#/calc/inter" onclick="S.interSel=[\''+d.id+'\']">Verificar com outros fármacos</a></div>':''})()+'<div class="card kv">'+kv("Apresentações",d.p)+kv("Mecanismo de ação",d.m)+kv("Indicações",d.i)+kv("Contraindicações e precauções",d.ci)+kv("Efeitos adversos e alertas",d.ae)+(d.wd?kv("Carência / observações regulatórias",d.wd):"")+'</div></div>'+disclaimer();
+}
+function kv(k,v){return v?'<div><div class="k">'+k+'</div><div class="v">'+esc(v)+'</div></div>':""}
+function copyDrug(id){const d=DM[id];const L=[d.n+" ("+d.b+")","Classe: "+(CLS[d.c]?CLS[d.c].n:""),d.ctl?"Controle: "+CTL[d.ctl].l:"","Apresentações: "+d.p,"Indicações: "+d.i,"Doses:"];
+  SP.forEach(s=>{const e=d.d[s.id];if(e)L.push("• "+s.n+": "+doseText(d,s.id)+" "+[e[2],e[3]].filter(Boolean).join(" ")+(e[4]&&e[0]!=null?" ("+e[4]+")":""))});
+  Object.keys(d.x).forEach(k=>SPM[k]&&L.push("⛔ "+SPM[k].n+": "+d.x[k]));L.push("Contraindicações: "+d.ci,"Efeitos adversos: "+d.ae);copy(L.filter(Boolean).join("\n"))}
+
+/* ================= Favoritos ================= */
+function vFavs(){const f=[...S.favs].map(id=>DM[id]).filter(Boolean);
+  return '<div class="stack"><h1>Favoritos</h1>'+(f.length?'<div class="list">'+f.map(drugItem).join("")+'</div>':'<div class="card empty">Toque na ⭐ de qualquer fármaco para salvá-lo aqui.</div>')+'</div>'}
+
+/* ================= Busca global ================= */
+function openSearch(v){const o=document.getElementById("searchOv");o.classList.add("show");const i=document.getElementById("gq");i.value=v||"";renderSearch(i.value);setTimeout(()=>i.focus(),30)}
+function closeSearch(){document.getElementById("searchOv").classList.remove("show")}
+function renderSearch(v){
+  const q=norm(v).trim().split(/\s+/).filter(Boolean);const el=document.getElementById("gres");
+  if(!q.length){el.innerHTML='<div class="muted sm">Dica: busque por princípio ativo, nome comercial (ex.: <b>Septanest</b>, <b>Clavulin</b>), indicação (<b>alveolite</b>), urgência (<b>anafilaxia</b>) ou caso (<b>terceiro molar</b>).</div>';return}
+  const m=o=>q.every(w=>o._s.includes(w));
+  const dr=DRUGS.filter(m).slice(0,25),tx=TOX.filter(m).slice(0,10),cs=CASES.filter(m).slice(0,10),st=(typeof STOMS!=='undefined'?STOMS:[]).filter(m).slice(0,10);
+  const go="onclick=\"closeSearch()\"";
+  el.innerHTML=(dr.length?'<div class="xs muted" style="font-weight:800;margin:6px 2px">MEDICAMENTOS ('+dr.length+')</div><div class="list">'+dr.map(d=>'<a class="item" '+go+' href="#/bulario/'+d.id+'"><div class="t">'+esc(d.n)+'</div><div class="s">'+esc(d.b)+'</div></a>').join("")+'</div>':"")+
+  (tx.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">TOXICOLOGIA ('+tx.length+')</div><div class="list">'+tx.map(t=>'<a class="item" '+go+' href="#/tox/'+t.id+'"><div class="row"><span class="sev '+t.sev+'"></span><div class="t">'+esc(t.n)+'</div></div><div class="s">'+esc(t.t+" · "+t.sp)+'</div></a>').join("")+'</div>':"")+
+  (st.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">ESTOMATOLOGIA ('+st.length+')</div><div class="list">'+st.map(l=>'<a class="item" '+go+' href="#/estomato/l/'+l.id+'"><div class="t">'+esc(l.n)+'</div><div class="s">'+esc(l.el)+'</div></a>').join("")+'</div>':"")+
+  (cs.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">CASOS CLÍNICOS ('+cs.length+')</div><div class="list">'+cs.map(c=>'<a class="item" '+go+' href="#/casos/'+c.id+'"><div class="t">'+esc(c.title)+'</div><div class="s">'+esc(c.sp+" · "+c.spec)+'</div></a>').join("")+'</div>':"")+
+  (!dr.length&&!tx.length&&!cs.length&&!st.length?'<div class="empty">Nada encontrado para “'+esc(v)+'”.</div>':"");
+}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSearch();if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();openSearch()}});
+
+/* ================= Calculadoras ================= */
+const TOOLS=[["anest","Anestésicos","calc"],["dose","Doses pediátricas","drop"],["profi","Profilaxia ATB","shield"],["emerg","Emergências","heart"],["inter","Interações","alert"],["cortic","Corticoides","flask"],["conv","Diluições","swap"]];
+function vCalc(tool,arg){if(tool==="dose"&&!arg)tool=tool;if(!CALC[tool])tool="anest";
+  if(tool==="dose"&&arg&&DM[arg])S.calcDrug=arg;
+  return '<div class="stack"><h1>Calculadoras</h1><div class="tools">'+TOOLS.map(([k,l,i])=>'<a class="tool '+(k===tool?"on":"")+'" href="#/calc/'+k+'">'+ic(i,18)+l+'</a>').join("")+'</div>'+
+  '<div class="card" id="calcBox">'+(CALC[tool]||CALC.dose)()+'</div></div>'+disclaimer();
+}
+function spSelect(id,val,onch){return '<select class="inp" id="'+id+'" onchange="'+onch+'">'+SP.map(s=>'<option value="'+s.id+'" '+(s.id===val?"selected":"")+'>'+s.e+" "+s.n+'</option>').join("")+'</select>'}
+function f(id,label,val,extra){return '<div class="field"><label for="'+id+'">'+label+'</label><input class="inp" type="number" inputmode="decimal" step="any" id="'+id+'" value="'+val+'" oninput="calcRun()" '+(extra||"")+' /></div>'}
+function gv(id){const e=document.getElementById(id);return e?num(e.value):0}
+function bsa(sp,w){return SPM[sp].k*Math.pow(w,2/3)/100}
+let calcRun=()=>{};
+const CALC={
+anest(){calcRun=calcAnest;const w=S.calcW.ad!=null?S.calcW.ad:70;
+  return '<h2>Dose máxima de anestésico local</h2><p class="muted sm" style="margin:4px 0 12px">Calcula o máximo seguro em mg e em tubetes de 1,8 mL pelo peso, considerando também o limite do vasoconstritor. Use sempre a MENOR dose eficaz, com aspiração.</p><div class="grid g2m">'+
+  '<div class="field"><label>Anestésico</label><select class="inp" id="aA" onchange="calcRun()">'+AN.map((a,i)=>'<option value="'+i+'">'+a.n+'</option>').join("")+'</select></div>'+
+  f("aW","Peso do paciente (kg)",w)+'<div class="field"><label>Condição cardiovascular</label><select class="inp" id="aC" onchange="calcRun()"><option value="0.2">Saudável (ASA I/II) — máx. 0,2 mg de epinefrina</option><option value="0.04">Cardiopata/hipertenso controlado/betabloqueador — máx. 0,04 mg</option></select></div>'+
+  f("aU","Tubetes já utilizados nesta sessão",0)+'</div><div class="out" id="aOut" style="margin-top:14px"></div>'},
+profi(){calcRun=calcProfi;
+  return '<h2>Profilaxia antibiótica — endocardite infecciosa</h2><p class="muted sm" style="margin:4px 0 12px">Diretriz AHA 2021. Indicada apenas para condições cardíacas de ALTO risco + procedimentos que manipulam gengiva, região periapical ou perfuram mucosa. Dose única 30–60 min antes (até 2 h depois se esquecida).</p>'+
+  '<div class="card" style="background:var(--surface-2)"><b>Alto risco:</b> prótese valvar (inclusive transcateter) ou material protético em reparo valvar; endocardite prévia; cardiopatia congênita cianótica não corrigida ou corrigida com defeito residual/material protético (primeiros 6 meses); transplante cardíaco com valvopatia.<br/><span class="muted sm">NÃO indicada: prolapso de valva mitral, sopro inocente, marca-passo, stent coronário, cirurgia de revascularização.</span></div>'+
+  '<div class="grid g2m" style="margin-top:12px">'+f("pW","Peso (kg)",S.calcW.ped!=null?S.calcW.ped:20)+'<div class="field"><label>Situação</label><select class="inp" id="pS" onchange="calcRun()"><option value="vo">Via oral — sem alergia à penicilina</option><option value="al">Alérgico à penicilina — via oral</option><option value="al2">Alérgico com história de anafilaxia/angioedema/urticária</option><option value="iv">Não consegue tomar VO</option></select></div></div><div class="out" id="pOut" style="margin-top:14px"></div>'},
+emerg(){calcRun=calcEmerg;
+  return '<h2>Kit de emergência do consultório</h2><p class="muted sm" style="margin:4px 0 12px">Doses calculadas pelo peso. Em qualquer emergência grave: chamar SAMU (192), O2 e monitorar sinais vitais.</p><div class="grid g2m">'+f("eW","Peso (kg)",S.calcW.ad!=null?S.calcW.ad:70)+'</div><div class="scroll-x" style="margin-top:12px"><div id="eOut"></div></div>'},
+cortic(){calcRun=calcCort;
+  return '<h2>Equivalência de corticoides</h2><p class="muted sm" style="margin:4px 0 12px">Doses equipotentes em efeito glicocorticoide.</p><div class="grid g2m"><div class="field"><label>Corticoide de origem</label><select class="inp" id="kO" onchange="calcRun()">'+CO.map((c,i)=>'<option value="'+i+'" '+(i===4?"selected":"")+'>'+c[0]+'</option>').join("")+'</select></div>'+f("kD","Dose (mg)",8)+'</div><div id="kOut" style="margin-top:12px"></div>'},
+inter(){calcRun=()=>{};const sel=(S.interSel||[]).filter(id=>DM[id]);S.interSel=sel;const pairs=interPairs(sel.map(id=>DM[id].n));
+  return '<h2>Verificador de interações</h2><p class="muted sm" style="margin:4px 0 12px">Adicione 2 ou mais fármacos. O sistema verifica '+INTER.length+' regras (pares e classes farmacológicas) com mecanismo, conduta e nível de evidência.</p>'+
+  '<div class="search">'+ic("search")+'<input class="inp" id="iq" placeholder="Adicionar fármaco..." oninput="interSug(this.value)" autocomplete="off" /></div><div id="isug" class="list" style="margin-top:6px"></div>'+
+  '<div class="row wrapf" style="gap:6px;margin-top:10px">'+sel.map(id=>'<button class="chip on" onclick="S.interSel=S.interSel.filter(x=>x!==\''+id+'\');rerender()">'+esc(DM[id].n)+' ✕</button>').join("")+(sel.length?'<button class="chip" onclick="S.interSel=[];rerender()">Limpar</button>':"")+(S.rx.items.length?'<button class="chip" onclick="interFromRx()">+ Itens da receita</button>':"")+'</div>'+
+  (sel.length<2?'<div class="empty">Adicione pelo menos 2 fármacos.</div>':pairs.length?'<div class="note bad" style="margin-top:12px"><b>'+pairs.length+' interação(ões) encontrada(s)</b> — '+pairs.filter(p=>p.r.sev==="Grave").length+' grave(s).</div><div class="stack" style="margin-top:10px">'+pairs.map(interCard).join("")+'</div>':'<div class="note ok" style="margin-top:12px">Nenhuma interação cadastrada entre esses fármacos. Isso não exclui interações não descritas — mantenha o julgamento clínico.</div>')},
+dose(){
+  const sp=S.calcSp;const list=DRUGS.filter(d=>d.d[sp]&&d.d[sp][0]!=null);
+  if(!S.calcDrug||!DM[S.calcDrug]||!DM[S.calcDrug].d[sp]||DM[S.calcDrug].d[sp][0]==null)S.calcDrug=(list.find(d=>d.id===S.calcDrug)||list[0]||{}).id||"";
+  const d=DM[S.calcDrug];const u=d?UNIT[d.u||"mg"]:UNIT.mg;const e=d?d.d[sp]:null;
+  calcRun=calcDose;
+  return '<h2>Doses por peso</h2><p class="muted sm" style="margin:4px 0 12px">Para crianças (e emergências). Escolha o perfil, o peso e o fármaco. Ajuste a dose dentro da faixa e a concentração do produto que você tem em mãos.</p>'+
+  '<div class="grid g2m"><div class="field"><label>Perfil</label>'+spSelect("cSp",sp,"S.calcSp=this.value;store.set('calcSp',S.calcSp);rerender()")+'</div>'+
+  '<div class="field"><label for="cW">Peso (kg)</label><div class="wstep"><button class="btn" onclick="stepW(-1)">−</button><input class="inp" type="number" inputmode="decimal" step="any" id="cW" value="'+weightFor(sp)+'" oninput="S.calcW[S.calcSp]=num(this.value);store.set(\'calcW\',S.calcW);calcRun()" /><button class="btn" onclick="stepW(1)">+</button></div></div></div>'+
+  '<div class="field" style="margin-top:12px"><label>Fármaco ('+list.length+' com dose por kg para '+SPM[sp].n+')</label><div class="search">'+ic("search")+'<input class="inp" id="cFind" placeholder="Filtrar lista..." oninput="filterDoseSel(this.value)" /></div>'+
+  '<select class="inp" id="cDrug" style="margin-top:8px" onchange="S.calcDrug=this.value;rerender()">'+list.map(x=>'<option value="'+x.id+'" '+(x.id===S.calcDrug?"selected":"")+'>'+esc(x.n)+'</option>').join("")+'</select></div>'+
+  (d?'<div class="note info" style="margin-top:12px"><b>'+esc(d.n)+'</b> — '+SPM[sp].e+" "+esc(doseText(d,sp))+(e[2]?" · "+esc(e[2]):"")+(e[3]?" · "+esc(e[3]):"")+(e[4]?'<br/>'+esc(e[4]):"")+'</div>'+
+  '<div class="grid g2m" style="margin-top:12px"><div class="field"><label for="cDose">Dose escolhida ('+u.k+')</label><input class="inp" type="number" inputmode="decimal" step="any" id="cDose" value="'+(e[5]!=null?e[5]:e[0])+'" oninput="syncRange(this.value)" />'+
+  (e[0]!==e[1]?'<input type="range" id="cRange" min="'+e[0]+'" max="'+e[1]+'" step="'+((e[1]-e[0])/100)+'" value="'+(e[5]!=null?e[5]:e[0])+'" oninput="document.getElementById(\'cDose\').value=+(+this.value).toPrecision(3);calcRun()" /><div class="row wrapf" style="gap:6px;margin-top:4px">'+[["mín.",e[0]]].concat(e[5]!=null&&e[5]!==e[0]&&e[5]!==e[1]?[["usual",e[5]]]:[]).concat([["máx.",e[1]]]).map(([l,v])=>'<button class="chip" onclick="setDose('+v+')">'+l+' '+fmt(v)+'</button>').join("")+'</div><div class="xs muted" style="margin-top:4px">'+(e[5]!=null?'Inicia na dose inicial usual.':'Inicia na dose mínima (conservadora).')+'</div>':"")+'</div>'+
+  (u.c?f("cConc","Concentração ("+u.c+")",d.conc||"",'placeholder="ex.: '+(d.conc||10)+'"')+f("cGt","Gotas por mL (conta-gotas)",d.gt||20):"")+
+  (["mg","mcg","m2"].includes(d.u||"mg")&&d.u!=="mcgmin"?f("cTab","Comprimido/cápsula ("+u.t+")",d.tab||"",'placeholder="opcional"'):"")+
+  (d.u==="mcgmin"?f("cBag","Volume da bolsa/seringa (mL)",250)+f("cRate","Taxa da infusão (mL/h)",10):"")+'</div>'+
+  '<div class="out" id="cOut" style="margin-top:14px"></div>'+
+  (Object.keys(d.x).length?'<div class="note bad" style="margin-top:10px">⛔ '+Object.keys(d.x).filter(k=>SPM[k]).map(k=>"<b>"+SPM[k].n+":</b> "+esc(d.x[k])).join(" · ")+'</div>':"")+
+  '<div class="actions" style="margin-top:12px"><a class="btn sm" href="#/bulario/'+d.id+'">'+ic("pill",16)+' Monografia</a><button class="btn sm" onclick="addRxFromCalc()">'+ic("plus",16)+' Receita</button><button class="btn sm" onclick="copy(document.getElementById(\'cOut\').innerText)">'+ic("copy",16)+' Copiar</button></div>':'<div class="empty">Para adultos as doses são fixas (veja cada monografia). Selecione <b>Criança</b> para calcular por peso.</div>');
+},
+cri(){calcRun=calcCRI;const sp=S.calcSp;
+  return '<h2>Infusão contínua (IC / CRI)</h2><p class="muted sm" style="margin:4px 0 12px">Calcula quanto fármaco adicionar à bolsa/seringa para a taxa desejada.</p><div class="grid g2m">'+
+  f("iW","Peso (kg)",weightFor(sp))+'<div class="field"><label>Unidade da dose</label><select class="inp" id="iU" onchange="calcRun()"><option value="mcgkgmin">mcg/kg/min</option><option value="mcgkgh">mcg/kg/h</option><option value="mgkgh">mg/kg/h</option><option value="mgkgd">mg/kg/dia</option><option value="uikgh">UI/kg/h</option></select></div>'+
+  f("iD","Dose",5)+f("iC","Concentração do fármaco (mg/mL ou UI/mL)",50)+f("iV","Volume da bolsa/seringa (mL)",250)+f("iR","Taxa de infusão (mL/h)",10)+'</div>'+
+  '<div class="chips" style="margin-top:12px">'+[["MLK cão (morfina-lidocaína-cetamina)","mlk"],["Fentanil","fen"],["Lidocaína","lid"],["Cetamina","ket"],["Dobutamina","dob"],["Noradrenalina","nor"],["Furosemida","fur"],["Dexmedetomidina","dex"]].map(([l,k])=>'<button class="chip" onclick="criPreset(\''+k+'\')">'+l+'</button>').join("")+'</div>'+
+  '<div class="out" id="iOut" style="margin-top:12px"></div>'},
+fluido(){calcRun=calcFluid;const sp=S.calcSp;
+  return '<h2>Fluidoterapia</h2><p class="muted sm" style="margin:4px 0 12px">Déficit (desidratação) + manutenção + perdas contínuas. Reavalie a cada 4–6 h.</p><div class="grid g2m">'+
+  '<div class="field"><label>Espécie</label>'+spSelect("fSp",sp,"S.calcSp=this.value;store.set('calcSp',S.calcSp);document.getElementById('fW').value=weightFor(S.calcSp);calcRun()")+'</div>'+f("fW","Peso (kg)",weightFor(sp))+
+  '<div class="field"><label>Desidratação estimada (%)</label><select class="inp" id="fD" onchange="calcRun()">'+[0,5,6,7,8,10,12].map(x=>'<option value="'+x+'" '+(x===6?"selected":"")+'>'+(x?x+"%":"Sem déficit")+(x===5?" — leve, só histórico":x===6?" — mucosas secas, TPC leve":x===8?" — turgor ↓, olhos fundos":x===10?" — taquicardia, pulso fraco":x===12?" — choque":"")+'</option>').join("")+'</select></div>'+
+  f("fT","Repor déficit em (horas)",12)+f("fL","Perdas contínuas estimadas (mL/dia)",0)+'<div class="field"><label>Equipo</label><select class="inp" id="fE" onchange="calcRun()"><option value="20">Macrogotas (20 gotas/mL)</option><option value="60">Microgotas (60 gotas/mL)</option></select></div></div>'+
+  '<div class="out" id="fOut" style="margin-top:14px"></div><div class="note warn" style="margin-top:10px"><b>Choque:</b> bolus de cristaloide 10–20 mL/kg (cão) ou 5–10 mL/kg (gato) em 15 min, reavaliar. Cardiopatas e gatos: taxas menores.</div>'},
+rcp(){calcRun=calcRCP;const sp=["dog","cat"].includes(S.calcSp)?S.calcSp:"dog";
+  return '<h2>RCP e drogas de emergência</h2><p class="muted sm" style="margin:4px 0 12px">Baseado nas diretrizes RECOVER (cães e gatos). Compressões 100–120/min, ciclos de 2 min, ventilação 10/min.</p><div class="grid g2m">'+
+  '<div class="field"><label>Espécie</label><select class="inp" id="rSp" onchange="calcRun()"><option value="dog" '+(sp==="dog"?"selected":"")+'>🐕 Cão</option><option value="cat" '+(sp==="cat"?"selected":"")+'>🐈 Gato</option></select></div>'+f("rW","Peso (kg)",weightFor(sp))+'</div><div class="scroll-x" style="margin-top:12px"><div id="rOut"></div></div>'},
+transf(){calcRun=calcTransf;
+  return '<h2>Transfusão sanguínea</h2><p class="muted sm" style="margin:4px 0 12px">Volume = peso × fator × (Ht desejado − Ht paciente) ÷ Ht doador. Gatos: tipagem SEMPRE (A/B/AB).</p><div class="grid g2m">'+
+  '<div class="field"><label>Espécie</label><select class="inp" id="tSp" onchange="calcRun()"><option value="90">🐕 Cão (fator 90)</option><option value="60">🐈 Gato (fator 60)</option><option value="80">🐎 Equino (fator 80)</option><option value="60">🐄 Bovino (fator 60)</option></select></div>'+
+  f("tW","Peso (kg)",weightFor(S.calcSp==="cat"?"cat":"dog"))+f("tP","Ht do paciente (%)",12)+f("tA","Ht desejado (%)",25)+f("tD","Ht da bolsa/doador (%)",45)+'</div><div class="out" id="tOut" style="margin-top:14px"></div>'},
+energia(){calcRun=calcRER;const sp=["dog","cat"].includes(S.calcSp)?S.calcSp:"dog";
+  return '<h2>Necessidade energética</h2><p class="muted sm" style="margin:4px 0 12px">RER = 70 × peso^0,75. Pacientes internados: iniciar com RER (33% no 1º dia em anoréxicos prolongados).</p><div class="grid g2m">'+
+  '<div class="field"><label>Espécie</label><select class="inp" id="eSp" onchange="eFactors();calcRun()"><option value="dog" '+(sp==="dog"?"selected":"")+'>🐕 Cão</option><option value="cat" '+(sp==="cat"?"selected":"")+'>🐈 Gato</option></select></div>'+
+  f("eW","Peso (kg) — use o peso ideal para obesos",weightFor(sp))+'<div class="field"><label>Condição</label><select class="inp" id="eF" onchange="calcRun()"></select></div>'+f("eK","Densidade do alimento (kcal/kg)",3800)+'</div><div class="out" id="eOut" style="margin-top:14px"></div>'+(AFTER.push(eFactors),"")},
+kcl(){calcRun=calcKCl;
+  return '<h2>Suplementação de potássio</h2><p class="muted sm" style="margin:4px 0 12px">Escala de Scott (cães e gatos). NUNCA exceder 0,5 mEq/kg/h. Homogeneizar bem a bolsa.</p><div class="grid g2m">'+
+  '<div class="field"><label>Potássio sérico (mEq/L)</label><select class="inp" id="kK" onchange="calcRun()"><option value="80|6">&lt; 2,0</option><option value="60|8">2,1 – 2,5</option><option value="40|12" selected>2,6 – 3,0</option><option value="28|18">3,1 – 3,5</option><option value="20|25">3,6 – 5,0 (manutenção)</option></select></div>'+
+  f("kW","Peso (kg)",weightFor(S.calcSp))+f("kV","Volume da bolsa (mL)",500)+'<div class="field"><label>Solução de KCl</label><select class="inp" id="kS" onchange="calcRun()"><option value="2.56">KCl 19,1% (2,56 mEq/mL)</option><option value="1.34">KCl 10% (1,34 mEq/mL)</option></select></div>'+f("kR","Taxa planejada (mL/h)",30)+'</div><div class="out" id="kOut" style="margin-top:14px"></div>'},
+bic(){calcRun=calcBic;
+  return '<h2>Déficit de bicarbonato</h2><p class="muted sm" style="margin:4px 0 12px">mEq = fator × peso × déficit de base. Indicado em geral se pH &lt; 7,1 ou HCO₃ &lt; 12 mEq/L. Repor 1/3 a 1/2 em 20–30 min e reavaliar gasometria.</p><div class="grid g2m">'+
+  '<div class="field"><label>Paciente</label><select class="inp" id="bF" onchange="calcRun()"><option value="0.3">Cão/gato/adulto (0,3)</option><option value="0.5">Neonato/filhote (0,5)</option><option value="0.6">Bezerro diarreico (0,6)</option></select></div>'+
+  f("bW","Peso (kg)",weightFor(S.calcSp))+f("bB","Déficit de base (BE negativo, em módulo)",12)+'</div><div class="out" id="bOut" style="margin-top:14px"></div>'},
+bsa(){calcRun=calcBSA;
+  return '<h2>Superfície corporal (m²)</h2><p class="muted sm" style="margin:4px 0 12px">m² = K × peso(kg)^(2/3) ÷ 100. Usada para quimioterápicos.</p><div class="grid g2m">'+
+  '<div class="field"><label>Espécie</label>'+spSelect("sSp",S.calcSp,"calcRun()")+'</div>'+f("sW","Peso (kg)",weightFor(S.calcSp))+f("sD","Dose do fármaco (mg/m²) — opcional",0)+'</div><div class="out" id="sOut" style="margin-top:14px"></div>'},
+conv(){calcRun=calcConv;
+  return '<h2>Conversões e diluições</h2><div class="grid g2m" style="margin-top:12px">'+f("vP","Solução em % (p/v)",2)+'<div class="out" id="vOut1"></div></div><div class="hr"></div><h3>Diluição (C1 × V1 = C2 × V2)</h3><div class="grid g2m" style="margin-top:10px">'+
+  f("vC1","Concentração inicial (mg/mL)",50)+f("vC2","Concentração final desejada (mg/mL)",5)+f("vV2","Volume final desejado (mL)",10)+'</div><div class="out" id="vOut2" style="margin-top:12px"></div>'}
+};
+function interSug(v){const q=norm(v).trim();const el=document.getElementById("isug");if(!q){el.innerHTML="";return}
+  el.innerHTML=DRUGS.filter(d=>d._s.includes(q)&&!(S.interSel||[]).includes(d.id)).slice(0,6).map(d=>'<a class="item" onclick="S.interSel=(S.interSel||[]).concat(\''+d.id+'\');rerender()"><div class="t">'+esc(d.n)+'</div><div class="s">'+esc(d.b)+'</div></a>').join("")}
+function interFromRx(){const ids=S.rx.items.map(i=>(DRUGS.find(d=>d.n===i.n)||{}).id).filter(Boolean);S.interSel=[...new Set((S.interSel||[]).concat(ids))];rerender()}
+const AN=[{n:"Lidocaína 2% c/ epinefrina 1:100.000",mg:36,max:7,abs:500,epi:0.018},{n:"Lidocaína 2% c/ epinefrina 1:200.000",mg:36,max:7,abs:500,epi:0.009},{n:"Lidocaína 2% sem vasoconstritor",mg:36,max:4.4,abs:300,epi:0},
+ {n:"Mepivacaína 3% sem vasoconstritor",mg:54,max:6.6,abs:400,epi:0},{n:"Mepivacaína 2% c/ epinefrina 1:100.000",mg:36,max:6.6,abs:400,epi:0.018},{n:"Articaína 4% c/ epinefrina 1:100.000",mg:72,max:7,abs:500,epi:0.018},
+ {n:"Articaína 4% c/ epinefrina 1:200.000",mg:72,max:7,abs:500,epi:0.009},{n:"Prilocaína 3% c/ felipressina",mg:54,max:8,abs:600,epi:0},{n:"Bupivacaína 0,5% c/ epinefrina 1:200.000",mg:9,max:1.3,abs:90,epi:0.009}];
+function calcAnest(){const a=AN[num(document.getElementById("aA").value)],w=gv("aW"),lim=num(document.getElementById("aC").value),used=gv("aU");const o=document.getElementById("aOut");if(!o)return;
+  S.calcW.ad=w;store.set("calcW",S.calcW);
+  const mg=Math.min(a.max*w,a.abs),tubAn=mg/a.mg,tubEpi=a.epi?lim/a.epi:Infinity,tub=Math.min(tubAn,tubEpi),rest=tub-used;
+  const lim2=tubEpi<tubAn;
+  o.innerHTML='<div class="lbl">Máximo nesta sessão</div><div class="big">'+fmt(Math.floor(tub*10)/10,1)+' tubetes</div><div class="sm muted">'+(lim2?"Limitado pelo vasoconstritor":"Limitado pelo anestésico")+'</div>'+
+  '<div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(mg,0)+' mg</b><span>dose máxima ('+fmt(a.max)+' mg/kg; teto '+a.abs+' mg)</span></div><div class="res"><b>'+fmt(tubAn,1)+'</b><span>tubetes pelo anestésico ('+a.mg+' mg/tubete)</span></div>'+
+  (a.epi?'<div class="res"><b>'+fmt(tubEpi,1)+'</b><span>tubetes pelo vasoconstritor ('+fmt(a.epi,3)+' mg/tubete; máx. '+lim+' mg)</span></div>':'<div class="res"><b>—</b><span>sem epinefrina</span></div>')+
+  '<div class="res"><b style="color:'+(rest<0?"var(--bad)":"inherit")+'">'+fmt(Math.max(rest,0),1)+'</b><span>tubetes restantes ('+fmt(used)+' usados)</span></div></div>'+
+  (rest<0?'<div class="note bad" style="margin-top:10px"><b>Dose máxima ULTRAPASSADA</b> — observe sinais de toxicidade (gosto metálico, zumbido, tremores, convulsão).</div>':"")+
+  (/Prilocaína/.test(a.n)?'<div class="note warn" style="margin-top:10px">Evitar em gestantes (felipressina) e em risco de meta-hemoglobinemia.</div>':"")+(/Articaína/.test(a.n)&&w<20?'<div class="note warn" style="margin-top:10px">Articaína: uso a partir de 4 anos.</div>':"")+(/Bupivacaína/.test(a.n)&&w<40?'<div class="note bad" style="margin-top:10px">Bupivacaína não é recomendada em crianças.</div>':"")+
+  '<div class="sm" style="margin-top:10px">Referência: Malamed. Doses máximas são limites, não alvos — idosos, hepatopatas e pacientes debilitados toleram menos.</div>';}
+function calcProfi(){const w=gv("pW"),s=document.getElementById("pS").value,o=document.getElementById("pOut");const kid=w<40;
+  const R={vo:[["Amoxicilina","2 g VO","50 mg/kg VO (máx. 2 g)",50]],al:[["Azitromicina","500 mg VO","15 mg/kg (máx. 500 mg)",15],["Claritromicina","500 mg VO","15 mg/kg (máx. 500 mg)",15],["Doxiciclina","100 mg VO","< 45 kg: 2,2 mg/kg (máx. 100 mg)",2.2],["Cefalexina (sem anafilaxia/angioedema/urticária)","2 g VO","50 mg/kg (máx. 2 g)",50]],
+   al2:[["Azitromicina","500 mg VO","15 mg/kg (máx. 500 mg)",15],["Claritromicina","500 mg VO","15 mg/kg (máx. 500 mg)",15],["Doxiciclina","100 mg VO","< 45 kg: 2,2 mg/kg (máx. 100 mg)",2.2]],
+   iv:[["Ampicilina","2 g IM/IV","50 mg/kg IM/IV",50],["Cefazolina ou ceftriaxona","1 g IM/IV","50 mg/kg IM/IV (máx. 1 g)",50]]}[s];
+  const cap={Amoxicilina:2000,Azitromicina:500,Claritromicina:500,Doxiciclina:100,Ampicilina:2000};
+  o.innerHTML='<div class="lbl">'+(kid?"Dose pediátrica (peso "+fmt(w)+" kg)":"Adulto")+'</div><table class="tbl" style="margin-top:6px"><thead><tr><th>Fármaco</th><th>Dose única</th></tr></thead><tbody>'+R.map(([n,ad,pd,k])=>{let d=ad;if(kid){const c=cap[n.split(" ")[0]]||(/Cef/.test(n)?(/cefazolina/i.test(n)?1000:2000):2000);d=fmt(Math.min(k*w,c),0)+' mg — '+pd}return '<tr><td><b>'+n+'</b></td><td class="n">'+d+'</td></tr>'}).join("")+'</tbody></table>'+
+  '<div class="sm" style="margin-top:10px">Clindamicina NÃO é mais recomendada (AHA 2021). Paciente já em uso de antibiótico da mesma classe: escolher classe diferente. Prótese articular: profilaxia de rotina não recomendada (ADA/AAOS) — decidir com o ortopedista em imunossuprimidos.</div>';}
+function calcEmerg(){const w=gv("eW"),o=document.getElementById("eOut");const kid=w<40;
+  const L=[["Adrenalina 1 mg/mL (anafilaxia)","IM coxa",Math.min(0.01*w,kid?0.3:0.5),"mg",1,"repetir a cada 5–15 min"],["Glucagon (hipoglicemia, inconsciente)","IM",w<25?0.5:1,"mg",1,"pó 1 mg reconstituído"],["Glicose 50% (hipoglicemia, IV)","IV",kid?0.5*w:25,"g",0.5,"g → mL na concentração 0,5 g/mL"],
+   ["Midazolam 5 mg/mL (convulsão > 5 min)","IM/IN",w>40?10:(w>=13?5:0.2*w),"mg",5,""],["Salbutamol 100 mcg/jato (asma)","inalatório",null,"",0,kid?"2–4 jatos com espaçador a cada 20 min":"4–8 jatos com espaçador a cada 20 min"],
+   ["AAS (dor torácica)","mastigar",kid?null:"160–325","mg",0,kid?"não indicado":"sem alergia/sangramento"],["Isossorbida 5 mg SL (angina)","sublingual",kid?null:5,"mg",0,"se PAS > 90 e sem sildenafila; até 3 doses"],
+   ["Difenidramina 50 mg/mL (alergia)","IM",Math.min(1*w,50),"mg",50,"após adrenalina se anafilaxia"],["Hidrocortisona (crise adrenal/anafilaxia)","IV/IM",kid?Math.min(2*w,100):100,"mg",50,"pó 100 mg/2 mL"],
+   ["Flumazenil 0,1 mg/mL (excesso de BZD)","IV",kid?Math.min(0.01*w,0.2):0.2,"mg",0.1,"repetir a cada 1 min"],["Naloxona 0,4 mg/mL (opioides)","IV/IM",kid?Math.min(0.1*w,0.4):0.4,"mg",0.4,""],["Atropina 0,5 mg/mL (bradicardia)","IV/IM",kid?Math.max(0.1,Math.min(0.02*w,0.5)):0.5,"mg",0.5,""]];
+  o.innerHTML='<table class="tbl"><thead><tr><th>Fármaco</th><th>Dose</th><th>Volume</th></tr></thead><tbody>'+L.map(([n,v,d,u,c,ob])=>{const dn=typeof d==="number";const vol=dn&&c?(u==="g"?d/c:d/c):null;
+   return '<tr><td><b>'+n+'</b><div class="xs muted">'+v+(ob?" · "+ob:"")+'</div></td><td class="n">'+(d==null?"—":(dn?fmt(d):d)+" "+u)+'</td><td class="n">'+(vol!=null?fmt(vol)+" mL":"—")+'</td></tr>'}).join("")+'</tbody></table>'+
+  '<div class="note warn" style="margin-top:10px">RCP: compressões 100–120/min, 5–6 cm (adulto), 30:2; DEA assim que disponível. O2 10–15 L/min por máscara.</div>';}
+const CO=[["Hidrocortisona",20],["Prednisona/prednisolona",5],["Metilprednisolona",4],["Triancinolona",4],["Dexametasona",0.75],["Betametasona",0.75]];
+function calcCort(){const i=num(document.getElementById("kO").value),d=gv("kD"),o=document.getElementById("kOut");const eq=d/CO[i][1];
+  o.innerHTML='<table class="tbl"><thead><tr><th>Corticoide</th><th>Dose equivalente</th></tr></thead><tbody>'+CO.map(([n,x],j)=>'<tr'+(j===i?' style="background:var(--accent-soft)"':'')+'><td>'+n+'</td><td class="n">'+fmt(eq*x)+' mg</td></tr>').join("")+'</tbody></table><div class="sm muted" style="margin-top:8px">Equivalência glicocorticoide aproximada (dexametasona 0,75 mg ≈ prednisona 5 mg ≈ hidrocortisona 20 mg).</div>';}
+function stepW(dir){const i=document.getElementById("cW");let w=num(i.value);const st=w>=100?10:w>=20?1:w>=5?0.5:0.1;w=Math.max(0.01,+(w+dir*st).toFixed(2));i.value=w;S.calcW[S.calcSp]=w;store.set("calcW",S.calcW);calcRun()}
+function setDose(v){document.getElementById('cDose').value=v;syncRange(v)}
+function syncRange(v){const r=document.getElementById("cRange");if(r)r.value=v;calcRun()}
+function filterDoseSel(v){const q=norm(v);const s=document.getElementById("cDrug");const sp=S.calcSp;const list=DRUGS.filter(d=>d.d[sp]&&d.d[sp][0]!=null&&(!q||d._s.includes(q)));
+  s.innerHTML=list.map(x=>'<option value="'+x.id+'" '+(x.id===S.calcDrug?"selected":"")+'>'+esc(x.n)+'</option>').join("");if(list.length&&!list.find(x=>x.id===S.calcDrug)){S.calcDrug=list[0].id;rerender();document.getElementById("cFind").value=v;document.getElementById("cFind").focus()}}
+function frac(n){const q=Math.round(n*4)/4;const w=Math.floor(q),r=q-w;const m={0:"",0.25:"¼",0.5:"½",0.75:"¾"}[r];return (w?w+(m?" "+m:""):(m||"0"))}
+let lastCalc=null;
+function calcDose(){
+  const d=DM[S.calcDrug];const out=document.getElementById("cOut");if(!d||!out)return;
+  const sp=S.calcSp,e=d.d[sp],u=UNIT[d.u||"mg"];const w=gv("cW"),dose=gv("cDose"),conc=gv("cConc"),tab=gv("cTab");
+  if(w<=0){out.innerHTML='<div class="muted">Informe o peso.</div>';return}
+  let total,html="",base=d.u==="m2"?bsa(sp,w):w;total=dose*base;
+  const warn=(dose<e[0]*0.999||dose>e[1]*1.001)?'<div class="note bad" style="margin-top:10px">Dose fora da faixa de referência ('+fmt(e[0])+"–"+fmt(e[1])+" "+u.k+').</div>':"";
+  if(d.u==="mcgmin"){
+    const mcgmin=total,mgh=mcgmin*60/1000;const bag=gv("cBag"),rate=gv("cRate");
+    const mlh=conc>0?mcgmin*60/conc:NaN;const addMl=(conc>0&&rate>0)?(mcgmin*60/rate)*bag/conc:NaN;
+    html='<div class="lbl">Taxa de fármaco</div><div class="big">'+fmt(mcgmin)+' mcg/min</div><div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(mgh)+' mg/h</b><span>quantidade por hora</span></div><div class="res"><b>'+fmt(mlh)+' mL/h</b><span>fármaco puro ('+fmt(conc)+' mcg/mL)</span></div></div>'+
+    (isFinite(addMl)?'<div class="note ok" style="margin-top:10px"><b>Preparo:</b> adicionar <b>'+fmt(addMl)+' mL</b> do fármaco em '+fmt(bag)+' mL de diluente e infundir a <b>'+fmt(rate)+' mL/h</b>.'+(addMl>bag*0.2?" <b>Volume de fármaco alto — aumente a taxa ou reduza o volume da bolsa.</b>":"")+'</div>':"");
+    lastCalc={d,txt:"Infusão contínua a "+fmt(dose)+" mcg/kg/min: adicionar "+fmt(addMl)+" mL em "+fmt(bag)+" mL e infundir a "+fmt(rate)+" mL/h."};
+  }else{
+    const vol=conc>0&&u.c?total/conc:NaN;const tabs=tab>0?total/tab:NaN;const gtm=gv("cGt")||20;const gts=vol*gtm;
+    html='<div class="lbl">Dose total por administração</div><div class="big">'+fmt(total)+" "+u.t+'</div>'+
+    (d.u==="m2"?'<div class="sm muted">Superfície corporal: '+fmt(base,3)+' m²</div>':"")+
+    '<div class="res-grid" style="margin-top:10px">'+(u.c?'<div class="res"><b>'+(isFinite(vol)?fmt(vol)+" mL":"—")+'</b><span>volume ('+(conc?fmt(conc)+" "+u.c:"informe a concentração")+')</span></div>':'')+
+    (isFinite(gts)&&d.gt?'<div class="res"><b>≈ '+(gts<1?fmt(gts,1):Math.round(gts))+' gota'+(gts>=1.5?'s':'')+'</b><span>líquido oral/gotas ('+fmt(gtm)+' gotas/mL)'+(gts<1?' — volume pequeno: prefira seringa':'')+'</span></div>':"")+(isFinite(tabs)?'<div class="res"><b>'+fmt(tabs,2)+' comp.</b><span>≈ '+frac(tabs)+' de '+fmt(tab)+" "+u.t+'</span></div>':"")+
+    '<div class="res"><b>'+esc(e[2]||"—")+'</b><span>via</span></div><div class="res"><b style="font-size:15px">'+esc(e[3]||"—")+'</b><span>frequência</span></div></div>';
+    const via=(e[2]||"").split(/[\/ ]/)[0];
+    lastCalc={d,txt:(isFinite(vol)?"Administrar "+fmt(vol)+" mL"+(/VO|oral/i.test(e[2]||"")&&gts>=1?" (≈ "+Math.round(gts)+" gotas)":"")+" ("+fmt(total)+" "+u.t+")":isFinite(tabs)?"Administrar "+frac(tabs)+" comprimido(s) de "+fmt(tab)+" "+u.t+" ("+fmt(total)+" "+u.t+")":"Administrar "+fmt(total)+" "+u.t)+(via?" por via "+via:"")+", "+(e[3]||"")+".",pres:(isFinite(vol)&&conc?fmt(conc)+" "+u.c:isFinite(tabs)?fmt(tab)+" "+u.t:"")};
+  }
+  out.innerHTML=html+'<div style="margin-top:10px">'+labInfo(d,sp).tag+'</div>'+warn+(e[4]?'<div class="sm" style="margin-top:10px"><b>Obs.:</b> '+esc(e[4])+'</div>':"");
+}
+const CRIP={mlk:[["mcgkgmin"],"Morfina 0,1 mg/kg/h + Lidocaína 50 mcg/kg/min + Cetamina 10 mcg/kg/min (cão; em gatos evitar lidocaína). Calcule cada fármaco separadamente."],
+ fen:[["mcgkgh",5,50],"Fentanil 2–10 mcg/kg/h (50 mcg/mL)."],lid:[["mcgkgmin",50,20000],"Lidocaína 25–80 mcg/kg/min (2% = 20 mg/mL)."],ket:[["mcgkgmin",10,100000],"Cetamina 2–10 mcg/kg/min (100 mg/mL)."],
+ dob:[["mcgkgmin",5,12500],"Dobutamina 2,5–15 mcg/kg/min (12,5 mg/mL)."],nor:[["mcgkgmin",0.1,1000],"Noradrenalina 0,05–2 mcg/kg/min (1 mg/mL)."],fur:[["mgkgh",0.66,10],"Furosemida 0,66–1 mg/kg/h (10 mg/mL)."],dex:[["mcgkgh",1,500],"Dexmedetomidina 0,5–3 mcg/kg/h (0,5 mg/mL)."]};
+function criPreset(k){const p=CRIP[k];if(p[0].length>1){document.getElementById("iU").value=p[0][0];document.getElementById("iD").value=p[0][1];
+  let c=p[0][2];if(p[0][0].startsWith("mcg"))c=c/1000;document.getElementById("iC").value=c;}toast(p[1]);calcRun()}
+function calcCRI(){const w=gv("iW"),U=document.getElementById("iU").value,d=gv("iD"),c=gv("iC"),V=gv("iV"),R=gv("iR");const o=document.getElementById("iOut");if(!o)return;
+  let perH; // em mg/h (ou UI/h)
+  if(U==="mcgkgmin")perH=d*w*60/1000;else if(U==="mcgkgh")perH=d*w/1000;else if(U==="mgkgh"||U==="uikgh")perH=d*w;else perH=d*w/24;
+  const mlDrugH=c>0?perH/c:NaN;const hours=R>0?V/R:NaN;const amt=perH*hours;const addMl=c>0?amt/c:NaN;const un=U==="uikgh"?"UI":"mg";
+  o.innerHTML='<div class="lbl">Quantidade por hora</div><div class="big">'+fmt(perH)+" "+un+'/h</div><div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(mlDrugH)+' mL/h</b><span>se fármaco puro (bomba de seringa)</span></div><div class="res"><b>'+fmt(hours)+' h</b><span>duração da bolsa</span></div></div>'+
+  '<div class="note ok" style="margin-top:10px"><b>Preparo:</b> adicionar <b>'+fmt(addMl)+' mL</b> ('+fmt(amt)+" "+un+') do fármaco a '+fmt(V)+' mL e infundir a <b>'+fmt(R)+' mL/h</b>. Considere retirar da bolsa o mesmo volume adicionado.</div>';}
+function calcFluid(){const sp=document.getElementById("fSp").value,w=gv("fW"),D=num(document.getElementById("fD").value),T=gv("fT")||24,L=gv("fL"),E=num(document.getElementById("fE").value);const o=document.getElementById("fOut");
+  const s=SPM[sp];const maint=s.mlExp===0.75?s.ml*Math.pow(w,0.75):s.ml*w;const def=w*D*10;const first=(def/T)+(maint+L)/24;const after=(maint+L)/24;const tot24=def+maint+L;
+  const gt=r=>r*E/60;
+  o.innerHTML='<div class="lbl">Taxa nas primeiras '+fmt(T)+' h</div><div class="big">'+fmt(first,1)+' mL/h</div><div class="sm muted">≈ '+fmt(gt(first),1)+' gotas/min · 1 gota a cada '+fmt(60/gt(first),1)+' s</div>'+
+  '<div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(def,0)+' mL</b><span>déficit ('+D+'%)</span></div><div class="res"><b>'+fmt(maint,0)+' mL/dia</b><span>manutenção ('+fmt(maint/w,0)+' mL/kg/dia)</span></div><div class="res"><b>'+fmt(after,1)+' mL/h</b><span>após corrigir déficit</span></div><div class="res"><b>'+fmt(tot24,0)+' mL</b><span>total estimado 24 h</span></div></div>';}
+function calcRCP(){const sp=document.getElementById("rSp").value,w=gv("rW");const o=document.getElementById("rOut");
+  const R=[["Adrenalina (dose baixa)",0.01,1,"mg","IV/IO a cada 3–5 min (ciclos alternados)"],["Adrenalina (intratraqueal)",0.02,1,"mg","diluir em salina, via tubo"],["Vasopressina",0.8,20,"UI","IV/IO, alternativa à adrenalina"],["Atropina",0.04,0.5,"mg","IV/IO — assistolia/AESP vagal"],
+   ["Lidocaína (FV refratária — cães)",2,20,"mg","IV/IO lento"],["Amiodarona (FV refratária)",5,50,"mg","IV/IO lento"],["Naloxona (reversão opioide)",0.04,0.4,"mg","IV/IO"],["Flumazenil (reversão BZD)",0.01,0.1,"mg","IV/IO"],["Atipamezol (reversão alfa-2)",0.1,5,"mg","IM/IV"],
+   ["Gluconato de cálcio 10%",50,100,"mg","IV lento — hipocalcemia/hipercalemia"],["Bicarbonato 8,4% (RCP > 10 min)",1,1,"mEq","IV lento"],["Glicose 50% (diluir)",0.5,500,"g","= 1 mL/kg diluído 1:2"]];
+  const rows=R.map(([n,dk,c,un,ob])=>{if(sp==="cat"&&n.startsWith("Lidocaína"))return"";let tot=dk*w,vol;if(un==="g"){tot=dk*w;vol=tot*1000/c}else vol=tot/c;
+    return '<tr><td><b>'+n+'</b><div class="xs muted">'+fmt(dk)+" "+(un==="g"?"g":un)+'/kg · '+ob+'</div></td><td class="n">'+fmt(tot)+" "+un+'</td><td class="n">'+fmt(vol)+' mL</td></tr>'}).join("");
+  o.innerHTML='<table class="tbl"><thead><tr><th>Fármaco</th><th>Dose</th><th>Volume</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+  '<div class="res-grid" style="margin-top:12px"><div class="res"><b>'+fmt(4*w,0)+"–"+fmt(6*w,0)+' J</b><span>desfibrilação monofásica externa (4–6 J/kg)</span></div><div class="res"><b>'+fmt(2*w,0)+"–"+fmt(4*w,0)+' J</b><span>desfibrilação bifásica externa (2–4 J/kg)</span></div><div class="res"><b>'+fmt(10*w,0)+' mL</b><span>volume corrente (10 mL/kg)</span></div><div class="res"><b>'+(sp==="cat"?"2,5–4,5":w<5?"3–5":w<15?"5–7":w<30?"7–9":"9–11")+'</b><span>sonda endotraqueal sugerida (mm DI)</span></div></div>'+
+  '<div class="note warn" style="margin-top:10px">Concentrações: adrenalina 1 mg/mL, vasopressina 20 UI/mL, atropina 0,5 mg/mL, lidocaína 2%, amiodarona 50 mg/mL, naloxona 0,4 mg/mL, flumazenil 0,1 mg/mL, atipamezol 5 mg/mL, Ca 10% (100 mg/mL), bicarbonato 1 mEq/mL. Confira as ampolas disponíveis.</div>';}
+function calcTransf(){const k=num(document.getElementById("tSp").value),w=gv("tW"),p=gv("tP"),a=gv("tA"),dn=gv("tD");const o=document.getElementById("tOut");
+  const v=dn>0?w*k*(a-p)/dn:NaN;
+  o.innerHTML='<div class="lbl">Volume de sangue total</div><div class="big">'+fmt(Math.max(0,v),0)+' mL</div><div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(Math.max(0,v)/4,0)+' mL/h</b><span>se infundido em 4 h (máx.)</span></div><div class="res"><b>'+fmt(w*0.25,1)+' mL/h</b><span>taxa inicial (0,25 mL/kg/h) nos primeiros 15–30 min</span></div></div>'+
+  '<div class="sm" style="margin-top:10px">Regra prática: 2 mL/kg de sangue total (ou 1 mL/kg de concentrado de hemácias) elevam o Ht em ~1%. Usar filtro de 170–260 µm, monitorar temperatura, FC, FR e sinais de reação.</div>';}
+function eFactors(){const sp=document.getElementById("eSp").value;const F=sp==="dog"?[["1","Internado / RER"],["1.6","Adulto castrado"],["1.8","Adulto inteiro"],["1.0","Perda de peso"],["1.2","Obeso propenso / sedentário"],["3.0","Filhote < 4 meses"],["2.0","Filhote 4 meses–adulto"],["2.0","Trabalho leve"],["4.0","Lactação (média)"]]:[["1","Internado / RER"],["1.2","Adulto castrado"],["1.4","Adulto inteiro"],["0.8","Perda de peso"],["1.0","Propenso a obesidade"],["2.5","Filhote"],["2.0","Lactação (início)"]];
+  document.getElementById("eF").innerHTML=F.map(([v,l])=>'<option value="'+v+'">'+l+" (×"+String(v).replace(".",",")+')</option>').join("")}
+function calcRER(){const w=gv("eW"),fc=num(document.getElementById("eF").value),kc=gv("eK");const o=document.getElementById("eOut");if(!o)return;
+  const rer=70*Math.pow(w,0.75),mer=rer*fc;const g=kc>0?mer/kc*1000:NaN;
+  o.innerHTML='<div class="lbl">Energia diária</div><div class="big">'+fmt(mer,0)+' kcal/dia</div><div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(rer,0)+' kcal</b><span>RER (repouso)</span></div><div class="res"><b>'+fmt(g,0)+' g/dia</b><span>de alimento ('+fmt(kc,0)+' kcal/kg)</span></div><div class="res"><b>'+fmt(rer/3,0)+' kcal</b><span>1º dia em anoréxico (33% RER)</span></div><div class="res"><b>'+fmt(w*(w<5?6:5),0)+'–'+fmt(w*8,0)+' g</b><span>proteína mínima aprox.</span></div></div>';}
+function calcKCl(){const [meq,mlkgh]=document.getElementById("kK").value.split("|").map(Number);const w=gv("kW"),V=gv("kV"),s=num(document.getElementById("kS").value),R=gv("kR");const o=document.getElementById("kOut");
+  const add=meq*V/1000,ml=add/s,maxRateScott=mlkgh*w,maxRateSafe=0.5*w/(meq/1000),rateK=R*meq/1000/w;
+  o.innerHTML='<div class="lbl">Adicionar à bolsa</div><div class="big">'+fmt(ml,1)+' mL de KCl</div><div class="sm muted">'+fmt(add,1)+' mEq em '+fmt(V)+' mL → '+meq+' mEq/L</div><div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(Math.min(maxRateScott,maxRateSafe),0)+' mL/h</b><span>taxa máxima (escala / 0,5 mEq/kg/h)</span></div><div class="res"><b style="color:'+(rateK>0.5?"var(--bad)":"inherit")+'">'+fmt(rateK,3)+' mEq/kg/h</b><span>na taxa planejada de '+fmt(R)+' mL/h</span></div></div>'+(rateK>0.5?'<div class="note bad" style="margin-top:10px"><b>Atenção:</b> taxa planejada excede 0,5 mEq/kg/h — risco de arritmia/parada cardíaca.</div>':"");}
+function calcBic(){const fc=num(document.getElementById("bF").value),w=gv("bW"),b=Math.abs(gv("bB"));const o=document.getElementById("bOut");const t=fc*w*b;
+  o.innerHTML='<div class="lbl">Déficit total</div><div class="big">'+fmt(t,1)+' mEq</div><div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(t/3,1)+"–"+fmt(t/2,1)+' mL</b><span>bicarbonato 8,4% (1/3–1/2 da dose)</span></div><div class="res"><b>'+fmt(t,1)+' mL</b><span>8,4% para dose total</span></div></div><div class="sm" style="margin-top:10px">Administrar lento (20–30 min), não misturar com cálcio, reavaliar gasometria e K (risco de hipocalemia).</div>';}
+function calcBSA(){const sp=document.getElementById("sSp").value,w=gv("sW"),dm=gv("sD");const o=document.getElementById("sOut");const m=bsa(sp,w);
+  o.innerHTML='<div class="lbl">Superfície corporal</div><div class="big">'+fmt(m,3)+' m²</div>'+(dm>0?'<div class="res-grid" style="margin-top:10px"><div class="res"><b>'+fmt(dm*m)+' mg</b><span>dose total ('+fmt(dm)+' mg/m²)</span></div></div>':"");}
+function calcConv(){const p=gv("vP");document.getElementById("vOut1").innerHTML='<div class="lbl">Equivale a</div><div class="big">'+fmt(p*10)+' mg/mL</div><div class="sm muted">'+fmt(p*10000)+' mcg/mL · '+fmt(p)+' g/100 mL</div>';
+  const c1=gv("vC1"),c2=gv("vC2"),v2=gv("vV2");const v1=c1>0?c2*v2/c1:NaN;document.getElementById("vOut2").innerHTML='<div class="lbl">Aspirar do frasco</div><div class="big">'+fmt(v1)+' mL</div><div class="sm muted">+ '+fmt(v2-v1)+' mL de diluente = '+fmt(v2)+' mL a '+fmt(c2)+' mg/mL</div>';}
+
+/* ================= Toxicologia ================= */
+function vTox(){const types=[...new Set(TOX.map(t=>t.t))];
+  const list=TOX.filter(t=>!S.toxT||t.t===S.toxT);const ord={Fatal:0,Grave:1,Moderada:2,Leve:3};list.sort((a,b)=>ord[a.sev]-ord[b.sev]||a.n.localeCompare(b.n,"pt-BR"));
+  return '<div class="stack"><div class="row between"><h1>Urgências médicas</h1><span class="muted sm">'+list.length+' itens</span></div>'+
+  '<div class="note bad"><b>Emergência grave?</b> Ligue <b>SAMU 192</b> (ou Bombeiros 193), ofereça O2 e monitore os sinais vitais. Tenha o kit de emergência e um DEA acessíveis.</div><a class="btn sm" href="#/calc/emerg">Doses do kit de emergência</a>'+
+  '<div class="chips"><button class="chip '+(!S.toxT?"on":"")+'" onclick="S.toxT=\'\';rerender()">Todos</button>'+types.map(t=>'<button class="chip '+(S.toxT===t?"on":"")+'" onclick="S.toxT=\''+t+'\';rerender()">'+t+'</button>').join("")+'</div>'+
+  '<div class="list">'+list.map(t=>'<a class="item" href="#/tox/'+t.id+'"><div class="row" style="align-items:flex-start"><span class="sev '+t.sev+'" style="margin-top:6px"></span><div style="min-width:0;flex:1"><div class="t">'+esc(t.n)+'</div><div class="s">'+esc(t.sp)+'</div><div class="tags"><span class="tag '+(t.sev==="Fatal"||t.sev==="Grave"?"t-bad":t.sev==="Moderada"?"t-warn":"t-ok")+'">'+t.sev+'</span><span class="tag t-info">'+t.t+'</span>'+''+'</div></div></div></a>').join("")+'</div></div>'+disclaimer();}
+function vToxD(id){const t=TOX.find(x=>x.id===id);if(!t)return'<div class="empty">Não encontrado.</div>';
+  return '<div class="stack"><div class="card"><div class="row wrapf" style="gap:6px"><span class="tag '+(t.sev==="Fatal"||t.sev==="Grave"?"t-bad":t.sev==="Moderada"?"t-warn":"t-ok")+'">'+t.sev+'</span><span class="tag t-info">'+t.t+'</span></div><h1 style="margin-top:8px">'+esc(t.n)+'</h1><div class="muted sm" style="margin-top:4px">'+esc(t.sp)+'</div></div>'+
+  '<div class="card kv">'+kv("Grupo de risco",t.sp)+kv("Fatores desencadeantes",t.dose)+kv("Fisiopatologia",t.mech)+kv("Como reconhecer",t.sx)+'</div>'+
+  '<div class="card" style="border-color:var(--ok)"><div class="kv">'+kv("Conduta",t.tx)+'</div></div>'+
+  (t.ant?'<div class="note ok"><b>Ponto-chave:</b> '+esc(t.ant)+'</div>':"")+
+  '<div class="actions"><button class="btn sm" onclick="copy(document.querySelector(\'#app\').innerText)">'+ic("copy",16)+' Copiar</button><a class="btn sm" href="#/calc/dose">'+ic("calc",16)+' Calcular doses</a></div></div>'+disclaimer();}
+
+/* ================= Casos ================= */
+function vCases(){const g=[...new Set(CASES.map(c=>c.g))];const q=norm(S.caseQ);
+  const list=CASES.filter(c=>(!S.caseSp||c.g===S.caseSp)&&(!q||c._s.includes(q)));
+  return '<div class="stack"><div class="row between"><h1>Casos clínicos</h1><span class="muted sm">'+S.done.size+'/'+CASES.length+' estudados</span></div>'+
+  '<div class="search">'+ic("search")+'<input class="inp" value="'+esc(S.caseQ)+'" placeholder="Buscar por doença, perfil, especialidade" oninput="S.caseQ=this.value;clearTimeout(window._cq);window._cq=setTimeout(()=>{rerender();const i=document.querySelector(\'#app input\');i.focus();i.setSelectionRange(i.value.length,i.value.length)},250)" /></div>'+
+  '<div class="chips"><button class="chip '+(!S.caseSp?"on":"")+'" onclick="S.caseSp=\'\';rerender()">Todos</button>'+g.filter(x=>SPM[x]).map(x=>'<button class="chip '+(S.caseSp===x?"on":"")+'" onclick="S.caseSp=\''+x+'\';rerender()">'+SPM[x].e+" "+SPM[x].n+'</button>').join("")+'</div>'+
+  '<div class="list">'+list.map(c=>'<a class="item" href="#/casos/'+c.id+'"><div class="row between"><div class="xs muted" style="font-weight:800">'+(SPM[c.g]?SPM[c.g].e+" ":"")+esc(c.sp)+' · '+esc(c.spec)+'</div>'+(S.done.has(c.id)?'<span class="tag t-ok">✓ estudado</span>':"")+'</div><div class="t" style="margin-top:4px">'+esc(c.title)+'</div></a>').join("")+(list.length?"":'<div class="empty">Nenhum caso encontrado.</div>')+'</div></div>';}
+function vCase(id){const i=CASES.findIndex(c=>c.id===id);const c=CASES[i];if(!c)return'<div class="empty">Caso não encontrado.</div>';const nx=CASES[(i+1)%CASES.length];
+  return '<div class="stack"><div class="card"><div class="xs muted" style="font-weight:800">'+(SPM[c.g]?SPM[c.g].e+" ":"")+esc(c.sp)+' · '+esc(c.spec)+'</div><h1 style="margin-top:6px;font-size:20px">'+esc(c.title)+'</h1></div>'+
+  '<div class="card"><div class="k xs muted" style="font-weight:800;text-transform:uppercase;letter-spacing:.04em">Apresentação</div><p style="margin:6px 0 0">'+esc(c.ctx)+'</p></div>'+
+  '<div class="case-q">🤔 '+esc(c.q||"Qual a sua conduta diagnóstica e terapêutica?")+'</div>'+
+  '<div id="caseAns" style="display:none" class="stack"><div class="card"><h3>Conduta comentada</h3><ul class="pts" style="margin-top:8px">'+c.pts.map(p=>'<li>'+esc(p)+'</li>').join("")+'</ul></div>'+(c.take?'<div class="take">📌 '+esc(c.take)+'</div>':"")+'</div>'+
+  '<button class="btn pri block" id="caseBtn" onclick="document.getElementById(\'caseAns\').style.display=\'block\';this.style.display=\'none\';S.done.add(\''+c.id+'\');store.set(\'doneCases\',[...S.done])">Revelar conduta</button>'+
+  '<a class="btn block" href="#/casos/'+nx.id+'">Próximo caso →</a></div>'+disclaimer();}
+
+/*__FEAT__*/
+/* ================= Odontograma ================= */
+const TT={ // tipos de dente
+ IC:{n:"Incisivo central",r:"1 raiz",ca:"1 canal",an:{s:"Infiltrativa (supraperiosteal) vestibular + nasopalatino para a palatina",i:"Infiltrativa vestibular (articaína é eficaz) ou bloqueio do nervo incisivo/mentual"}},
+ IL:{n:"Incisivo lateral",r:"1 raiz",ca:"1 canal (inferior: 2 canais em ~20–40%)",an:{s:"Infiltrativa vestibular + nasopalatino/infiltração palatina",i:"Infiltrativa vestibular ou bloqueio incisivo"}},
+ C:{n:"Canino",r:"1 raiz (a mais longa da arcada)",ca:"1 canal (inferior: 2 em ~5%)",an:{s:"Infiltrativa vestibular (alveolar superior anterior) + palatina",i:"Bloqueio incisivo/mentual ou alveolar inferior"}},
+ PM1:{n:"1º pré-molar",r:"sup.: 2 raízes (V e P) · inf.: 1 raiz",ca:"sup.: 2 canais · inf.: 1 (2 em ~25%)",an:{s:"Infiltrativa vestibular (alveolar superior médio) + palatino maior/infiltração palatina",i:"Bloqueio do alveolar inferior ou mentual/incisivo"}},
+ PM2:{n:"2º pré-molar",r:"1 raiz",ca:"sup.: 1–2 canais · inf.: 1 canal",an:{s:"Infiltrativa vestibular + palatino maior",i:"Bloqueio do alveolar inferior ou mentual/incisivo"}},
+ M1:{n:"1º molar",r:"sup.: 3 raízes (MV, DV, P) · inf.: 2 raízes (M e D)",ca:"sup.: 3–4 canais (MV2 em ~60–90%) · inf.: 3 canais (4 em ~30%)",an:{s:"Alveolar superior posterior (ou infiltrativa) + palatino maior; raiz MV pode exigir infiltração adicional",i:"Bloqueio do alveolar inferior + bucal; complementar com infiltração vestibular de articaína 4%"}},
+ M2:{n:"2º molar",r:"sup.: 3 raízes · inf.: 2 raízes (podem ser fusionadas)",ca:"sup.: 3–4 canais · inf.: 3 canais (C-shaped em asiáticos)",an:{s:"Alveolar superior posterior + palatino maior",i:"Bloqueio do alveolar inferior + bucal"}},
+ M3:{n:"3º molar (siso)",r:"Variável, frequentemente fusionadas/dilaceradas",ca:"Variável",an:{s:"Alveolar superior posterior + palatino maior",i:"Bloqueio do alveolar inferior + lingual + bucal (Gow-Gates/Vazirani-Akinosi como alternativas)"}}
+};
+const ERUP={ // erupção dentes permanentes (anos) sup / inf
+ 1:["7–8","6–7"],2:["8–9","7–8"],3:["11–12","9–10"],4:["10–11","10–12"],5:["10–12","11–12"],6:["6–7","6–7"],7:["12–13","11–13"],8:["17–21","17–21"]};
+const DTT={1:"Incisivo central decíduo",2:"Incisivo lateral decíduo",3:"Canino decíduo",4:"1º molar decíduo",5:"2º molar decíduo"};
+const DERUP={1:["~10 meses","~8 meses"],2:["~11 meses","~13 meses"],3:["~19 meses","~20 meses"],4:["~16 meses","~16 meses"],5:["~29 meses","~27 meses"]};
+function pickSI(t,sup){const p=t.split(" · ");const f=p.find(x=>x.startsWith(sup?"sup.":"inf."));return f?f.replace(/^(sup|inf)\.:\s*/,""):t}
+function toothType(n){return ["","IC","IL","C","PM1","PM2","M1","M2","M3"][n]}
+function toothSVG(num,sel,up){const d=num%10;const w=d>=6||(num>50&&d>=4)?34:d>=4?28:26;const crown=d>=6||(num>50&&d>=4)?'M2 14 Q2 2 10 3 Q'+(w/2)+' 6 '+(w-10)+' 3 Q'+(w-2)+' 2 '+(w-2)+' 14 Z':'M3 14 Q3 2 '+(w/2)+' 2 Q'+(w-3)+' 2 '+(w-3)+' 14 Z';
+  const roots=(d>=6||(num>50&&d>=4))?'M5 14 L7 34 L11 34 L12 16 M'+(w-12)+' 16 L'+(w-11)+' 34 L'+(w-7)+' 34 L'+(w-5)+' 14':'M'+(w/2-4)+' 14 L'+(w/2-2)+' 36 L'+(w/2+2)+' 36 L'+(w/2+4)+' 14';
+  return '<svg viewBox="0 0 '+w+' 40" width="'+w+'" height="40" style="transform:'+(up?"scaleY(-1)":"none")+'"><path d="'+roots+'" fill="'+(sel?"var(--accent-soft)":"var(--surface-2)")+'" stroke="var(--muted)" stroke-width="1.2"/><path d="'+crown+'" fill="'+(sel?"var(--accent)":"var(--surface)")+'" stroke="'+(sel?"var(--accent)":"var(--ink)")+'" stroke-width="1.4"/></svg>'}
+function vOdonto(){const perm=S.odSet!=="dec";const Q=perm?[[18,17,16,15,14,13,12,11],[21,22,23,24,25,26,27,28],[48,47,46,45,44,43,42,41],[31,32,33,34,35,36,37,38]]:[[55,54,53,52,51],[61,62,63,64,65],[85,84,83,82,81],[71,72,73,74,75]];
+  const btn=n=>'<button onclick="S.tooth='+n+';rerender()" style="background:none;border:0;padding:2px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--ink)" aria-label="Dente '+n+'">'+(String(n)[0]<"3"||String(n)[0]==="5"||String(n)[0]==="6"?'<span class="xs" style="font-weight:800">'+n+'</span>'+toothSVG(n,S.tooth==n,true):toothSVG(n,S.tooth==n,false)+'<span class="xs" style="font-weight:800">'+n+'</span>')+'</button>';
+  const row=(a,b)=>'<div style="display:flex;justify-content:center;gap:2px"><div style="display:flex;gap:1px;padding-right:6px;border-right:2px solid var(--line-2)">'+a.map(btn).join("")+'</div><div style="display:flex;gap:1px;padding-left:6px">'+b.map(btn).join("")+'</div></div>';
+  let info='<div class="empty">Toque em um dente para ver anatomia, erupção e técnica anestésica.</div>';const t=+S.tooth;
+  if(t){const q=Math.floor(t/10),d=t%10,sup=[1,2,5,6].includes(q);
+    if(q<=4){const T=TT[toothType(d)];info='<div class="card"><div class="xs muted" style="font-weight:800">DENTE '+t+' · '+(sup?"SUPERIOR":"INFERIOR")+' '+([1,4,5,8].includes(q)?"DIREITO":"ESQUERDO")+'</div><h2 style="margin-top:4px">'+T.n+(sup?" superior":" inferior")+'</h2><div class="kv" style="margin-top:10px">'+kv("Raízes",pickSI(T.r,sup))+kv("Canais (mais comum)",pickSI(T.ca,sup))+kv("Erupção",ERUP[d][sup?0:1]+" anos")+kv("Anestesia indicada",sup?T.an.s:T.an.i)+'</div></div>';}
+    else{info='<div class="card"><div class="xs muted" style="font-weight:800">DENTE '+t+' · DECÍDUO '+(sup?"SUPERIOR":"INFERIOR")+'</div><h2 style="margin-top:4px">'+DTT[d]+'</h2><div class="kv" style="margin-top:10px">'+kv("Erupção (média)",DERUP[d][sup?0:1])+kv("Esfoliação",{1:"6–7 anos",2:"7–8 anos",3:"9–12 anos",4:"9–11 anos",5:"10–12 anos"}[d])+kv("Sucessor permanente",String((q===5?1:q===6?2:q===7?3:4))+d)+kv("Anestesia",sup?"Infiltrativa vestibular (osso fino); palatina com técnica indolor":"Infiltrativa costuma bastar em molares decíduos; bloqueio do alveolar inferior se necessário (forame mais baixo na criança)")+'</div><a class="btn sm" style="margin-top:10px" href="#/calc/anest">Calcular dose máxima pelo peso</a></div>';}}
+  return '<div class="stack"><div class="row between"><h1>Odontograma</h1><div class="row" style="gap:6px"><button class="chip '+(perm?"on":"")+'" onclick="S.odSet=\'perm\';S.tooth=\'\';rerender()">Permanente</button><button class="chip '+(!perm?"on":"")+'" onclick="S.odSet=\'dec\';S.tooth=\'\';rerender()">Decíduo</button></div></div>'+
+  '<div class="card scroll-x" style="padding:12px 4px"><div style="min-width:'+(perm?"560":"360")+'px" class="stack">'+row(Q[0],Q[1])+'<div style="height:2px;background:var(--line-2);margin:4px 8px"></div>'+row(Q[2],Q[3])+'</div></div><p class="xs muted" style="text-align:center;margin:0">Notação FDI · arraste para os lados no celular</p>'+info+'</div>';}
+
+/* ================= Receituário ================= */
+function saveRx(){store.set("rx",S.rx)}
+function addRxDrug(id,txt,pres){const d=DM[id];S.rx.items.push({n:d.n,pres:pres||d.p.split(";")[0],qty:"",pos:txt||"",ctl:d.ctl||""});saveRx();toast("Adicionado ao receituário");location.hash="#/receita"}
+function addRxFromCalc(){if(!lastCalc)return;addRxDrug(lastCalc.d.id,lastCalc.txt+" Por ___ dias.",lastCalc.pres)}
+function rxType(){const c=S.rx.items.map(i=>i.ctl);
+  if(c.includes("A1"))return["bad","Contém substância da lista A1: exige Notificação de Receita A (amarela) do talonário oficial — esta folha serve apenas como rascunho/orientação ao tutor."];
+  if(c.includes("B1"))return["bad","Contém substância da lista B1: exige Notificação de Receita B (azul) do talonário próprio — esta folha serve como rascunho/orientação."];
+  if(c.includes("CANN"))return["bad","Contém cannabis: produto registrado/autorizado (ANVISA RDC 327/2019 ou MAPA), em receita especial retida na farmácia. Manipulação proibida. Confirme a norma vigente."];
+  if(c.includes("C1")||c.includes("CTL")||c.includes("C5"))return["warn","Receita de Controle Especial em 2 vias (1ª via retida na farmácia). Inclua endereço completo do pacienor."];
+  if(c.includes("ATB"))return["warn","Antimicrobiano: emita 2 vias quando a dispensação for em farmácia humana (RDC 471/2021 — validade 10 dias)."];
+  return["ok","Receita simples."];}
+function vRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const [tc,tl]=rxType();
+  const inp=(o,k,l,ph)=>'<div class="field"><label>'+l+'</label><input class="inp" value="'+esc(o[k]||"")+'" placeholder="'+(ph||"")+'" oninput="S.rx.'+(o===P?"pat":"tut")+'.'+k+'=this.value;saveRx()" /></div>';
+  return '<div class="stack"><h1>Receituário</h1>'+
+  (!D.nome?'<div class="note info">Cadastre seu nome e CRO em <a href="#/ajustes">Ajustes</a> para que apareçam na receita.</div>':"")+
+  '<div class="card"><h3>Paciente</h3><div class="grid g2m" style="margin-top:10px">'+inp(P,"nome","Nome do paciente")+'<div class="field"><label>Perfil</label><select class="inp" onchange="S.rx.pat.sp=this.value;saveRx()">'+SP.map(s=>'<option '+(P.sp===s.n?"selected":"")+'>'+s.n+'</option>').join("")+'</select></div>'+inp(P,"raca","CPF")+inp(P,"idade","Idade")+inp(P,"sexo","Sexo")+inp(P,"peso","Peso (kg)")+'</div></div>'+
+  '<div class="card"><h3>Endereço e responsável</h3><div class="grid g2m" style="margin-top:10px">'+inp(T,"nome","Responsável (se menor)")+inp(T,"cpf","RG/convênio")+inp(T,"end","Endereço completo","obrigatório em receitas de controle")+inp(T,"tel","Telefone")+'</div></div>'+
+  '<div class="card"><div class="row between"><h3>Prescrição ('+R.items.length+')</h3><button class="btn sm" onclick="openSearchRx()">'+ic("plus",16)+' Adicionar</button></div>'+
+  (R.items.length?R.items.map((it,i)=>'<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px" class="stack"><div class="row between"><b>'+(i+1)+'. '+esc(it.n)+'</b>'+ctlTag(it.ctl)+'<button class="btn sm ghost" onclick="S.rx.items.splice('+i+',1);saveRx();rerender()" aria-label="Remover">'+ic("trash",16)+'</button></div>'+
+  '<div class="grid g2m"><div class="field"><label>Apresentação</label><input class="inp" value="'+esc(it.pres)+'" oninput="S.rx.items['+i+'].pres=this.value;saveRx()" /></div><div class="field"><label>Quantidade</label><input class="inp" value="'+esc(it.qty)+'" placeholder="ex.: 1 frasco / 20 comprimidos" oninput="S.rx.items['+i+'].qty=this.value;saveRx()" /></div></div>'+
+  '<div class="field"><label>Posologia</label><textarea class="inp" oninput="S.rx.items['+i+'].pos=this.value;saveRx()" placeholder="Administrar ... mL por via oral a cada 12 horas por 7 dias.">'+esc(it.pos)+'</textarea></div></div>').join(""):'<div class="empty">Adicione fármacos pelo botão acima, pela monografia ou pela calculadora (o texto da posologia é preenchido automaticamente).</div>')+'</div>'+
+  '<div class="field"><label>Orientações gerais</label><textarea class="inp" oninput="S.rx.obs=this.value;saveRx()" placeholder="Retorno em 7 dias. Manter colar elizabetano...">'+esc(R.obs||"")+'</textarea></div>'+
+  (function(){const P=interPairs(R.items.map(i=>i.n));return P.length?'<div class="note bad"><b>⚠ '+P.length+' interação(ões) na receita:</b><br/>'+P.map(p=>'• '+sevTag(p.r.sev)+' '+esc(p.x+' + '+p.y)+': '+esc(p.r.eff)).join('<br/>')+'<br/><a href="#/calc/inter" onclick="interFromRx()">Ver detalhes</a></div>':''})()+
+  '<div class="note '+tc+'">'+tl+'</div>'+
+  '<div class="actions"><button class="btn pri" onclick="printRx()">'+ic("print",18)+' Imprimir / PDF</button><button class="btn" onclick="copy(rxText())">'+ic("copy",18)+' Copiar texto</button><button class="btn" onclick="if(confirm(\'Limpar receita atual?\')){S.rx={items:[],pat:{},tut:{}};saveRx();rerender()}">'+ic("trash",18)+' Limpar</button></div></div>';}
+function openSearchRx(){openSearch("");toast("Abra o fármaco e toque em “Receita”")}
+function rxText(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const L=[];
+  L.push((D.clinica||"")+(D.nome?"\nCD "+D.nome+(D.crmv?" — CRO "+D.crmv:""):""));L.push("");
+  L.push("Paciente: "+(P.nome||"")+" | CPF: "+(P.raca||"")+" | Idade: "+(P.idade||"")+" | Sexo: "+(P.sexo||"")+" | Peso: "+(P.peso||"")+" kg");
+  L.push("Responsável: "+(T.nome||"")+(T.cpf?" | Doc.: "+T.cpf:"")+(T.end?" | End.: "+T.end:"")+(T.tel?" | Tel.: "+T.tel:""));L.push("");
+  R.items.forEach((it,i)=>{L.push((i+1)+". "+it.n+(it.pres?" — "+it.pres:"")+(it.qty?" .......... "+it.qty:""));L.push("   "+(it.pos||""));});
+  if(R.obs){L.push("");L.push("Orientações: "+R.obs)}L.push("");L.push((D.end?D.end+" — ":"")+new Date().toLocaleDateString("pt-BR"));return L.join("\n");}
+function printRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const c=R.items.map(i=>i.ctl);const two=c.some(x=>["C1","CTL","ATB","A1","B1","C5","CANN"].includes(x));
+  const page=via=>'<div class="rx-page">'+(via?'<div style="text-align:right;font-weight:bold;font-size:12px;margin-bottom:4px">'+via+'</div>':"")+'<div class="rx-h"><b>'+esc(D.clinica||"Receituário Odontológico")+'</b><br/>'+esc(D.nome?"Cirurgião(ã)-Dentista: "+D.nome:"")+(D.crmv?" — CRO "+esc(D.crmv):"")+'<br/><small>'+esc(D.end||"")+(D.tel?" · "+esc(D.tel):"")+'</small>'+'</div>'+
+   (two?'<p><b>'+(c.includes("ATB")&&!c.some(x=>["C1","CTL","A1","B1"].includes(x))?"RECEITA DE ANTIMICROBIANO":"RECEITUÁRIO DE CONTROLE ESPECIAL")+'</b></p>':"")+'<p style="font-size:12px">USO ODONTOLÓGICO</p>'+
+   '<p><b>Paciente:</b> '+esc(P.nome||"")+' &nbsp; <b>CPF:</b> '+esc(P.raca||"")+' &nbsp; <b>Idade:</b> '+esc(P.idade||"")+' &nbsp; <b>Sexo:</b> '+esc(P.sexo||"")+' &nbsp; <b>Peso:</b> '+esc(P.peso||"")+' kg<br/><b>Responsável:</b> '+esc(T.nome||"")+(T.cpf?" &nbsp; <b>Doc.:</b> "+esc(T.cpf):"")+'<br/><b>Endereço:</b> '+esc(T.end||"")+(T.tel?" &nbsp; <b>Tel.:</b> "+esc(T.tel):"")+'</p><hr/>'+
+   R.items.map((it,i)=>'<div class="rx-item"><b>'+(i+1)+'. '+esc(it.n)+(it.pres?" — "+esc(it.pres):"")+'</b>'+(it.qty?' <span style="float:right">'+esc(it.qty)+'</span>':"")+'<br/>'+esc(it.pos||"")+'</div>').join("")+
+   (R.obs?'<p style="margin-top:18px"><b>Orientações:</b> '+esc(R.obs)+'</p>':"")+
+   '<div class="rx-foot">'+new Date().toLocaleDateString("pt-BR")+'<br/><br/>_______________________________________<br/>'+esc(D.nome||"Assinatura e carimbo")+(D.crmv?" — CRO "+esc(D.crmv):"")+(two?'<br/><small>Identificação do comprador / farmácia: ____________________________</small>':"")+'</div></div>';
+  document.getElementById("printArea").innerHTML=two?page("1ª via — Farmácia")+page("2ª via — Paciente"):page("");
+  const nome="Receita "+((P.nome||"").trim()||"odontologica");
+  if(window.AndroidPrint&&AndroidPrint.print){setTimeout(()=>{try{AndroidPrint.print(nome)}catch(e){copy(rxText())}},250);return}
+  try{window.print()}catch(e){copy(rxText())}
+}
+
+/* ================= Legislação ================= */
+function vReg(){return '<div class="stack"><h1>Legislação & receituário</h1>'+
+  '<div class="card"><h3>O que o cirurgião-dentista pode prescrever</h3><ul class="pts sm" style="margin-top:8px">'+
+  '<li><b>Lei 5.081/1966 (art. 6º):</b> compete ao cirurgião-dentista prescrever e aplicar especialidades farmacêuticas de uso interno e externo indicadas em Odontologia.</li>'+
+  '<li>Pode prescrever <b>controlados</b> (Portaria SVS/MS 344/98) e <b>antimicrobianos</b> — sempre para <b>uso odontológico</b>.</li>'+
+  '<li>Prescrições fora da área odontológica (ex.: anti-hipertensivo, antidepressivo para depressão) não são de competência do dentista: encaminhe ao médico.</li>'+
+  '<li>Sedação com óxido nitroso exige habilitação específica reconhecida pelo CFO; anestesia geral é ato médico (anestesiologista).</li></ul></div>'+
+  '<div class="card scroll-x"><h3>Qual receita usar?</h3><table class="tbl" style="margin-top:8px"><thead><tr><th>Tipo</th><th>Exemplos odontológicos</th><th>Documento</th></tr></thead><tbody>'+
+  '<tr><td>'+ctlTag("A1")+'</td><td>Morfina, oxicodona (raro)</td><td>Notificação de Receita A (amarela) — talonário da Vigilância Sanitária; validade 30 dias.</td></tr>'+
+  '<tr><td>'+ctlTag("B1")+'</td><td>Midazolam, diazepam, lorazepam, alprazolam, clonazepam</td><td>Notificação de Receita B (azul) — numeração fornecida pela Vigilância Sanitária; validade 30 dias.</td></tr>'+
+  '<tr><td>'+ctlTag("C1")+'</td><td>Carbamazepina, gabapentina, pregabalina, amitriptilina, nortriptilina</td><td>Receita de Controle Especial em 2 vias; validade 30 dias.</td></tr>'+
+  '<tr><td>'+ctlTag("CTL")+'</td><td>Tramadol, codeína (associações)</td><td>Em geral Receita de Controle Especial em 2 vias — confirme a lista vigente.</td></tr>'+
+  '<tr><td>'+ctlTag("ATB")+'</td><td>Amoxicilina, clindamicina, azitromicina, metronidazol</td><td>Receita em 2 vias com retenção, validade 10 dias (RDC 471/2021).</td></tr>'+
+  '<tr><td><span class="tag t-ok">Simples</span></td><td>Analgésicos, AINEs, corticoides, antissépticos</td><td>Receita simples com nome, CRO, endereço, data e assinatura (Código de Ética Odontológica).</td></tr></tbody></table>'+
+  '<div class="note warn" style="margin-top:10px">Listas e prazos mudam com atualizações da ANVISA. Confirme sempre a versão vigente da Portaria 344/98 e orientações do CRO do seu estado.</div></div>'+
+  '<div class="card"><h3>Boas práticas de prescrição odontológica</h3><ul class="pts sm" style="margin-top:8px">'+
+  '<li>Antibiótico só com sinais de infecção disseminada/sistêmica ou em profilaxia indicada — nunca substitui drenagem/remoção da causa (diretriz ADA 2019).</li>'+
+  '<li>Registre no prontuário: anamnese, alergias, medicamentos em uso, dose anestésica utilizada (tubetes) e prescrições.</li>'+
+  '<li>Pacientes especiais: consulte o médico assistente (anticoagulação, antirreabsortivos, quimioterapia, transplante).</li></ul></div></div>';}
+/* ================= Ajustes ================= */
+function vSettings(){const D=S.doc;const t=store.get("theme","auto");
+  const inp=(k,l,ph)=>'<div class="field"><label>'+l+'</label><input class="inp" value="'+esc(D[k]||"")+'" placeholder="'+(ph||"")+'" oninput="S.doc.'+k+'=this.value;store.set(\'doc\',S.doc)" /></div>';
+  return '<div class="stack"><h1>Ajustes</h1><div class="card"><h3>Dados do prescritor</h3><p class="sm muted" style="margin:4px 0 10px">Ficam salvos somente neste aparelho e aparecem no receituário.</p><div class="grid g2m">'+inp("nome","Nome completo")+inp("crmv","CRO (nº/UF)","12345/SP")+inp("clinica","Clínica/Hospital")+inp("tel","Telefone")+'</div><div style="margin-top:12px">'+inp("end","Endereço")+'</div></div>'+
+  (AUTH_ON&&store.get("auth",null)?'<div class="card"><h3>Conta</h3><p class="sm" style="margin:6px 0 10px">Conectado como <b>'+esc(store.get("auth",{}).email)+'</b></p><button class="btn" onclick="logout()">Sair da conta</button></div>':"")+
+  '<div class="card"><h3>Aparência</h3><div class="row wrapf" style="margin-top:10px">'+[["auto","Automático"],["light","Claro"],["dark","Escuro"]].map(([k,l])=>'<button class="btn '+(t===k?"on":"")+'" onclick="store.set(\'theme\',\''+k+'\');applyTheme();rerender()">'+l+'</button>').join("")+'</div></div>'+
+  '<div class="card"><h3>Dados locais</h3><p class="sm muted" style="margin:4px 0 10px">'+S.favs.size+' favoritos · '+S.done.size+' casos estudados · '+S.rx.items.length+' itens na receita</p><button class="btn" onclick="if(confirm(\'Apagar favoritos, histórico e receita deste aparelho?\')){[\'favs\',\'recent\',\'doneCases\',\'rx\',\'calcW\'].forEach(k=>{try{localStorage.removeItem(\'lmo_\'+k)}catch(e){}});location.reload()}">'+ic("trash",18)+' Apagar dados locais</button></div>'+
+  '<div class="card"><h3>Sobre</h3><p class="sm" style="margin:6px 0 0">Clínica Odonto Pro — '+DRUGS.length+' fármacos e produtos, '+TOX.length+' urgências, '+INTER.length+' interações e '+CASES.length+' casos clínicos. Funciona 100% offline.</p></div>'+disclaimer()+'</div>';}
+
+
+/* ================= Login (Firebase Auth via REST) ================= */
+const FB={apiKey:"__FB_KEY__"};const AUTH_ON=!!FB.apiKey&&!FB.apiKey.startsWith("__");const GRACE_DAYS=7;
+const AUTH_ERR={EMAIL_NOT_FOUND:"E-mail ou senha incorretos.",INVALID_PASSWORD:"E-mail ou senha incorretos.",INVALID_LOGIN_CREDENTIALS:"E-mail ou senha incorretos.",INVALID_EMAIL:"E-mail inválido.",
+ USER_DISABLED:"Seu acesso foi desativado. Fale com o administrador.",USER_NOT_FOUND:"Seu acesso foi removido. Fale com o administrador.",TOKEN_EXPIRED:"Sua senha foi alterada. Entre novamente.",INVALID_REFRESH_TOKEN:"Sessão expirada. Entre novamente.",
+ TOO_MANY_ATTEMPTS_TRY_LATER:"Muitas tentativas. Aguarde alguns minutos.",PROJECT_NUMBER_MISMATCH:"Sessão inválida para este app. Entre novamente.",MISSING_PASSWORD:"Informe a senha."};
+function jwt(t){try{return JSON.parse(atob(t.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")))}catch(e){return{}}}
+function devName(){const u=navigator.userAgent;const m=u.match(/Android[^;)]*;\s*([^;)]+)/);return m?m[1].trim():/iPhone|iPad/.test(u)?"iPhone/iPad":/Windows/.test(u)?"Windows":/Mac/.test(u)?"Mac":"Navegador"}
+const IDT="https://identitytoolkit.googleapis.com/v1/accounts:";
+async function idt(op,body){const r=await fetch(IDT+op+"?key="+FB.apiKey,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||("HTTP "+r.status));return j}
+async function setSession(idToken,sid){await idt("update",{idToken,displayName:"sessao:"+sid+"|"+devName(),returnSecureToken:false})}
+async function getSession(idToken){const j=await idt("lookup",{idToken});const dn=(j.users&&j.users[0]&&j.users[0].displayName)||"";const m=dn.match(/^sessao:([^|]+)\|?(.*)$/);return m?{sid:m[1],dev:m[2]}:null}
+function kicked(dev){store.set("auth",null);showLogin("Sua conta foi acessada em outro aparelho"+(dev?" ("+dev+")":"")+". Só é permitido um aparelho por vez — entre novamente para usar aqui.",true)}
+function authMsg(code){code=String(code||"").split(" ")[0].split(":")[0];return AUTH_ERR[code]||"Não foi possível entrar ("+code+")."}
+function showLogin(msg,isErr){const l=document.getElementById("login");l.classList.add("show");const e=document.getElementById("lgErr");if(msg&&isErr){e.textContent=msg;e.style.display="block"}else{e.style.display="none";if(msg)document.getElementById("lgMsg").textContent=msg}}
+async function doLogin(){const b=document.getElementById("lgBtn"),em=document.getElementById("lgE").value.trim(),pw=document.getElementById("lgP").value;b.disabled=true;b.textContent="Entrando...";
+ try{const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+FB.apiKey,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw,returnSecureToken:true})});const j=await r.json();
+  if(!r.ok)throw new Error(j.error&&j.error.message);const sid=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now());try{await setSession(j.idToken,sid)}catch(e){console.warn("sessão",e)}store.set("auth",{email:j.email,rt:j.refreshToken,ok:Date.now(),sid});document.getElementById("login").classList.remove("show");document.getElementById("lgP").value="";route();toast("Bem-vindo(a), "+j.email)}
+ catch(e){showLogin(e instanceof TypeError?"Sem conexão com a internet. O primeiro acesso precisa de internet.":authMsg(e.message),true)}finally{b.disabled=false;b.textContent="Entrar"}}
+async function verifyAuth(){const a=store.get("auth",null);if(!a)return;
+ try{const r=await fetch("https://securetoken.googleapis.com/v1/token?key="+FB.apiKey,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=refresh_token&refresh_token="+encodeURIComponent(a.rt)});const j=await r.json();
+  if(r.ok){a.rt=j.refresh_token||a.rt;if(!a.sid){store.set("auth",null);showLogin("Atualização de segurança: entre novamente (agora só é permitido um aparelho por vez).",true);return}try{const ss=await getSession(j.id_token);if(!ss)await setSession(j.id_token,a.sid);else if(ss.sid!==a.sid){kicked(ss.dev);return}}catch(e){if(/USER_DISABLED|USER_NOT_FOUND|INVALID_ID_TOKEN|TOKEN_EXPIRED/.test(e.message)){store.set("auth",null);showLogin(authMsg(e.message),true);return}}a.ok=Date.now();store.set("auth",a)}else{store.set("auth",null);showLogin(authMsg(j.error&&j.error.message),true)}}
+ catch(e){if(Date.now()-a.ok>GRACE_DAYS*864e5)showLogin("Conecte-se à internet para validar seu acesso (verificação a cada "+GRACE_DAYS+" dias).",true)}}
+function logout(){store.set("auth",null);location.hash="#/";showLogin("Você saiu da conta.")}
+function authGate(){if(!AUTH_ON)return;const a=store.get("auth",null);
+ if(!a)showLogin();else if(Date.now()-a.ok>GRACE_DAYS*864e5){showLogin("Validando acesso...");verifyAuth().then(()=>{const b=store.get("auth",null);if(b&&Date.now()-b.ok<6e4)document.getElementById("login").classList.remove("show")})}else verifyAuth();
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&store.get("auth",null))verifyAuth()});setInterval(()=>{if(!document.hidden&&store.get("auth",null))verifyAuth()},60*1000)}
+
+/* ================= Init ================= */
+const LOGO = document.querySelector(".brand img").getAttribute("src");
+applyTheme();
+authGate();
+if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener&&matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyTheme);
+route();
+</script>
+</body>
+</html>

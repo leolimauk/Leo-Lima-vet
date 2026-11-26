@@ -1,0 +1,8 @@
+{
+  "appId": "br.com.leomedvet.app",
+  "appName": "Clínica Vet Pro",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#ffffff"
+  }
+}

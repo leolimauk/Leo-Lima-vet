@@ -1,0 +1,21 @@
+{
+  "name": "clinica-odonto-pro",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Clínica Odonto Pro — bulário e clínica odontológica (Android via Capacitor)",
+  "scripts": {
+    "prepare-web": "node -e \"require('fs').mkdirSync('www',{recursive:true});require('fs').copyFileSync('index.html','www/index.html')\"",
+    "android:init": "npm run prepare-web && npx cap add android && npx capacitor-assets generate --android",
+    "android:sync": "npm run prepare-web && npx cap sync android",
+    "android:build": "npm run android:sync && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.6.0"
+  }
+}

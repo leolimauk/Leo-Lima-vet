@@ -1,0 +1,8 @@
+{
+  "appId": "br.com.clinicaodontopro.app",
+  "appName": "Clínica Odonto Pro",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#ffffff"
+  }
+}
