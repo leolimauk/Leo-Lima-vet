@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/build-aab.yml"
+      - "versao-play.txt"
 
 permissions:
   contents: write
@@ -38,11 +39,13 @@ jobs:
           mkdir -p android/app/src/main/res/xml
           printf '%s\n' '<?xml version="1.0" encoding="utf-8"?>' '<paths xmlns:android="http://schemas.android.com/apk/res/android">' '    <external-path name="my_images" path="." />' '    <cache-path name="my_cache_images" path="." />' '</paths>' > $X
 
-      - name: Versão (versionCode = número da execução)
+      - name: Versão (nome em versao-play.txt; código interno automático)
         run: |
           G=android/app/build.gradle
+          VN=$(tr -d ' \r\n' < versao-play.txt)
           VC=$((100 + ${{ github.run_number }}))
-          sed -i -E "s/versionCode [0-9]+/versionCode $VC/; s/versionName \"[^\"]*\"/versionName \"2.1.$VC\"/" $G
+          echo "VN=$VN" >> $GITHUB_ENV
+          sed -i -E "s/versionCode [0-9]+/versionCode $VC/; s/versionName \"[^\"]*\"/versionName \"$VN\"/" $G
           grep -nE "versionCode|versionName|targetSdk|minSdk" $G android/variables.gradle || true
 
       - name: Compilar AAB (release, sem assinatura)
@@ -56,7 +59,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: aab-${{ github.run_number }}
-          name: AAB Play Store — build ${{ github.run_number }}
+          name: AAB Play Store — versão ${{ env.VN }} (build ${{ github.run_number }})
           body: Pacote para a Play Store (precisa ser assinado antes do envio).
           files: ClinicaVetPro-unsigned.aab
           prerelease: true
