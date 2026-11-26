@@ -32,6 +32,12 @@ jobs:
       - name: Criar projeto Android e ícones
         run: npm run android:init
 
+      - name: Permitir câmera (fotos dos pacientes)
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.CAMERA' $M || sed -i 's#</manifest>#    <uses-permission android:name="android.permission.CAMERA" />\n    <uses-feature android:name="android.hardware.camera" android:required="false" />\n</manifest>#' $M
+          grep -n 'CAMERA' $M
+
       - name: Impressão nativa e compartilhamento
         run: |
           cp android-native/MainActivity.java android/app/src/main/java/br/com/leomedvet/app/MainActivity.java

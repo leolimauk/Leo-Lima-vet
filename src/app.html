@@ -273,10 +273,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   </div>
 </div>
 <div class="lg" id="login"><div class="box"><img src="__LOGO__" alt="" /><h2 style="text-align:center">Clínica Vet Pro</h2><p class="muted sm" style="text-align:center;margin:4px 0 16px" id="lgMsg">Acesso restrito. Entre com o login fornecido pelo administrador.</p>
-<form onsubmit="event.preventDefault();doLogin()" class="stack"><div class="field"><label for="lgE">E-mail</label><input class="inp" id="lgE" type="email" autocomplete="username" required /></div>
+<div class="note bad" id="lgErr" style="display:none;margin-bottom:10px"></div><form id="lgForm" onsubmit="event.preventDefault();doLogin()" class="stack"><div class="field"><label for="lgE">E-mail</label><input class="inp" id="lgE" type="email" autocomplete="username" required /></div>
 <div class="field"><label for="lgP">Senha</label><input class="inp" id="lgP" type="password" autocomplete="current-password" required /></div>
-<div class="note bad" id="lgErr" style="display:none"></div><button class="btn pri block" id="lgBtn" type="submit">Entrar</button></form>
-<p class="xs muted" style="text-align:center;margin-top:14px">Esqueceu a senha ou precisa de acesso? Fale com o administrador.</p></div></div>
+<button class="btn pri block" id="lgBtn" type="submit">Entrar</button>
+<button type="button" class="btn ghost block" style="margin-top:6px" onclick="lgReset()">Esqueci minha senha</button></form><form id="lgSign" style="display:none" onsubmit="event.preventDefault();lgSignup()" class="stack"><div class="field"><label for="suN">Seu nome</label><input class="inp" id="suN" autocomplete="name" /></div><div class="field"><label for="suE">E-mail</label><input class="inp" id="suE" type="email" autocomplete="username" /></div><div class="field"><label for="suP">Crie uma senha (mín. 6)</label><input class="inp" id="suP" type="password" autocomplete="new-password" /></div><label class="row" style="gap:8px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="suOk" style="width:18px;height:18px;margin-top:2px" /><span class="xs">Li e aceito a <a href="https://leolimauk.github.io/Leo-Lima-vet/legal/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>.</span></label><button class="btn pri block" id="suBtn" type="submit">Criar conta e começar</button><button type="button" class="btn ghost block" onclick="lgMode('in')">Já tenho conta — entrar</button></form><div id="lgTrial" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);text-align:center"><p class="sm" style="margin:0 0 8px">Ainda não tem acesso?</p><button type="button" class="btn block" onclick="lgMode('up')">🎁 Teste grátis por <span id="lgTrialD">7</span> dias</button></div><p class="xs muted" style="text-align:center;margin-top:14px">Problemas com o acesso? Fale com o administrador.</p></div></div>
 <div class="toast" id="toast"></div>
 <div id="printArea"></div>
 
@@ -391,7 +391,7 @@ function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||
 /* ================= Router ================= */
 const AFTER=[];
 const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diag","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Toxicologia","alert"]];
-const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/derm","Dermatologia","paw"],["#/escalas","Escalas clínicas","gauge"],["#/apostila","Apostila (PDF)","bookopen"],["#/plantao","Modo Plantão","bolt"],["#/protocolos","Protocolos de emergência","heart"],["#/procedimentos","Procedimentos","syringe"],["#/internacao","Internação","clock"],["#/fisio","Valores fisiológicos","gauge"],["#/radio","Radiologia","xray"],["#/lab","Laboratório","flask"],["#/emergencia","Emergência","cross"],["#/anestesia","Anestesia","syringe"],["#/vacinas","Vacinação","drop"],["#/repro","Reprodução","venus"],["#/producao","Produção animal","barn"],["#/docs","Documentos & termos","clip"],["#/quiz","Quiz","quiz"],["#/odontovet","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+const SIDE=NAV.concat([["#/pacientes","Pacientes","paw"],["#/casos","Casos clínicos","book"],["#/derm","Dermatologia","paw"],["#/escalas","Escalas clínicas","gauge"],["#/apostila","Apostila (PDF)","bookopen"],["#/plantao","Modo Plantão","bolt"],["#/protocolos","Protocolos de emergência","heart"],["#/procedimentos","Procedimentos","syringe"],["#/internacao","Internação","clock"],["#/fisio","Valores fisiológicos","gauge"],["#/radio","Radiologia","xray"],["#/lab","Laboratório","flask"],["#/emergencia","Emergência","cross"],["#/anestesia","Anestesia","syringe"],["#/vacinas","Vacinação","drop"],["#/repro","Reprodução","venus"],["#/producao","Produção animal","barn"],["#/docs","Documentos & termos","clip"],["#/quiz","Quiz","quiz"],["#/odontovet","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
 function goBack(){if(history.length>1)history.back();else location.hash="#/"}
 function route(){
   const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
@@ -427,6 +427,8 @@ function route(){
     case "favoritos":html=vFavs();sub="Favoritos";break;
     case "legislacao":html=vReg();sub="Legislação & Receituário";break;
     case "ajustes":html=vSettings();sub="Ajustes";break;
+    case "pacientes":html=vPac(arg,parts[2]);isSub=!!arg;sub="Pacientes";break;
+    case "admin":html=vAdmin();sub="Usuários";break;
     default:html=vHome();
   }
   app.innerHTML=html;
@@ -437,7 +439,8 @@ function route(){
   const base="#/"+page;
   const mk=(arr,cls)=>arr.map(([href,l,i])=>'<a href="'+href+'" class="'+((href===base||(href==="#/"&&page===""))?"on":"")+'">'+ic(i,cls?20:22)+'<span>'+l+'</span></a>').join("");
   document.getElementById("dock").innerHTML=mk(NAV);
-  document.getElementById("side").innerHTML=mk(SIDE,1);
+  document.getElementById("side").innerHTML=mk(SIDE.concat(store.get("owner",false)?[["#/admin","Usuários (admin)","gear"]]:[]),1);
+  if(typeof newsShow==="function")setTimeout(()=>newsShow(),400);
   if(!route._keep)window.scrollTo(0,0);route._keep=false;
   if(page==="calc")calcRun();
 }
@@ -467,7 +470,7 @@ function vHome(){
   return '<section class="hero"><img src="'+LOGO+'" alt="" /><div style="flex:1;min-width:0;width:100%"><h1>Clínica Vet Pro</h1><p>Bulário, doses por espécie, calculadoras, toxicologia e casos clínicos — funciona offline.</p>'+
   '<div class="search">'+ic("search")+'<input class="inp" placeholder="Buscar: meloxicam, Cerenia, lírio, piometra..." onfocus="openSearch(this.value);this.blur()" readonly /></div></div></section>'+
   '<div class="stats"><div class="stat"><b>'+DRUGS.length+'</b><span>fármacos (monografias únicas)</span></div><div class="stat"><b>'+nDose+'</b><span>doses por espécie</span></div><div class="stat"><b>'+(TOX.length+INTER.length)+'</b><span>toxinas e interações</span></div><div class="stat"><b>'+CASES.length+'</b><span>casos clínicos</span></div></div>'+
-  '<div class="sec-title"><h2>Ferramentas</h2></div><div class="tiles">'+
+  accBanner()+'<div class="sec-title"><h2>Ferramentas</h2></div><div class="tiles">'+tile("#/pacientes","paw","c6","Pacientes","Prontuário · peso · vacinas · fotos")+
   tile("#/apostila","bookopen","c8","Apostila","Farmacologia · 174 páginas")+  tile("#/plantao","bolt","c3","Modo Plantão","Doses de emergência · RCP")+tile("#/protocolos","heart","c3","Protocolos","DVG · obstrução · convulsão")+
   tile("#/procedimentos","syringe","c5","Procedimentos","Passo a passo p/ estagiários")+tile("#/internacao","clock","c2","Internação","Medicações · SBAR")+
   tile("#/calc/dose","calc","c1","Calculadora de doses","mg, mL e comprimidos")+tile("#/calc/rcp","heart","c3","RCP & emergência","Doses por peso")+
@@ -765,7 +768,7 @@ function vRx(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const [tc,tl]=rxType
   '<div class="field"><label>Orientações gerais</label><textarea class="inp" oninput="S.rx.obs=this.value;saveRx()" placeholder="Retorno em 7 dias. Manter colar elizabetano...">'+esc(R.obs||"")+'</textarea></div>'+
   (function(){const P=interPairs(R.items.map(i=>i.n));return P.length?'<div class="note bad"><b>⚠ '+P.length+' interação(ões) na receita:</b><br/>'+P.map(p=>'• '+sevTag(p.r.sev)+' '+esc(p.x+' + '+p.y)+': '+esc(p.r.eff)).join('<br/>')+'<br/><a href="#/calc/inter" onclick="interFromRx()">Ver detalhes</a></div>':''})()+
   '<div class="note '+tc+'">'+tl+'</div>'+
-  '<div class="actions"><button class="btn pri" onclick="printRx()">'+ic("print",18)+' Imprimir / PDF</button><button class="btn" onclick="copy(rxText())">'+ic("copy",18)+' Copiar texto</button><button class="btn" onclick="if(confirm(\'Limpar receita atual?\')){S.rx={items:[],pat:{},tut:{}};saveRx();rerender()}">'+ic("trash",18)+' Limpar</button></div></div>';}
+  '<div class="actions"><button class="btn pri" onclick="printRx()">'+ic("print",18)+' Imprimir / PDF</button><button class="btn" onclick="rxPdf()">📄 Enviar PDF</button><button class="btn" onclick="rxWa()">📲 WhatsApp</button><button class="btn" onclick="copy(rxText())">'+ic("copy",18)+' Copiar texto</button><button class="btn" onclick="if(confirm(\'Limpar receita atual?\')){S.rx={items:[],pat:{},tut:{}};saveRx();rerender()}">'+ic("trash",18)+' Limpar</button></div></div>';}
 function openSearchRx(){openSearch("");toast("Abra o fármaco e toque em “Receita”")}
 function rxText(){const R=S.rx,P=R.pat||{},T=R.tut||{},D=S.doc;const L=[];
   L.push((D.clinica||"")+(D.nome?"\nMV "+D.nome+(D.crmv?" — CRMV "+D.crmv:""):""));L.push("");
@@ -817,7 +820,7 @@ function vReg(){return '<div class="stack"><h1>Legislação & receituário</h1>'
 function vSettings(){const D=S.doc;const t=store.get("theme","auto");
   const inp=(k,l,ph)=>'<div class="field"><label>'+l+'</label><input class="inp" value="'+esc(D[k]||"")+'" placeholder="'+(ph||"")+'" oninput="S.doc.'+k+'=this.value;store.set(\'doc\',S.doc)" /></div>';
   return '<div class="stack"><h1>Ajustes</h1><div class="card"><h3>Dados do prescritor</h3><p class="sm muted" style="margin:4px 0 10px">Ficam salvos somente neste aparelho e aparecem no receituário.</p><div class="grid g2m">'+inp("nome","Nome completo")+inp("crmv","CRMV (nº/UF)","12345/SP")+inp("clinica","Clínica/Hospital")+inp("tel","Telefone")+'</div><div style="margin-top:12px">'+inp("end","Endereço")+'</div></div>'+
-  (AUTH_ON&&store.get("auth",null)?'<div class="card"><h3>Conta</h3><p class="sm" style="margin:6px 0 10px">Conectado como <b>'+esc(store.get("auth",{}).email)+'</b></p><button class="btn" onclick="logout()">Sair da conta</button></div>':"")+
+  (AUTH_ON?vConta():"")+
   '<div class="card"><h3>Aparência</h3><div class="row wrapf" style="margin-top:10px">'+[["auto","Automático"],["light","Claro"],["dark","Escuro"]].map(([k,l])=>'<button class="btn '+(t===k?"on":"")+'" onclick="store.set(\'theme\',\''+k+'\');applyTheme();rerender()">'+l+'</button>').join("")+'</div></div>'+
   '<div class="card"><h3>Conteúdo do app</h3><p class="sm muted" style="margin:4px 0 10px">Versão do banco de dados: '+dataVer()+' · '+DRUGS.length+' fármacos. O app baixa atualizações de conteúdo automaticamente quando há internet (sem precisar instalar novo APK).</p><button class="btn" onclick="checkDataUpdate(true)">'+ic("search",18)+' Verificar atualização agora</button></div>'+
   '<div class="card"><h3>Dados locais</h3><p class="sm muted" style="margin:4px 0 10px">'+S.favs.size+' favoritos · '+S.done.size+' casos estudados · '+S.rx.items.length+' itens na receita</p><button class="btn" onclick="if(confirm(\'Apagar favoritos, histórico e receita deste aparelho?\')){[\'favs\',\'recent\',\'doneCases\',\'rx\',\'calcW\'].forEach(k=>{try{localStorage.removeItem(\'lmv_\'+k)}catch(e){}});location.reload()}">'+ic("trash",18)+' Apagar dados locais</button></div>'+
@@ -840,15 +843,18 @@ function authMsg(code){code=String(code||"").split(" ")[0].split(":")[0];return 
 function showLogin(msg,isErr){const l=document.getElementById("login");l.classList.add("show");const e=document.getElementById("lgErr");if(msg&&isErr){e.textContent=msg;e.style.display="block"}else{e.style.display="none";if(msg)document.getElementById("lgMsg").textContent=msg}}
 async function doLogin(){const b=document.getElementById("lgBtn"),em=document.getElementById("lgE").value.trim(),pw=document.getElementById("lgP").value;b.disabled=true;b.textContent="Entrando...";
  try{const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+FB.apiKey,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw,returnSecureToken:true})});const j=await r.json();
-  if(!r.ok)throw new Error(j.error&&j.error.message);const sid=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now());try{await setSession(j.idToken,sid)}catch(e){console.warn("sessão",e)}store.set("auth",{email:j.email,rt:j.refreshToken,ok:Date.now(),sid});document.getElementById("login").classList.remove("show");document.getElementById("lgP").value="";route();toast("Bem-vindo(a), "+j.email)}
+  if(!r.ok)throw new Error(j.error&&j.error.message);await loginOk(j);toast("Bem-vindo(a), "+j.email)}
  catch(e){showLogin(e instanceof TypeError?"Sem conexão com a internet. O primeiro acesso precisa de internet.":authMsg(e.message),true)}finally{b.disabled=false;b.textContent="Entrar"}}
+async function loginOk(j){const sid=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now());try{await setSession(j.idToken,sid)}catch(e){console.warn("sessão",e)}
+ store.set("auth",{email:(j.email||"").toLowerCase(),rt:j.refreshToken,ok:Date.now(),sid});store.set("owner",false);S.apx=null;S.apxT=null;document.getElementById("login").classList.remove("show");["lgP","suP"].forEach(k=>{const e=document.getElementById(k);if(e)e.value=""});lgMode("in");route();try{await accCheck(true)}catch(e){}}
 async function verifyAuth(){const a=store.get("auth",null);if(!a)return;
  try{const r=await fetch("https://securetoken.googleapis.com/v1/token?key="+FB.apiKey,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=refresh_token&refresh_token="+encodeURIComponent(a.rt)});const j=await r.json();
-  if(r.ok){a.rt=j.refresh_token||a.rt;if(!a.sid){store.set("auth",null);showLogin("Atualização de segurança: entre novamente (agora só é permitido um aparelho por vez).",true);return}try{const ss=await getSession(j.id_token);if(!ss)await setSession(j.id_token,a.sid);else if(ss.sid!==a.sid){kicked(ss.dev);return}}catch(e){if(/USER_DISABLED|USER_NOT_FOUND|INVALID_ID_TOKEN|TOKEN_EXPIRED/.test(e.message)){store.set("auth",null);showLogin(authMsg(e.message),true);return}}a.ok=Date.now();store.set("auth",a)}else{store.set("auth",null);showLogin(authMsg(j.error&&j.error.message),true)}}
+  if(r.ok){a.rt=j.refresh_token||a.rt;if(!a.sid){store.set("auth",null);showLogin("Atualização de segurança: entre novamente (agora só é permitido um aparelho por vez).",true);return}try{const ss=await getSession(j.id_token);if(!ss)await setSession(j.id_token,a.sid);else if(ss.sid!==a.sid){kicked(ss.dev);return}}catch(e){if(/USER_DISABLED|USER_NOT_FOUND|INVALID_ID_TOKEN|TOKEN_EXPIRED/.test(e.message)){store.set("auth",null);showLogin(authMsg(e.message),true);return}}a.ok=Date.now();store.set("auth",a);accCheck(false)}else{store.set("auth",null);showLogin(authMsg(j.error&&j.error.message),true)}}
  catch(e){if(Date.now()-a.ok>GRACE_DAYS*864e5)showLogin("Conecte-se à internet para validar seu acesso (verificação a cada "+GRACE_DAYS+" dias).",true)}}
-function logout(){store.set("auth",null);S.apx=null;S.apxT=null;try{APXDB.wipe()}catch(e){}location.hash="#/";showLogin("Você saiu da conta.")}
+function logout(){store.set("auth",null);store.set("owner",false);S.apx=null;S.apxT=null;try{APXDB.wipe()}catch(e){}location.hash="#/";showLogin("Você saiu da conta.")}
 function authGate(){if(!AUTH_ON)return;const a=store.get("auth",null);
  if(!a)showLogin();else if(Date.now()-a.ok>GRACE_DAYS*864e5){showLogin("Validando acesso...");verifyAuth().then(()=>{const b=store.get("auth",null);if(b&&Date.now()-b.ok<6e4)document.getElementById("login").classList.remove("show")})}else verifyAuth();
+ accApply();lgCfg();
  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&store.get("auth",null))verifyAuth()});setInterval(()=>{if(!document.hidden&&store.get("auth",null))verifyAuth()},60*1000)}
 
 /* ================= Init ================= */
