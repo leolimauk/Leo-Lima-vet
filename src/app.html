@@ -391,7 +391,7 @@ function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||
 /* ================= Router ================= */
 const AFTER=[];
 const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diag","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Toxicologia","alert"]];
-const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/derm","Dermatologia","paw"],["#/escalas","Escalas clínicas","gauge"],["#/plantao","Modo Plantão","bolt"],["#/protocolos","Protocolos de emergência","heart"],["#/procedimentos","Procedimentos","syringe"],["#/internacao","Internação","clock"],["#/fisio","Valores fisiológicos","gauge"],["#/lab","Laboratório","flask"],["#/emergencia","Emergência","cross"],["#/anestesia","Anestesia","syringe"],["#/vacinas","Vacinação","drop"],["#/repro","Reprodução","venus"],["#/producao","Produção animal","barn"],["#/docs","Documentos & termos","clip"],["#/quiz","Quiz","quiz"],["#/odontovet","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+const SIDE=NAV.concat([["#/casos","Casos clínicos","book"],["#/derm","Dermatologia","paw"],["#/escalas","Escalas clínicas","gauge"],["#/plantao","Modo Plantão","bolt"],["#/protocolos","Protocolos de emergência","heart"],["#/procedimentos","Procedimentos","syringe"],["#/internacao","Internação","clock"],["#/fisio","Valores fisiológicos","gauge"],["#/radio","Radiologia","xray"],["#/lab","Laboratório","flask"],["#/emergencia","Emergência","cross"],["#/anestesia","Anestesia","syringe"],["#/vacinas","Vacinação","drop"],["#/repro","Reprodução","venus"],["#/producao","Produção animal","barn"],["#/docs","Documentos & termos","clip"],["#/quiz","Quiz","quiz"],["#/odontovet","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
 function goBack(){if(history.length>1)history.back();else location.hash="#/"}
 function route(){
   const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
@@ -414,6 +414,7 @@ function route(){
     case "procedimentos":html=vProc(arg);isSub=!!arg;sub="Procedimentos";break;
     case "internacao":html=vInt(arg);isSub=!!arg;sub="Internação";break;
     case "fisio":html=vFisio();sub="Valores fisiológicos";break;
+    case "radio":html=vRadio(arg,parts[2]);isSub=!!parts[2];sub="Radiologia";break;
     case "lab":html=vLab(arg);sub="Laboratório";break;
     case "docs":html=vDocs(arg);sub="Documentos & termos";break;
     case "vacinas":html=vVac(arg);sub="Vacinação";break;
@@ -474,7 +475,7 @@ function vHome(){
   tile("#/receita","file","c2","Receituário","Gera receita pronta")+tile("#/legislacao","scale","c8","Legislação","MAPA · ANVISA · CFMV")+
   tile("#/diag","search","c5","Diagnósticos","Queixas · IRIS · ACVIM")+tile("#/derm","paw","c7","Dermatologia","Atlas e diferencial")+
   tile("#/escalas","gauge","c6","Escalas","Dor · ECC · coma")+tile("#/odontovet","tooth","c4","Odontograma","Triadan · AVDC")+
-  tile("#/lab","flask","c1","Laboratório","Hemograma · bioquímica · gaso")+tile("#/emergencia","cross","c3","Emergência","Triagem · choque · FAST")+
+  tile("#/radio","xray","c8","Radiologia","Atlas · VHS · leitura")+tile("#/lab","flask","c1","Laboratório","Hemograma · bioquímica · gaso")+tile("#/emergencia","cross","c3","Emergência","Triagem · choque · FAST")+
   tile("#/anestesia","syringe","c5","Anestesia","ASA · jejum · checklist")+tile("#/vacinas","drop","c6","Vacinação","Protocolos e calendário")+
   tile("#/repro","venus","c7","Reprodução","Parto · progesterona")+tile("#/producao","barn","c8","Produção animal","Lote · ECC · carência")+
   tile("#/docs","clip","c2","Documentos","Termos · atestados · ficha")+tile("#/quiz","quiz","c4","Quiz","Concurso · farmacologia")+tile("#/fisio","gauge","c6","Valores fisiológicos","FC · FR · T por espécie")+'</div>'+
@@ -544,7 +545,7 @@ function renderSearch(v){
   const go="onclick=\"closeSearch()\"";
   el.innerHTML=(dr.length?'<div class="xs muted" style="font-weight:800;margin:6px 2px">MEDICAMENTOS ('+dr.length+')</div><div class="list">'+dr.map(d=>'<a class="item" '+go+' href="#/bulario/'+d.id+'"><div class="t">'+esc(d.n)+'</div><div class="s">'+esc(d.b)+'</div></a>').join("")+'</div>':"")+
   (tx.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">TOXICOLOGIA ('+tx.length+')</div><div class="list">'+tx.map(t=>'<a class="item" '+go+' href="#/tox/'+t.id+'"><div class="row"><span class="sev '+t.sev+'"></span><div class="t">'+esc(t.n)+'</div></div><div class="s">'+esc(t.t+" · "+t.sp)+'</div></a>').join("")+'</div>':"")+
-  (function(){const pr=(typeof PROT!=='undefined'?PROT.map(x=>({h:'#/protocolos/'+x.id,n:x.n,s:'Protocolo de emergência',_s:norm(x.n+' '+x.s+' '+x.p.join(' '))})):[]).concat(typeof PROC!=='undefined'?PROC.map(x=>({h:'#/procedimentos/'+x.id,n:x.n,s:'Procedimento',_s:norm(x.n+' '+x.ind)})):[]).filter(m).slice(0,6);return pr.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">PROTOCOLOS E PROCEDIMENTOS</div><div class="list">'+pr.map(x=>'<a class="item" '+go+' href="'+x.h+'"><div class="t">'+esc(x.n)+'</div><div class="s">'+x.s+'</div></a>').join("")+'</div>':''})()+
+  (function(){const pr=(typeof RX!=='undefined'?RX.map(x=>({h:'#/radio/atlas/'+x.id,n:x.n,s:'Radiologia — '+x.r,_s:norm(x.n+' '+x.a.join(' ')+' '+x.d)})):[]).concat(typeof PROT!=='undefined'?PROT.map(x=>({h:'#/protocolos/'+x.id,n:x.n,s:'Protocolo de emergência',_s:norm(x.n+' '+x.s+' '+x.p.join(' '))})):[]).concat(typeof PROC!=='undefined'?PROC.map(x=>({h:'#/procedimentos/'+x.id,n:x.n,s:'Procedimento',_s:norm(x.n+' '+x.ind)})):[]).filter(m).slice(0,6);return pr.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">PROTOCOLOS E PROCEDIMENTOS</div><div class="list">'+pr.map(x=>'<a class="item" '+go+' href="'+x.h+'"><div class="t">'+esc(x.n)+'</div><div class="s">'+x.s+'</div></a>').join("")+'</div>':''})()+
   (qx.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">DIAGNÓSTICO POR QUEIXA</div><div class="list">'+qx.map(q=>'<a class="item" '+go+' href="#/diag/'+q.id+'"><div class="t">'+esc(q.n)+'</div></a>').join("")+'</div>':"")+
   (dm.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">DERMATOLOGIA</div><div class="list">'+dm.map(d=>'<a class="item" '+go+' href="#/derm/d/'+d.id+'"><div class="t">'+esc(d.n)+'</div></a>').join("")+'</div>':"")+
   (cs.length?'<div class="xs muted" style="font-weight:800;margin:14px 2px 6px">CASOS CLÍNICOS ('+cs.length+')</div><div class="list">'+cs.map(c=>'<a class="item" '+go+' href="#/casos/'+c.id+'"><div class="t">'+esc(c.title)+'</div><div class="s">'+esc(c.sp+" · "+c.spec)+'</div></a>').join("")+'</div>':"")+
