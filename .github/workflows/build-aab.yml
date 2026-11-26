@@ -7,6 +7,8 @@ on:
     paths:
       - ".github/workflows/build-aab.yml"
       - "versao-play.txt"
+      - "img/**"
+      - "index.html"
 
 permissions:
   contents: write

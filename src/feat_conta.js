@@ -3,10 +3,12 @@ const APP_VER="1.0";
 // Contas criadas no Firebase ANTES desta data continuam liberadas sem cadastro em "usuarios" (assinantes antigos).
 const ACC_CUTOFF=Date.parse("2026-11-26T12:00:00Z");
 const FS_BASE="https://firestore.googleapis.com/v1/projects/";
-const NEWS_V="2026-11b";
+const NEWS_V="2026-11c";
 const NEWS=[["🐾","Pacientes e prontuário","Ficha do animal, atendimentos, gráfico de peso, vacinas aplicadas e fotos pela câmera."],
  ["💉","Lembrete de vacina no WhatsApp","Gere a mensagem com as próximas doses e envie direto para o tutor."],
  ["📄","Receita em PDF pelo WhatsApp","Compartilhe a receita em PDF (ou texto) sem precisar imprimir."],
+ ["🧰","Materiais e instrumentos","Instrumental cirúrgico, insumos e equipamentos com fotos reais, tamanhos e dicas."],
+ ["📷","Fotos reais","Dermatologia e radiologia agora com fotos e radiografias reais (com crédito dos autores)."],
  ["👤","Conta e suporte","Alterar senha, excluir conta, política de privacidade e versão do app em Ajustes."]];
 
 /* ---------- utilidades ---------- */

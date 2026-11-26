@@ -67,9 +67,10 @@ const ICONS = {
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js")+"\n"+rd("feat_vet2.js")+"\n"+rd("feat_vet3.js")+"\n"+rd("feat_radio.js")+"\n"+rd("feat_apx.js")+"\n"+rd("feat_conta.js")+"\n"+rd("feat_pac.js"));
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js")+"\n"+rd("feat_vet2.js")+"\n"+rd("feat_vet3.js")+"\n"+rd("feat_radio.js")+"\n"+rd("feat_apx.js")+"\n"+rd("feat_conta.js")+"\n"+rd("feat_pac.js")+"\n"+rd("feat_mat.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
+const IMGF=path.join(dir,"img_credits.json");html=html.replace("/*__IMGC__*/{}",()=>fs.existsSync(IMGF)?fs.readFileSync(IMGF,"utf8").replace(/<\//g,"<\\/"):"{}");
 const APXF=path.join(dir,"apostila_app.json");html=html.replace("/*__APX__*/null",()=>fs.existsSync(APXF)?fs.readFileSync(APXF,"utf8").replace(/<\//g,"<\\/"):"null");
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");
 html = html.split("__LOGO__").join(logo)
