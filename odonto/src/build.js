@@ -45,11 +45,15 @@ const ICONS = {
   shield: "M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z M9 12l2 2 4-4",
   chart: "M3 3v18h18 M7 15l4-4 3 3 5-6",
   eye: "M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6z",
+  camera: "M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z M12 10a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7z",
+  xray: "M4 3h16v18H4z M12 6v12 M8 8q4 2 8 0 M7 11q5 2 10 0 M7 14q5 2 10 0",
+  layers: "M12 3l9 5-9 5-9-5z M3 13l9 5 9-5 M3 17l9 5 9-5",
+  cross: "M9 3h6v6h6v6h-6v6H9v-6H3V9h6z",
   logout: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_diag_perio.js")+"\n"+rd("feat_stom.js"));
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_diag_perio.js")+"\n"+rd("feat_stom.js")+"\n"+rd("feat_img_mat.js")+"\n"+rd("feat_pront_emerg.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");

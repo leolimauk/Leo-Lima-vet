@@ -390,7 +390,7 @@ function toggleTheme(){const t=store.get("theme","auto");const dark=t==="dark"||
 /* ================= Router ================= */
 const AFTER=[];
 const NAV=[["#/","Início","home"],["#/bulario","Bulário","pill"],["#/diagnosticos","Diagnóst.","search"],["#/calc","Cálculos","calc"],["#/tox","Urgências","alert"]];
-const SIDE=NAV.concat([["#/estomato","Estomatologia","eye"],["#/casos","Casos clínicos","book"],["#/periograma","Periograma","chart"],["#/odontograma","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
+const SIDE=NAV.concat([["#/emergencia","Emergências","cross"],["#/prontuario","Prontuário e fotos","camera"],["#/imagem","Exames de imagem","xray"],["#/materiais","Materiais dentários","layers"],["#/estomato","Estomatologia","eye"],["#/casos","Casos clínicos","book"],["#/periograma","Periograma","chart"],["#/odontograma","Odontograma","tooth"],["#/receita","Receituário","file"],["#/favoritos","Favoritos","star"],["#/legislacao","Legislação","scale"],["#/ajustes","Ajustes","gear"]]);
 function goBack(){if(history.length>1)history.back();else location.hash="#/"}
 function route(){
   const h=location.hash||"#/";const parts=h.replace(/^#\/?/,"").split("/").map(decodeURIComponent);
@@ -405,6 +405,10 @@ function route(){
     case "odontograma":html=vOdonto();sub="Odontograma";break;
     case "diagnosticos":if(arg){html=vDiag(arg);isSub=true;sub="Diagnóstico"}else{html=vDiags();sub="Diagnósticos"}break;
     case "periograma":html=vPerio();sub="Periograma";break;
+    case "emergencia":html=vEmergO(arg,parts[2]);isSub=!!parts[2];sub="Emergências";break;
+    case "prontuario":html=vPront(arg,parts[2]);isSub=!!arg;sub="Prontuário";break;
+    case "imagem":html=vImg(arg);sub="Exames de imagem";break;
+    case "materiais":html=vMat(arg);isSub=!!arg;sub="Materiais dentários";break;
     case "estomato":html=vStom(arg,parts[2]);isSub=!!arg;sub="Estomatologia";break;
     case "casos":if(arg){html=vCase(arg);isSub=true;sub="Caso Clínico"}else{html=vCases();sub="Casos Clínicos"}break;
     case "receita":html=vRx();sub="Receituário";break;
@@ -451,6 +455,8 @@ function vHome(){
   '<div class="search">'+ic("search")+'<input class="inp" placeholder="Buscar: articaína, amoxicilina, alveolite, anafilaxia..." onfocus="openSearch(this.value);this.blur()" readonly /></div></div></section>'+
   '<div class="stats"><div class="stat"><b>'+DRUGS.length+'</b><span>fármacos e produtos</span></div><div class="stat"><b>'+TOX.length+'</b><span>urgências médicas</span></div><div class="stat"><b>'+INTER.length+'</b><span>regras de interação</span></div><div class="stat"><b>'+CASES.length+'</b><span>casos clínicos</span></div></div>'+
   '<div class="sec-title"><h2>Ferramentas</h2></div><div class="tiles">'+
+  tile("#/emergencia","cross","c3","Emergências","RCP · doses · trauma dentário")+tile("#/prontuario","camera","c2","Prontuário","Evolução e fotos pelo celular")+
+  tile("#/imagem","xray","c5","Exames de imagem","Requisição: panorâmica, tomografia")+tile("#/materiais","layers","c7","Materiais dentários","Restauração, endodontia, prótese")+
   tile("#/calc/anest","calc","c1","Anestésicos locais","Dose máxima em tubetes")+tile("#/odontograma","tooth","c6","Odontograma","Anatomia e anestesia por dente")+
   tile("#/calc/profi","shield","c4","Profilaxia antibiótica","Endocardite (AHA)")+tile("#/calc/emerg","heart","c3","Kit de emergência","Doses por peso")+
   tile("#/calc/dose","drop","c5","Doses pediátricas","mg/kg → mL e gotas")+tile("#/calc/inter","alert","c2","Interações","Varfarina, epinefrina, AINEs...")+
