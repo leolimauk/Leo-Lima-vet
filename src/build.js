@@ -59,6 +59,7 @@ const ICONS = {
   barn: "M3 21V10l9-6 9 6v11z M9 21v-6h6v6 M3 10h18",
   quiz: "M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14 M12 17.5v.5",
   xray: "M4 3h16v18H4z M12 6v12 M8 8q4 2 8 0 M7 11q5 2 10 0 M7 14q5 2 10 0",
+  bookopen: "M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2z M22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z",
   logout: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9",
   paw: "M7 9a2 2 0 1 0 0-4a2 2 0 1 0 0 4z M12 7a2 2 0 1 0 0-4a2 2 0 1 0 0 4z M17 9a2 2 0 1 0 0-4a2 2 0 1 0 0 4z M12 11c-4 0-6 4-6 6.5S8 21 12 19c4 2 6 1 6-1.5S16 11 12 11z",
   gauge: "M12 14l4-4 M3 14a9 9 0 0 1 18 0 M5 18h14",
@@ -66,9 +67,10 @@ const ICONS = {
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js")+"\n"+rd("feat_vet2.js")+"\n"+rd("feat_vet3.js")+"\n"+rd("feat_radio.js"));
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_vet.js")+"\n"+rd("feat_vet2.js")+"\n"+rd("feat_vet3.js")+"\n"+rd("feat_radio.js")+"\n"+rd("feat_apx.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
+const APXF=path.join(dir,"apostila_app.json");html=html.replace("/*__APX__*/null",()=>fs.existsSync(APXF)?fs.readFileSync(APXF,"utf8").replace(/<\//g,"<\\/"):"null");
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");
 html = html.split("__LOGO__").join(logo)
   .replace("__ICONS__", JSON.stringify(ICONS))

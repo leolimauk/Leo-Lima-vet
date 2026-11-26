@@ -36,8 +36,14 @@ jobs:
       - name: Criar projeto Android e ícones
         run: npm run android:init
 
-      - name: Ativar impressão nativa (Imprimir / PDF)
-        run: cp android-native/MainActivity.java android/app/src/main/java/br/com/leomedvet/app/MainActivity.java
+      - name: Ativar impressão nativa (Imprimir / PDF) e compartilhamento de arquivos
+        run: |
+          cp android-native/MainActivity.java android/app/src/main/java/br/com/leomedvet/app/MainActivity.java
+          X=android/app/src/main/res/xml/file_paths.xml
+          mkdir -p android/app/src/main/res/xml
+          printf '%s\n' '<?xml version="1.0" encoding="utf-8"?>' '<paths xmlns:android="http://schemas.android.com/apk/res/android">' '    <external-path name="my_images" path="." />' '    <cache-path name="my_cache_images" path="." />' '</paths>' > $X
+          cat $X
+          grep -n "FileProvider\|file_paths" android/app/src/main/AndroidManifest.xml
 
       - name: Compilar APK (debug, instalável)
         run: |
