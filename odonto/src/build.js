@@ -53,7 +53,7 @@ const ICONS = {
 };
 const logo = rd("logo.uri").trim();
 const svg = n => `<svg class="i" viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
-let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_diag_perio.js")+"\n"+rd("feat_stom.js")+"\n"+rd("feat_img_mat.js")+"\n"+rd("feat_pront_emerg.js"));
+let html = rd("app.html").replace("/*__FEAT__*/", () => rd("feat_diag_perio.js")+"\n"+rd("feat_stom.js")+"\n"+rd("feat_img_mat.js")+"\n"+rd("feat_pront_emerg.js")+"\n"+rd("feat_ficha.js"));
 const FBKEY=(()=>{try{return JSON.parse(rd("firebase.json")).apiKey||""}catch(e){return ""}})();
 html=html.replace("__FB_KEY__",FBKEY);
 const json = JSON.stringify(data).replace(/<\/(script)/gi, "<\\/$1").replace(new RegExp("[\\u2028\\u2029]","g"), " ");

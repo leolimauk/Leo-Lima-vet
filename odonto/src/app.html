@@ -406,7 +406,7 @@ function route(){
     case "diagnosticos":if(arg){html=vDiag(arg);isSub=true;sub="Diagnóstico"}else{html=vDiags();sub="Diagnósticos"}break;
     case "periograma":html=vPerio();sub="Periograma";break;
     case "emergencia":html=vEmergO(arg,parts[2]);isSub=!!parts[2];sub="Emergências";break;
-    case "prontuario":html=vPront(arg,parts[2]);isSub=!!arg;sub="Prontuário";break;
+    case "prontuario":html=vPront(arg,parts[2],parts[3]);isSub=!!arg;sub="Prontuário";break;
     case "imagem":html=vImg(arg);sub="Exames de imagem";break;
     case "materiais":html=vMat(arg);isSub=!!arg;sub="Materiais dentários";break;
     case "estomato":html=vStom(arg,parts[2]);isSub=!!arg;sub="Estomatologia";break;
